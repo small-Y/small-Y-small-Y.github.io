@@ -49,8 +49,10 @@ $(".page .next").click(function(){
 });
 $(".page .prev").click(function(){
     index --;
+    $(".indicator span").removeClass("cur");
+    $(".indicator span").eq(index).addClass("cur");
     $div_img.finish().animate({
-            left :-$div_img_width*(index-1)
+            left :-$div_img_width*index
         },500,function(){
             if(index <=0){
                 index =7;
