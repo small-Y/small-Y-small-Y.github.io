@@ -1,0 +1,46 @@
+/*图片视口*/
+.banner{
+    width: 400px;
+    height: 200px;
+    margin: 10px auto;
+    background-color: red;
+    overflow: hidden;
+    position: relative;
+}
+/*图片容器*/
+.img{
+    width: 2800px;
+    height: 200px;
+    font-size: 0;
+    overflow: hidden;
+    background-color: yellow;
+    position: relative;
+    left: -400px;
+}
+div .img img{
+    float: left;
+    width: 400px;
+    height: 200px;
+}
+.banner .indicator{
+    position: absolute;
+    left: 10px;
+    bottom: 15px;
+}
+.banner span{
+    color: white;
+    cursor: pointer;
+    background-color: #444;
+    padding: 5px 10px;
+    border: 1px solid #444;
+    -moz-user-select: none;   
+}
+.banner span:hover , .banner .indicator span.cur{
+    border-color: #FFB400;
+}
+/* banner 区域里面的 page */
+.banner .page{
+    position: absolute;
+    right: 10px;
+    bottom: 15px;
+}
