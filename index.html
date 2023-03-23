@@ -36,25 +36,25 @@
 		<div class="banner">
 			<div class="img">
 				<a class="banner_img_a" href="#" target="_blank" style="display: inline;">
-					<img src="http://img.zhuangbeiku.com/e62451fecc8fc737fd9542ecc2049f9e" alt="">
+					<img src="img/4269.webp" alt="">
+				</a>
+				<a class="banner_img_a" href="#" target="_blank" style="display: inline;">
+					<img src="img/3128.webp" alt="">
+				</a>
+				<a class="banner_img_a" href="#" target="_blank" style="display: inline;">
+					<img src="img/368.webp" alt="">
+				</a>
+				<a class="banner_img_a" href="#" target="_blank" style="display: inline;">
+					<img src="img/5545.webp" alt="">
 				</a>
 				<a class="banner_img_a show" href="#" target="_blank" style="display: inline;">
-				    <img src="http://img.zhuangbeiku.com/4d5699cbc30af79ae833fb8ff7e95583" alt="">
+				    <img src="img/8535.webp" alt="">
 				</a>
 				<a class="banner_img_a" href="#" target="_blank" style="display: inline;">
-					<img src="http://img.zhuangbeiku.com/2200fd8829fdfba3ebdef19b6b1b36d9" alt="">
+					<img src="img/4269.webp" alt="">
 				</a>
 				<a class="banner_img_a" href="#" target="_blank" style="display: inline;">
-					<img src="http://img.zhuangbeiku.com/878c2a8f4cac3af805cd29d7ef66852e" alt="">
-				</a>
-				<a class="banner_img_a" href="#" target="_blank" style="display: inline;">
-					<img src="http://img.zhuangbeiku.com/3730068b95bed418240b4c264f34d313" alt="">
-				</a>
-				<a class="banner_img_a" href="#" target="_blank" style="display: inline;">
-					<img src="http://img.zhuangbeiku.com/e62451fecc8fc737fd9542ecc2049f9e" alt="">
-				</a>
-				<a class="banner_img_a show" href="#" target="_blank" style="display: inline;">
-				    <img src="http://img.zhuangbeiku.com/4d5699cbc30af79ae833fb8ff7e95583" alt="">
+					<img src="img/3128.webp" alt="">
 				</a>
 			</div>
 			<div class="indicator">
@@ -99,57 +99,3 @@
 		</script>
 	</body>
 </html>
-<script type="text/javascript">
-	
-	//轮播索引
-	var index =1;
-	var $div_img =$(".banner .img");
-	
-	//轮播定时器
-	
-		var timeer = setInterval(changeImage,2000);
-		function changeImage(){
-			index++;
-			$div_img.finish().animate({
-				left :-400*index
-			},500,function(){
-				if(index >= 6){
-					index =0;
-					$(this).css("left",-400);
-				}
-			});	
-		}
-	
-	//点击选择上下图片
-	$(".page span").hover(function(){
-		//停止执行
-		clearInterval(timeer);
-	},function(){
-		//继续执行
-		timeer = setInterval(changeImage,2000);
-	});
-	
-	
-	$(".page .next").click(function(){
-		changeImage();
-	});
-	$(".page .prev").click(function(){
-		index --;
-		$div_img.finish().animate({
-				left :-400*index
-			},500,function(){
-				if(index <=0){
-					index =5;
-					$(this).css("left",-2000);
-				}
-			});	
-	});
-	//页面指示器
-	$(".indicator span").mouseenter(function(){
-		//切换图片
-		index= $(this).index() +1;
-		clearInterval(timeer);
-		$div_img.css("left",-400*index);
-	});
-	
-</script>
