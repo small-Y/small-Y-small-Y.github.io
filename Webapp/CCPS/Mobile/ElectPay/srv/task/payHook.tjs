@@ -1,0 +1,133 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<!--#INCLUDE FILE="CryptoJS.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	function accountPay(fullPath,money){
+		try{
+			var ObjectList=[fullPath];
+			var FunctionParam = IOT.Utils.encode64(money);
+			var RuleName = "充值";
+			var type = "Node";
+			var ObjectTag = "Account";
+			var actionList;
+			if(IOT.Project.DataBaseType=="Oracle" || IOT.Project.DataBaseType=="PostgreSQL")
+			{
+				actionList=IOT.RDC.ExecuteSQL("select a.*,b.\"ObjectID\",c.\"ObjectTag\",c.\"ObjectName\",c.\"ObjectType\",b.\"TypeID\",b.\"FunctionName\" from OPC_OBJECTACTION a,OPC_OBJECTFUNC b,OPC_OBJECTCLASS c where a.\"FunctionID\"=b.\"FunctionID\" and b.\"ObjectID\"=c.\"ObjectID\" and c.\"ObjectTag\"=\'"+ObjectTag+"\' and a.\"RuleName\"=\'"+RuleName+"\' order by a.\"RuleID\"");
+			}
+			else
+			{
+				actionList=IOT.RDC.ExecuteSQL("select a.*,b.ObjectID,c.ObjectTag,c.ObjectName,c.ObjectType,b.TypeID,b.FunctionName from OPC_OBJECTACTION a,OPC_OBJECTFUNC b,OPC_OBJECTCLASS c where a.FunctionID=b.FunctionID and b.ObjectID=c.ObjectID and c.ObjectTag='"+ObjectTag+"' and a.RuleName='"+RuleName+"' order by a.RuleID");
+			}
+
+			//debugger;
+			if(actionList.data.length==0){
+				return false;
+			}
+			var RuleID=actionList.data[0].RuleID;
+			//
+			for(var i=0;i<ObjectList.length;i++)
+			{
+				if(type=="Organize")
+				{
+					if(FunctionParam==undefined)
+						Server.Execute("/pm/srv/excuteControl.ejs?ORGFilter="+ObjectList[i]+"&TimeOut=0&id="+RuleID);
+					else
+						Server.Execute("/pm/srv/excuteControl.ejs?ORGFilter="+ObjectList[i]+"&TimeOut=0&id="+RuleID+"&FunctionParam="+FunctionParam);
+				}
+				else
+				{
+					if(FunctionParam==undefined)
+						Server.Execute("/pm/srv/excuteControl.ejs?OPCFilter="+ObjectList[i]+"&TimeOut=0&id="+RuleID);
+					else
+						Server.Execute("/pm/srv/excuteControl.ejs?OPCFilter="+ObjectList[i]+"&TimeOut=0&id="+RuleID+"&FunctionParam="+FunctionParam);
+				}
+			}
+			return true;
+		}catch(e){
+			return false;
+		}
+		
+	
+	}
+	Response.write(function(){
+	    var ret={"success":true,"gData":[],"nData":[],"msg":""};
+
+		var sign = Request.form("sign");
+		var data = Request.form("data");
+
+		var sysid="50";
+		var subsysid="BGD01";
+
+		var cert="6BACA451224E2BB7E050000A150004466BACA451224F2BB7E050000A150004466BACA45122502BB7E050000A150004466BACA45122512BB7E050000A150004466BACA45122522BB7E050000A150004466BACA45122532BB7E050000A150004466BACA45122542BB7E050000A150004466BACA45122552BB7E050000A150004466BACA45122562BB7E050000A150004466BACA45122572BB7E050000A150004466BACA45122582BB7E050000A150004466BACA45122592BB7E050000A150004466BACA451225A2BB7E050000A150004466BACA451225B2BB7E050000A150004466BACA451225C2BB7E050000A150004466BACA451225D2BB7E050000A150004466BACA451225E2BB7E050000A150004466BACA451225F2BB7E050000A150004466BACA45122602BB7E050000A150004466BACA45122612BB7E050000A150004466BACA45122622BB7E050000A150004466BACA45122632BB7E050000A150004466BACA45122642BB7E050000A150004466BACA45122652BB7E050000A150004466BACA45122662BB7E050000A150004466BACA45122672BB7E050000A150004466BACA45122682BB7E050000A150004466BACA45122692BB7E050000A150004466BACA451226A2BB7E050000A150004466BACA451226B2BB7E050000A150004466BACA451226C2BB7E050000A150004466BACA451226D2BB7E050000A15000446"
+
+		//var signT=System.Security.ComputerMD5(sysid+subsysid+cert+data,false).toLowerCase();
+		var signT=CryptoJS.MD5(sysid+subsysid+cert+data).toString().toLowerCase();
+		
+		//校验SING
+		if(signT==sign){
+			//执行充值
+			var res=TSS.Utils.xmlToJson(data);
+			//			<?xml version="1.0" encoding="GBK"?>
+			//			<payResult>
+			//			   <billno></billno>
+			//			   <billamt></billamt>
+			//			   <paidtime></paidtime>
+			//			<trade_no></trade_no>
+			//			</payResult>
+
+			//billno	String	订单号
+			//billamt	String	订单金额
+			//paidtime	String	支付时间 (格式 yyyy-MM-dd HH:mm:ss)
+			//trade_no	String	交易流水号
+			var billno=res.payResult.billno;
+			var billamt=res.payResult.billamt;
+			var paidtime=res.payResult.paidtime;
+			var trade_no=res.payResult.trade_no;
+
+
+			//查询数据库
+			var sql="SELECT \"PayID\",\"InsideNO\",\"OutsideNO\",\"BusinessType\","
+				+"\"PayUserID\",\"PayUserName\",\"ReceiveUserID\",\"ReceiveUserName\",\"AmountPay\",\"PayType\",\"OperateStatus\",\"BusinessStatus\" "
+				+" FROM \"SSM_TRANSACTION\" where  \"InsideNO\"='"+billno+"'"
+			var res=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,sql))[0];
+			if(res.MessageCode>0){
+				ret.msg=res.MessageText;
+				return  TSS.JSON.encode(ret);
+			}
+
+			var re=res.Record;
+			if(re.length!=1){
+				return 0;
+			}else{
+			
+				if(re[0].BusinessStatus=="未执行"){
+					//执行业务
+					var ret=accountPay(re[0].ReceiveUserID,re[0].AmountPay);
+					if(ret){
+						//更新状态
+						var uSql="update \"SSM_TRANSACTION\"  set \"BusinessStatus\"='执行成功' where  \"InsideNO\"='"+billno+"'";
+						var res=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,uSql))[0];
+						return 1;
+
+					}else{
+						return 4;
+					}
+				}
+				
+				return 1;
+			}
+			return 2
+			
+		}else{
+		
+			return 3;
+		}
+		
+		
+		 return TSS.JSON.encode(ret);
+		
+		
+	}());
+	Response.ContentType = "text/plain";
+%>

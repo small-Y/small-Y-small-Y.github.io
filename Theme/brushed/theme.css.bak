@@ -1,0 +1,43 @@
+@charset "utf-8";
+
+.dialog
+{
+	background: transparent url(./i/frame.png) repeat left top;
+}
+
+.dialog .bar
+{
+    color:#5f5f5f;
+}
+
+.dialog .main .content
+{
+	background:transparent url(./i/random_grey_variations.png) repeat left bottom;
+}
+
+
+.dialog-max
+{
+   background: transparent url(./i/frame.png) repeat left top;
+}
+
+.dialog-max .bar
+{
+    color:#5f5f5f;
+}
+
+.dialog-max .main .content
+{
+	background:transparent url(./i/random_grey_variations.png) repeat left bottom;
+}
+
+.dialog-fullscreen
+{
+   background: transparent url(./i/frame.png) repeat left top;
+}
+
+
+.dialog-fullscreen .main .content
+{
+	background:transparent url(./i/random_grey_variations.png) repeat left bottom;
+}

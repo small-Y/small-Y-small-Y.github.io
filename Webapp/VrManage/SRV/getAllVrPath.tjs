@@ -1,0 +1,45 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+var allpath=[];
+function getChildDiv(path){
+	var divs=TSS.JSON.decode(System.Storage.ListDir(path,""));
+	if(divs.Flag==false){
+		return "";
+	}
+
+////"/360_cuber.jpg"
+////"/360_cubeb.jpg"
+////"/360_cubel.jpg"
+////"/360_cubef.jpg"
+////"/360_cubeu.jpg"
+////"/360_cubed.jpg"
+
+	for(var i=0;i<divs.List.length;i++){
+		if( System.Storage.IsFileExist(divs.List[i].urlPath+"/360_cuber.jpg")){
+			allpath.push(divs.List[i].urlPath);
+		}
+		if(divs.List[i].isDir==true){
+			getChildDiv(divs.List[i].urlPath);
+		}
+	}
+	return allpath;
+
+}
+	Response.Write(function () {
+		var result={
+			flag:false,
+			info:"",
+			data:[]
+		};
+		//return System.Storage.ListDir("/API/Map/VR","")
+		//
+		getChildDiv("/API/Map/VR");
+		//
+		result.data=allpath;
+		result.flag=true;
+		return TSS.JSON.encode(result);
+		
+	}());
+	Response.ContentType = "application/json";
+%>

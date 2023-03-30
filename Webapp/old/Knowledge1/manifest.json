@@ -1,0 +1,55 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/tax",
+  "appid": "81E75440-3C16-43C7-B5E4-5577A2342B8D",
+  "apptype": "Things",
+  "name": "知识中心管理服务系统",
+  "short": "知识中心",
+  "description": "知识中心的内容发布管理。",
+  "author": "ThingsLabs",
+  "version": "1.0",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/Knowledge/index.tjs",
+	  "container": "webapp",
+	  "sort": 13,
+	  "height": 600,
+	  "width": 800,
+	  "webapp":[{
+		   "id":"knowledgekpi",
+		   "text":"知识视窗",
+		   "info":"",
+		   "children":[]
+		},{
+		   "id":"knowledgeset",
+		   "text":"知识管理",
+		   "info":"",
+		   "children":[]
+		},{
+		   "id":"faq",
+		   "text":"咨询答复",
+		   "info":"",
+		   "children":[]
+		},{
+		   "id":"knowledgetype",
+		   "text":"分类管理",
+		   "info":"",
+		   "children":[]
+		},{
+		   "id":"knowledgetag",
+		   "text":"标签管理",
+		   "info":"",
+		   "children":[]
+		}]
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "",
+	  "container": "webapp",
+	  "webapp":[]
+    }
+  },
+  "icons": {
+    "logo": "icon_256.png"
+  }
+}

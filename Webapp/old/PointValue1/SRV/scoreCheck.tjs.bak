@@ -1,0 +1,109 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var tc = new Date();
+		startTime = new Date();
+		startTime.setFullYear(tc.getFullYear(),tc.getMonth(),tc.getDate());
+		startTime.setHours(0,0,0,0);
+		var server=TSS.JSON.decode(System.Basic.GetServerStatus());
+		var wxinfo = TSS.JSON.decode(System.Basic.GetWeiXinInfo());
+		//
+		var count=0;
+		if(wxinfo.WeixinEnable){
+			var userMap=[];
+			var record1=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_UserID\",\"T_UserName\",\"T_FullName\",\"T_UserScore\" from UserDataTable"));
+			if(record1.length==0)
+			{
+				return System.RDC.GetLastError();
+			}
+			if(record1[0].MessageCode>0)
+			{
+				return record1[0].MessageText;
+			}
+			for(var i=0;i<record1[0].Record.length;i++)
+			{
+				record1[0].Record[i].T_GoldScore=0;
+				userMap[record1[0].Record[i].T_UserID]=record1[0].Record[i];
+			}
+			//
+			var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_UserID\",sum(\"T_Paid\"-\"T_Refund\") as score from UserScoreOrderTable where \"T_OrderTime\">='"+startTime.DateAdd("d",-1).Format("yyyy-MM-dd hh:mm:ss")+"' group by \"T_UserID\""));
+			if(record2.length==0)
+			{
+				return System.RDC.GetLastError();
+			}
+			if(record2[0].MessageCode>0)
+			{
+				return record2[0].MessageText;
+			}
+			//
+			var record3=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_UserID\",sum(\"T_GoldScore\"-\"T_Paid\"+\"T_Refund\") as score from GoldScoreOrderTable where \"T_OrderTime\">='"+startTime.DateAdd("d",-1).Format("yyyy-MM-dd hh:mm:ss")+"' group by \"T_UserID\""));
+			if(record3.length==0)
+			{
+				return System.RDC.GetLastError();
+			}
+			if(record3[0].MessageCode>0)
+			{
+				return record3[0].MessageText;
+			}
+			for(var i=0;i<record3[0].Record.length;i++)
+			{
+				userMap[record3[0].Record[i].T_UserID].T_GoldScore=record3[0].Record[i].score;
+			}
+			//
+			for(var i=0;i<record2[0].Record.length;i++)
+			{
+				if(record2[0].Record[i].score!=0)
+				{
+					var first=userMap[record2[0].Record[i].T_UserID].T_FullName+"，近日您已"+(record2[0].Record[i].score>0?"增加":"减少")+Math.abs(record2[0].Record[i].score)+"积分，"+(userMap[record2[0].Record[i].T_UserID].T_GoldScore>0?"获得":"减扣")+Math.abs(userMap[record2[0].Record[i].T_UserID].T_GoldScore)+"金币！";
+					if(userMap[record2[0].Record[i].T_UserID].T_GoldScore==0)
+						first=userMap[record2[0].Record[i].T_UserID].T_FullName+"，近日您已"+(record2[0].Record[i].score>0?"增加":"减少")+Math.abs(record2[0].Record[i].score)+"积分！";
+					//
+					var msgData={
+								   "first": {
+									   "value":first,
+									   "color":"#0066cc"
+								   },
+								   "keyword1":{
+									   "value":userMap[record2[0].Record[i].T_UserID].T_UserName,
+									   "color":"#666"
+								   },
+								   "keyword2": {
+									   "value":startTime.DateAdd("d",-1).Format("MM月dd日")+"~"+(new Date()).Format("MM月dd日 hh:mm"),
+									   "color":"#666"
+								   },
+								   "keyword3": {
+									   "value":(record2[0].Record[i].score>0?"+":"")+record2[0].Record[i].score,
+									   "color":record2[0].Record[i].score>0?"#ff6600":"#00cc00"
+								   },
+								   "keyword4": {
+									   "value":userMap[record2[0].Record[i].T_UserID].T_UserScore,
+									   "color":"#3366ff"
+								   },
+								   "keyword5": {
+									   "value":"每日积分",
+									   "color":"#666"
+								   },
+								   "remark":{
+									   "value":"更多信息交流，请访问“"+server.AuthName+"”。",
+									   "color":"#666"
+								   }
+								};
+					var ret=TSS.Utils.pushWeiXin("ScoreNotice","#0066ff","https://open.weixin.qq.com/connect/oauth2/authorize?appid="+wxinfo.AppID+"&redirect_uri=https%3A%2F%2F"+server.HomePage+"%2FAPI%2FWeiXin%2FWebApp&response_type=code&scope=snsapi_userinfo&state=user#wechat_redirect",msgData,userMap[record2[0].Record[i].T_UserID].T_UserName);
+					if(ret!="OK")
+					{
+						Server.DebugPrint(ret);
+					}
+					else
+					{
+						count++;
+					}
+				}
+			}
+		}
+		//
+		return count+"个用户积分检查与盘点成功！";
+	}());
+	Response.ContentType = "text/plain";
+%>

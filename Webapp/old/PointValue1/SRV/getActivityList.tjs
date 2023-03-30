@@ -1,0 +1,48 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			data:[]
+		};
+		//
+		var appMap=[];
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from PointValueAppTable"))[0];
+		if(record.MessageCode>0)
+		{
+			TSS.Utils.log(record.MessageText);
+			return TSS.JSON.encode(result);
+		}
+		for(var i=0;i<record.Record.length;i++)
+		{
+			appMap[record.Record[i].T_AppID]=record.Record[i];
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from PointValueActivityTable"))[0];
+		if(record.MessageCode>0)
+		{
+			TSS.Utils.log(record.MessageText);
+			return TSS.JSON.encode(result);
+		}
+		//
+		result.flag=true;
+		for(var i=0;i<record.Record.length;i++)
+		{
+			if(appMap[record.Record[i].T_AppID]!=undefined)
+			{
+				result.data[result.data.length]=['<input type="checkbox" id="'+record.Record[i].T_ActivityID+'" name="selActivityID" class="checkboxes">',
+												record.Record[i].T_ActivityName,
+												appMap[record.Record[i].T_AppID].T_AppName,
+												record.Record[i].T_Double,
+												TSS.Utils.parseDate(record.Record[i].T_StartTime).Format('yyyy年MM月dd日'),
+												TSS.Utils.parseDate(record.Record[i].T_EndTime).Format('yyyy年MM月dd日'),
+												record.Record[i].T_ActivityCreated,
+												'<a href="javascript:App.doActivity(\''+record.Record[i].T_ActivityID+'\',\''+record.Record[i].T_ActivityName+'\','+record.Record[i].T_Double+',\''+record.Record[i].T_StartTime+'\',\''+record.Record[i].T_EndTime+'\',\''+record.Record[i].T_ActivityCreated+'\',\''+record.Record[i].T_AppID+'\');" class="btn btn-sm btn-outline green-haze sbold"><i class="fa fa-pencil"></i> 修改</a>'];
+			}
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

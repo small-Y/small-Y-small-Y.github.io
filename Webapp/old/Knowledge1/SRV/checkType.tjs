@@ -1,0 +1,38 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result = {
+				flag:true,
+				info:""
+			};
+		//
+		//
+		var typeID = Request.Form("typeID");
+		var typeName = Request.Form("typeName");
+		var szSql="";
+		var userInfo=TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		if(userInfo.userTypeNum<1)
+		{
+
+			szSql="SELECT * FROM CommunityTypeTable where \"TypeID\"='"+typeID+"' or \"TypeName\"='"+typeName+"'";
+			var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+			if (resSet.MessageCode>0){
+				result.flag=false;
+				result.info=resSet.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			if(resSet.Record.length>0){
+				result.flag=false;
+				result.info="存在相同的分类！";
+			}else{
+				result.flag=true;
+				result.info="验证通过！";
+			}
+		}
+
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

@@ -1,0 +1,262 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:true,
+			info:"",
+			UserPie1:[{name:"已激活",y:0,color:"#00ccff"},{name:"未激活",y:0,color:"#ff9900"}],
+			UserPie2:[],
+			UserPie3:[],
+			orgCategories:[],
+			orgBar:[{type: 'column',name:"已激活",data:[],color:"#0099cc"},{type: 'column',name:"未激活",data:[],color:"#ff9900"}],
+			sexBar:[{type: 'column',name:"男性",data:[],color:"#3399ff"},{type: 'column',name:"女性",data:[],color:"#009900"}]
+		};
+		//
+		var color1=["#0099ff","#cc33cc","#ff8000","#0080c0","#8080ff","#800080","#8080c0","#ff80c0"];
+		var color2=["#00cc99","#006699","#9999ff","#6666cc","#ff66cc","#ff9900","#99cc00","#ccff00"];
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select count(*) as total from UserDataTable  where \"T_LoginTime\">='"+(new Date).Format('yyyy-01-01')+"'"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		result.UserPie1[0].y=record[0].Record[0].total;
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select count(*) as total from UserDataTable  where \"T_LoginTime\"<'"+(new Date).Format('yyyy-01-01')+"' or \"T_LoginTime\" is null"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		result.UserPie1[1].y=record[0].Record[0].total;
+		//
+		var groupMap=new Array();
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_GroupID\",\"T_GroupName\" from UserGroupTable  where \"T_ParentID\"=1 order by \"T_GroupName\""));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			groupMap[record[0].Record[i].T_GroupID]=record[0].Record[i].T_GroupName;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_GroupID\",count(*) as total from UserGroupRelationTable where \"T_GroupID\" in (select \"T_GroupID\" from UserGroupTable  where \"T_ParentID\"=1) group by \"T_GroupID\""));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			result.UserPie2[result.UserPie2.length]={
+					name:groupMap[record[0].Record[i].T_GroupID],
+					color:color1[i%8],
+					y:record[0].Record[i].total
+				};
+		}
+		//
+		var roleMap=new Array();
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_RoleID\",\"T_RoleName\" from UserRoleTable   where \"T_ParentID\"=3 order by \"T_RoleName\""));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			roleMap[record[0].Record[i].T_RoleID]=record[0].Record[i].T_RoleName;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_RoleID\",count(*) as total from UserRoleRelationTable  where \"T_RoleID\" in (select \"T_RoleID\" from UserRoleTable  where \"T_ParentID\"=3) group by \"T_RoleID\""));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			result.UserPie3[result.UserPie3.length]={
+					name:roleMap[record[0].Record[i].T_RoleID],
+					color:color2[i%8],
+					y:record[0].Record[i].total
+				};
+		}
+		//
+		var orgMap=new Array();
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_OrgID\",\"T_OrgName\" from OrganizationDataTable where \"T_ParentID\"=2 order by \"T_OrgCode\",\"T_OrgName\""));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			result.orgCategories[i]=record[0].Record[i].T_OrgName;
+			result.orgBar[0].data[i]=0;
+			result.orgBar[1].data[i]=0;
+			result.sexBar[0].data[i]=0;
+			result.sexBar[1].data[i]=0;
+			orgMap[record[0].Record[i].T_OrgID]=i;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_OrgID\",\"T_FullName\" from OrganizationDataTable where \"T_ParentID\"!=2"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			for(var j=0;j<result.orgCategories.length;j++)
+			{
+				if(record[0].Record[i].T_FullName.indexOf(result.orgCategories[j])>=0)
+				{
+					orgMap[record[0].Record[i].T_OrgID]=j;
+					break;
+				}
+			}
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_OrgID\",count(*) as total from UserDataTable where \"T_LoginTime\">='"+(new Date).Format('yyyy-01-01')+"' and \"T_OrgID\" in (select \"T_OrgID\" from OrganizationDataTable) group by \"T_OrgID\""));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			result.orgBar[0].data[orgMap[record[0].Record[i].T_OrgID]]+=record[0].Record[i].total;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_OrgID\",count(*) as total from UserDataTable where (\"T_LoginTime\"<'"+(new Date).Format('yyyy-01-01')+"' or \"T_LoginTime\" is null) and \"T_OrgID\" in (select \"T_OrgID\" from OrganizationDataTable) group by \"T_OrgID\""));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			result.orgBar[1].data[orgMap[record[0].Record[i].T_OrgID]]+=record[0].Record[i].total;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_OrgID\",count(*) as total from UserDataTable where \"T_Sex\"='男' and \"T_OrgID\" in (select \"T_OrgID\" from OrganizationDataTable) group by \"T_OrgID\""));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			result.sexBar[0].data[orgMap[record[0].Record[i].T_OrgID]]+=record[0].Record[i].total;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_OrgID\",count(*) as total from UserDataTable where \"T_Sex\"='女' and \"T_OrgID\" in (select \"T_OrgID\" from OrganizationDataTable) group by \"T_OrgID\""));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			result.sexBar[1].data[orgMap[record[0].Record[i].T_OrgID]]+=record[0].Record[i].total;
+		}
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

@@ -1,0 +1,48 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			text:"",
+			data:[]
+		};
+		//
+		result.flag=true;
+		var appList = Session("CPS");
+		if(appList==undefined)
+		{
+			appList = TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System",""));
+			Session("CPS") = appList;
+		}
+		//
+		var strRunStatus=["空闲挂起","运行中...","强制停止","强制运行","删除标记"];
+		var taskList = TSS.JSON.decode(System.Basic.GetPlantTaskEntry("*"));
+		for(var i=0;i<taskList.length;i++)
+		{
+			if(taskList[i].RunStatus==0)
+			{
+				result.data[result.data.length]=[i+1,
+												taskList[i].TaskName,
+												TSS.Utils.dateMessage(taskList[i].LastTime),
+												strRunStatus[taskList[i].RunStatus],
+												taskList[i].LastMsg==""?taskList[i].TaskInfo:taskList[i].LastMsg,
+												appList.map[taskList[i].AppName]==undefined?"系统服务":appList.data[appList.map[taskList[i].AppName]].short,
+												'<a href="javascript:App.runTask(\''+taskList[i].TaskTag+'\');" class="btn btn-sm btn-outline green-haze sbold"><i class="fa fa-newspaper-o"></i> 启&nbsp;动</a>&nbsp;<a href="javascript:App.delTask(\''+taskList[i].TaskTag+'\');" class="btn btn-sm btn-outline red-haze sbold"><i class="fa fa-newspaper-o"></i> 删&nbsp;除</a>'];
+			}
+			else
+			{
+				result.data[result.data.length]=[i+1,
+												taskList[i].TaskName,
+												TSS.Utils.dateMessage(taskList[i].LastTime),
+												strRunStatus[taskList[i].RunStatus],
+												taskList[i].LastMsg==""?taskList[i].TaskInfo:taskList[i].LastMsg,
+												appList.map[taskList[i].AppName]==undefined?"系统服务":appList.data[appList.map[taskList[i].AppName]].short,
+												'<a href="javascript:App.stopTask(\''+taskList[i].TaskTag+'\');" class="btn btn-sm btn-outline yellow-haze sbold"><i class="fa fa-newspaper-o"></i> 停&nbsp;止</a>&nbsp;<a href="javascript:App.delTask(\''+taskList[i].TaskTag+'\');" class="btn btn-sm btn-outline red-haze sbold"><i class="fa fa-newspaper-o"></i> 删&nbsp;除</a>'];
+			}
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

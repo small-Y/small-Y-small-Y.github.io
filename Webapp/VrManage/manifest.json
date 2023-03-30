@@ -1,0 +1,35 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/tax",
+  "appid": "607CEBCA-782E-46D2-87CB-59C3E4912A12",
+  "apptype": "Things",
+  "name": "全景配置管理工具",
+  "short": "全景配置",
+  "description": "全景配置管理工具",
+  "author": "ThingsLabs",
+  "version": "1.0.0",
+  "app": {
+    "launch": {
+	  "enable":false,
+	  "local_path": "/WebApp/VrManage/index.tjs",
+	  "container": "webapp",
+	  "sort": 7,
+	  "height": 600,
+	  "width": 800,
+	  "webapp":[{
+		   "id":"VrConfig",
+		   "text":"Vr配置管理",
+		   "info":"",
+		   "children":[]
+		}]
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "",
+	  "container": "webapp",
+	  "webapp":[]
+    }
+  },
+  "icons": {
+    "logo": "icon_64.png"
+  }
+}

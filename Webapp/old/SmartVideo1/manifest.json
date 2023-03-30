@@ -1,0 +1,30 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/fax",
+  "appid": "ABA2FBAC-058C-474B-99E5-527BEE4315D3",
+  "apptype": "Things",
+  "name": "校园视频服务系统",
+  "short": "视频聚合",
+  "description": "基于资源信息模型的的内置视频服务",
+  "author": "ThingsLabs",
+  "version": "2.0",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/SmartVideo/index.tjs",
+	  "container": "webapp",
+	  "sort": 7,
+	  "height": 600,
+	  "width": 800
+    },
+    "mobile": {
+	  "enable":true,
+	  "local_path": "/WebApp/SmartVideo/Mobile/index.tjs",
+	  "ad":true,
+	  "info":"视频直播现场环境。",
+	  "container": "webapp"
+    }
+  },
+  "icons": {
+    "logo": "icon.png"
+  }
+}

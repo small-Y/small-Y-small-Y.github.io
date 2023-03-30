@@ -1,0 +1,18 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var dbname=Request.Form("dbname");
+		var sqlcmd=TSS.Utils.decode64(Request.Form("sqlcmd"));
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL(dbname,true,sqlcmd));
+		if(record.length==0)
+		{
+			result=[{"SQLID":0,"MessageCode":1,"MessageText":System.RDC.GetLastError(),"ExecuteTime":0,"Store":[],"ColumnModel":[],"Record":[]}]
+			return TSS.JSON.encode(result);
+		}
+		//
+		return TSS.JSON.encode(record);
+	}());
+	Response.ContentType = "text/plain";
+%>

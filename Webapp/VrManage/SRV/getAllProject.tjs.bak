@@ -1,0 +1,30 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			info:"",
+			data:[]
+		};
+		//
+		return Server.ExecuteAPI("GET","/API/System","");
+		var res=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System","")).data;
+
+		for(var i=0;i<res.length;i++){
+			if(res[i].app.launch.container=="proxy"){
+				var o={
+					id:res[i].appPath,
+					text:res[i].name
+				}	
+				result.data.push(o)
+			}
+		}
+		//
+		result.flag=true;
+		//
+		return TSS.JSON.encode(result);
+		
+	}());
+	Response.ContentType = "application/json";
+%>

@@ -1,0 +1,421 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result=[];
+		var parent=Request.QueryString("parent");
+		var id=Request.QueryString("id");
+		var type=Request.QueryString("type");
+		//
+		var loginUser = TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		if(!loginUser.loginStatus)
+		{
+			result.flag=false;
+			result.text="尚未登录";
+			return TSS.JSON.encode(result);
+		}
+		//
+		var funcMap=new Array();
+		if(type=="org")
+		{
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_RightTag\",\"T_AppID\" from OrgRightRelationTable where \"T_OrgID\"="+id))[0];
+			if(record.MessageCode>0)
+			{
+				result.text=record.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record.Record.length;i++)
+			{
+				if(record.Record[i].T_RightTag=="*")
+					funcMap[record.Record[i].T_AppID]=1;
+				else
+					funcMap[record.Record[i].T_AppID+"."+record.Record[i].T_RightTag]=1;
+			}
+		}
+		else if(type=="group")
+		{
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_RightTag\",\"T_AppID\" from GroupRightRelationTable where \"T_GroupID\"="+id))[0];
+			if(record.MessageCode>0)
+			{
+				result.text=record.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record.Record.length;i++)
+			{
+				if(record.Record[i].T_RightTag=="*")
+					funcMap[record.Record[i].T_AppID]=1;
+				else
+					funcMap[record.Record[i].T_AppID+"."+record.Record[i].T_RightTag]=1;
+			}
+		}
+		else if(type=="role")
+		{
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_RightTag\",\"T_AppID\" from RoleRightRelationTable where \"T_RoleID\"="+id))[0];
+			if(record.MessageCode>0)
+			{
+				result.text=record.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record.Record.length;i++)
+			{
+				if(record.Record[i].T_RightTag=="*")
+					funcMap[record.Record[i].T_AppID]=1;
+				else
+					funcMap[record.Record[i].T_AppID+"."+record.Record[i].T_RightTag]=1;
+			}
+		}
+		else if(type=="user")
+		{
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_RightTag\",\"T_AppID\" from UserRightRelationTable where \"T_UserID\"="+id))[0];
+			if(record.MessageCode>0)
+			{
+				result.text=record.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record.Record.length;i++)
+			{
+				if(record.Record[i].T_RightTag=="*")
+					funcMap[record.Record[i].T_AppID]=1;
+				else
+					funcMap[record.Record[i].T_AppID+"."+record.Record[i].T_RightTag]=1;
+			}
+		}
+		//
+		if(parent=="#")
+		{
+			var basic = TSS.JSON.decode(System.Basic.GetServerStatus());
+			result[0]={
+						"id":4,
+						"icon":"icon-social-dribbble font-blue-sharp",
+						"text":basic.AuthName,
+						"children":[],
+						"state": {
+									"selected": funcMap[4]==1?true:false,
+									"opened": true
+								},
+						"li_attr":basic,
+						"type":"root"
+					};
+			//
+			var appList=[];
+			var AppSystemList = TSS.JSON.decode(System.Storage.ListDir("/Webapp/", "*"));
+			for (var i = 0; i < AppSystemList.List.length; i++) {
+				if (AppSystemList.List[i].isDir
+					&& System.Storage.IsFileExist(AppSystemList.List[i].urlPath + "/manifest.json")) {
+					var appItem = TSS.JSON.decode(System.Storage.ReadTextFile(AppSystemList.List[i].urlPath + "/manifest.json"));
+					//
+					if((appItem.app.launch.container=="sysapp" && loginUser.isUserSuper)
+						|| appItem.app.launch.container=="webapp"
+						|| appItem.app.launch.container=="smartapp"
+						|| appItem.app.launch.container=="proxy"
+						|| appItem.app.launch.container=="url")
+					{
+						if(!loginUser.isUserSuper)
+						{
+							if(loginUser.rightList!=undefined 
+								&& loginUser.rightList[appItem.appid]!=undefined)
+							{
+								if(appItem.app.launch!=undefined
+									&& appItem.app.launch.webapp!=undefined)
+								{
+									for(var j=0;j<appItem.app.launch.webapp.length;j++)
+									{
+										var bFindFlag=false;
+										for(var k=0;k<loginUser.rightList[appItem.appid].length;k++)
+										{
+											if(loginUser.rightList[appItem.appid][k]=="desktop"
+												|| loginUser.rightList[appItem.appid][k].indexOf("desktop."+appItem.app.launch.webapp[j].id)>=0)
+											{
+												bFindFlag=true;
+												break;
+											}
+										}
+										//
+										if(!bFindFlag)
+										{
+											appItem.app.launch.webapp.splice(j,1);
+											j--;
+										}
+										else
+										{
+											for(var l=0;l<appItem.app.launch.webapp[j].children.length;l++)
+											{
+												var bFindFlag=false;
+												for(var k=0;k<loginUser.rightList[appItem.appid].length;k++)
+												{
+													if(loginUser.rightList[appItem.appid][k]=="desktop"
+														|| loginUser.rightList[appItem.appid][k].indexOf("desktop."+appItem.app.launch.webapp[j].id+"."+appItem.app.launch.webapp[j].children[l].id)>=0)
+													{
+														bFindFlag=true;
+														break;
+													}
+												}
+												//
+												if(!bFindFlag)
+												{
+													appItem.app.launch.webapp[j].children.splice(l,1);
+													l--;
+												}
+											}
+										}
+									}
+									//如果没有模块权限
+									if(appItem.app.launch.webapp.length==0)
+										appItem.app.launch.enable=false;
+								}
+								else
+								{
+									var bFindFlag=false;
+									for(var k=0;k<loginUser.rightList[appItem.appid].length;k++)
+									{
+										if(loginUser.rightList[appItem.appid][k]=="desktop")
+										{
+											bFindFlag=true;
+											break;
+										}
+									}
+									//
+									if(!bFindFlag
+										&& appItem.app.launch!=undefined)
+										appItem.app.launch.enable=false;
+								}
+								//
+								if(appItem.app.pad!=undefined
+									&& appItem.app.pad.webapp!=undefined)
+								{
+									for(var j=0;j<appItem.app.pad.webapp.length;j++)
+									{
+										var bFindFlag=false;
+										for(var k=0;k<loginUser.rightList[appItem.appid].length;k++)
+										{
+											if(loginUser.rightList[appItem.appid][k]=="pad"
+												|| loginUser.rightList[appItem.appid][k].indexOf("pad."+appItem.app.pad.webapp[j].id)>=0)
+											{
+												bFindFlag=true;
+												break;
+											}
+										}
+										//
+										if(!bFindFlag)
+										{
+											appItem.app.pad.webapp.splice(j,1);
+											j--;
+										}
+									}
+									//如果没有模块权限
+									if(appItem.app.pad.webapp.length==0)
+										appItem.app.pad.enable=false;
+								}
+								else
+								{
+									var bFindFlag=false;
+									for(var k=0;k<loginUser.rightList[appItem.appid].length;k++)
+									{
+										if(loginUser.rightList[appItem.appid][k]=="pad")
+										{
+											bFindFlag=true;
+											break;
+										}
+									}
+									//
+									if(!bFindFlag
+										&& appItem.app.pad!=undefined)
+										appItem.app.pad.enable=false;
+								}
+								//
+								if(appItem.app.mobile!=undefined
+									&& appItem.app.mobile.webapp!=undefined)
+								{
+									for(var j=0;j<appItem.app.mobile.webapp.length;j++)
+									{
+										var bFindFlag=false;
+										for(var k=0;k<loginUser.rightList[appItem.appid].length;k++)
+										{
+											if(loginUser.rightList[appItem.appid][k]=="mobile"
+												|| loginUser.rightList[appItem.appid][k].indexOf("mobile."+appItem.app.mobile.webapp[j].id)>=0)
+											{
+												bFindFlag=true;
+												break;
+											}
+										}
+										//
+										if(!bFindFlag)
+										{
+											appItem.app.mobile.webapp.splice(j,1);
+											j--;
+										}
+									}
+									//如果没有模块权限
+									if(appItem.app.mobile.webapp.length==0)
+										appItem.app.mobile.enable=false;
+								}
+								else
+								{
+									var bFindFlag=false;
+									for(var k=0;k<loginUser.rightList[appItem.appid].length;k++)
+									{
+										if(loginUser.rightList[appItem.appid][k]=="mobile")
+										{
+											bFindFlag=true;
+											break;
+										}
+									}
+									//
+									if(!bFindFlag
+										&& appItem.app.mobile!=undefined)
+										appItem.app.mobile.enable=false;
+								}
+								appList[appList.length]=appItem;
+							}
+						}
+						else
+						{
+							appList[appList.length]=appItem;
+						}
+					}
+				}
+			}
+			//
+			appList.sort(function(x,y){
+				return (x.app.launch.sort<y.app.launch.sort)?-1:1;
+			});
+			//
+			function getwebapp(pid,module)
+			{
+				if(module==undefined)
+					return;
+
+				var child=[];
+				for (var i = 0; i < module.length; i++) {
+					child[child.length]={
+						"id":pid+"."+module[i].id,
+						"text":module[i].text,
+						"children":getwebapp(pid+"."+module[i].id,module[i].children),
+						"state": {
+									"selected": funcMap[pid+"."+module[i].id]==1?true:false,
+									"opened": funcMap[pid+"."+module[i].id]==1?true:false
+								},
+						"type":"file"
+					};
+				}
+				return child;
+			}
+			//
+			function getpadapp(pid,module)
+			{
+				if(module==undefined)
+					return;
+				
+				var child=[];
+				for (var i = 0; i < module.length; i++) {
+					child[child.length]={
+						"id":pid+"."+module[i].id,
+						"text":module[i].text,
+						"children":[],
+						"state": {
+									"selected": funcMap[pid+"."+module[i].id]==1?true:false,
+									"opened": funcMap[pid+"."+module[i].id]==1?true:false
+								},
+						"type":"file"
+					};
+				}
+				return child;
+			}
+			//
+			function getmobileapp(pid,module)
+			{
+				if(module==undefined)
+					return;
+				
+				var child=[];
+				for (var i = 0; i < module.length; i++) {
+					child[child.length]={
+						"id":pid+"."+module[i].id,
+						"text":module[i].text,
+						"children":[],
+						"state": {
+									"selected": funcMap[pid+"."+module[i].id]==1?true:false,
+									"opened": funcMap[pid+"."+module[i].id]==1?true:false
+								},
+						"type":"file"
+					};
+				}
+				return child;
+			}
+			//
+			function getchildren(pid,launch,pad,mobile)
+			{
+				var child=[];
+				//桌面应用
+				if(launch!=undefined 
+					&& launch.enable)
+				{
+					child[child.length]={
+						"id":pid+".desktop",
+						"text":"管理端应用",
+						"children":getwebapp(pid+".desktop",launch.webapp),
+						"state": {
+									"selected": funcMap[pid+".desktop"]==1?true:false,
+									"opened": funcMap[pid+".desktop"]==1?true:false
+								},
+						"type":"default"
+					};
+				}
+				//平板应用
+				if(pad!=undefined 
+					&& pad.enable)
+				{
+					child[child.length]={
+						"id":pid+".pad",
+						"text":"工作台应用",
+						"children":getpadapp(pid+".pad",pad.webapp),
+						"state": {
+									"selected": funcMap[pid+".pad"]==1?true:false,
+									"opened": funcMap[pid+".pad"]==1?true:false
+								},
+						"type":"default"
+					};
+				}
+				//移动应用
+				if(mobile!=undefined 
+					&& mobile.enable)
+				{
+					child[child.length]={
+						"id":pid+".mobile",
+						"text":"移动应用",
+						"children":getmobileapp(pid+".mobile",mobile.webapp),
+						"state": {
+									"selected": funcMap[pid+".mobile"]==1?true:false,
+									"opened": funcMap[pid+".mobile"]==1?true:false
+								},
+						"type":"default"
+					};
+				}
+				return child;
+			}
+			//
+			for (var i = 0; i < appList.length; i++) {
+				result[0].children[result[0].children.length]={
+					"id":appList[i].appid,
+					"text":appList[i].name,
+					"children":getchildren(appList[i].appid,appList[i].app.launch,appList[i].app.pad,appList[i].app.mobile),
+					"state": {
+                                "selected": funcMap[appList[i].appid]==1?true:false,
+								"opened": funcMap[appList[i].appid]==1?true:false
+                            },
+					"type":"default"
+				};
+			}
+		}
+		else
+		{
+			
+		}
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

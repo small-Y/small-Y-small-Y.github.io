@@ -1,0 +1,35 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result = {
+				flag:true,
+				info:""
+			};
+		//
+		var T_CommunityID=Request.QueryString("T_CommunityID");
+		var type=Request.QueryString("type");
+		//
+		var szSql="";
+		var userInfo=TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		if(userInfo.userTypeNum<1)
+		{
+			var szSql;
+			if(type==0){
+				szSql="update CommunityDataTable set \"T_Review\"=1 where \"T_CommunityID\"='"+T_CommunityID +"'";
+			}else if(type==1){
+				szSql="delete from CommunityDataTable where \"T_CommunityID\"='"+T_CommunityID +"'";
+			}
+			var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+			if (resSet.MessageCode>0){
+				result.flag=false;
+				result.info=resSet.MessageText;
+				return TSS.JSON.encode(result);
+			}
+		}
+
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

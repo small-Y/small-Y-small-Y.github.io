@@ -1,0 +1,28 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/tax",
+  "appid": "29973520-18C7-48F5-B53B-73F7A9573B44",
+  "apptype": "Things",
+  "name": "消息中心",
+  "short": "消息中心",
+  "description": "管理私人消息的接收及发布工具",
+  "author": "ThingsLabs",
+  "version": "1.0.1",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/MessageCenter/index.ejs",
+	  "container": "system",
+	  "sort": 14,
+	  "height": 678,
+	  "width": 960
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "/WebApp/MessageCenter/Mobile/index.ejs",
+	  "container": "system"
+    }
+  },
+  "icons": {
+    "logo": "icon_64.png"
+  }
+}

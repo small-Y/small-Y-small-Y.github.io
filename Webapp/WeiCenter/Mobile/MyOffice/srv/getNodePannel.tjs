@@ -1,0 +1,86 @@
+/// <reference path="../vsdoc/api.js" />
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+        var fullTag=Request.QueryString("fullTag");
+        var TagName=Request.QueryString("TagName");
+	    //
+        var nodeInfo=IOT.System.NodeObject.Get(fullTag,"self");
+        var html='<link type="text/css" rel="stylesheet" href="./css/main.css"><h3 style="margin: 0 0 10px 0;text-align: center;color:#fff;">'+TagName+(nodeInfo.data.OnLineFlag?'（在线）':'（离线）')+'</h3>';
+		if(nodeInfo.data.DeviceType!="KPI" || nodeInfo.data.ObjectAttr.length>0)
+        {
+		    html+=('<table width="100%" cellPadding="5px" border="0px" style="font-size:10.5pt;border-collapse: collapse;border-spacing: 0;color:#fff;">');
+			html += '<tr><td width="40px" style="line-height: 24px;border: 1px solid #fafafa;">序号</td><td width="100px" style="line-height: 24px;border: 1px solid  #fafafa;">设备属性</td><td style="text-align: center;line-height: 24px;border: 1px solid  #fafafa;">属性值</td></tr>';
+			if(nodeInfo.data.DeviceType!="KPI"){
+				html += '<tr><td style="text-align: center;line-height: 24px;border: 1px solid  white;">1</td><td style="line-height: 24px;border: 1px solid  white;">' + nodeInfo.data.TypeName + '</td><td  style="text-align: right;line-height: 24px;border: 1px solid  white;">站号：' + (nodeInfo.data.STNO) + '&nbsp;&nbsp;</td></tr>';
+				html += '<tr><td style="text-align: center;line-height: 24px;border: 1px solid  white;">2</td><td style="line-height: 24px;border: 1px solid  white;">通讯时间</td><td  style="text-align: right;line-height: 24px;border: 1px solid  white;">' + nodeInfo.data.OnLineTime + '&nbsp;&nbsp;</td></tr>';
+			}
+			//
+			for(var i=0;i<nodeInfo.data.ObjectAttr.length;i++)
+			{
+				html += '<tr><td style="text-align: center;line-height: 24px;border: 1px solid  white;">' + (i+3) + '</td><td style="line-height: 24px;border: 1px solid  white;">' + nodeInfo.data.ObjectAttr[i].AttrName + '</td><td  style="text-align: right;line-height: 24px;border: 1px solid  white;">' + (nodeInfo.data.ObjectAttr[i].EnumFlag?(nodeInfo.data.ObjectAttr[i].EnumKey):(nodeInfo.data.ObjectAttr[i].AttrValue+nodeInfo.data.ObjectAttr[i].AttrUnit)) + '&nbsp;&nbsp;</td></tr>';
+			}
+			html += '</table></div><br>';
+		}
+	    //
+		html+=('<table width="100%" cellPadding="5px" border="0px" style="font-size:10.5pt;border-collapse: collapse;border-spacing: 0;color:#fff;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">');
+        html += '<tr><td width="40px" style="line-height: 24px;border: 1px solid  #fafafa;">序号</td><td width="100px" style="line-height: 24px;border: 1px solid  #fafafa;">设备变量</td><td style="text-align: center;line-height: 24px;border: 1px solid  #fafafa;">累计值</td></tr>';
+        var n=0;
+		var tc=new Date();
+        for(var i=0;i<nodeInfo.data.OPCValueList.length;i++)
+        {
+            if(nodeInfo.data.OPCValueList[i].RecordFlag && nodeInfo.data.OPCValueList[i].DispFlag)
+            {
+                if(nodeInfo.data.OPCValueList[i].ParamFlag==1)
+                {
+                    var status="&nbsp;&#8764;";
+                    if(nodeInfo.data.OPCValueList[i].DataValue*24/(tc.getHours()+1)>nodeInfo.data.OPCValueList[i].MonthMaxMeasure)
+                        status="&nbsp;&#8595;";
+                    else if(nodeInfo.data.OPCValueList[i].DataValue*24/(tc.getHours()+1)<nodeInfo.data.OPCValueList[i].MonthMaxMeasure*3/4)
+                        status="&nbsp;&#8593;";
+                    //
+                    n++;
+                    html += '<tr><td style="text-align: center;line-height: 24px;border: 1px solid  white;">' +n+ '</td><td style="line-height: 24px;border: 1px solid  white;">' + nodeInfo.data.OPCValueList[i].ValueName + '</td><td  style="text-align: right;line-height: 24px;border: 1px solid  white;">今日：' + nodeInfo.data.OPCValueList[i].DayMeasure+nodeInfo.data.OPCValueList[i].DataUnit+status+'<br>本月：'+nodeInfo.data.OPCValueList[i].MonthMeasure+nodeInfo.data.OPCValueList[i].DataUnit+'&nbsp;&nbsp;<br>示数：'+nodeInfo.data.OPCValueList[i].DataValue+nodeInfo.data.OPCValueList[i].DataUnit+ '&nbsp;&nbsp;</td></tr>';
+                }
+            }
+        }
+        html += '</table></div><br>';
+	    //
+        html+=('<table width="100%" cellPadding="5px" border="0px" style="font-size:10.5pt;border-collapse: collapse;border-spacing: 0;color:#fff;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">');
+        html += '<tr><td width="40px" style="line-height: 24px;border: 1px solid  #fafafa;">序号</td><td width="100px" style="line-height: 24px;border: 1px solid  #fafafa;">设备变量</td><td style="text-align: center;line-height: 24px;border: 1px solid  #fafafa;">瞬时值</td></tr>';
+        var n=0;
+        for(var i=0;i<nodeInfo.data.OPCValueList.length;i++)
+        {
+            if(nodeInfo.data.OPCValueList[i].RecordFlag && nodeInfo.data.OPCValueList[i].DispFlag)
+            {
+                if(nodeInfo.data.OPCValueList[i].ParamFlag==0)
+                {
+                    var status="&nbsp;&#8764;";
+                    if(nodeInfo.data.OPCValueList[i].DataValue>nodeInfo.data.OPCValueList[i].DayParamAvg)
+                        status="&nbsp;&#8595;";
+                    else if(nodeInfo.data.OPCValueList[i].DataValue<nodeInfo.data.OPCValueList[i].DayParamAvg)
+                        status="&nbsp;&#8593;";
+                    //
+                    n++;
+                    html += '<tr><td style="text-align: center;line-height: 24px;border: 1px solid  white;">' +n+ '</td><td style="line-height: 24px;border: 1px solid  white;">' + nodeInfo.data.OPCValueList[i].ValueName + '</td><td  style="text-align: right;line-height: 24px;border: 1px solid  white;">' + (nodeInfo.data.OPCValueList[i].DataValue+nodeInfo.data.OPCValueList[i].DataUnit+status) + '</td></tr>';
+                }
+            }
+        }
+        html += '</table></div><br>';
+	    //
+        var actionList=IOT.RDC.ExecuteSQL("select a.*,b.ObjectID,c.ObjectTag,c.ObjectName,c.ObjectType,b.TypeID,b.FunctionName,b.FunctionInfo from OPC_OBJECTACTION a,OPC_OBJECTFUNC b,OPC_OBJECTCLASS c where a.FunctionID=b.FunctionID and b.ObjectID=c.ObjectID and b.TypeID="+nodeInfo.data.TypeID);
+        if(actionList.flag)
+        {
+            for(var i=0;i<actionList.data.length;i++)
+            {
+                html += ('<div id="'+actionList.data[i].RuleID+'" name="'+fullTag+'" class="NodeAction" style="color:#fff;border: 1px solid #fafafa;width: 100%;padding: 5px 10px;margin: 10px 0;text-align: center;box-sizing:border-box;cursor: pointer;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">'+actionList.data[i].RuleName+'</div>');
+            }
+        }
+	    //
+        
+        return html;
+	}());
+	Response.ContentType = "text/html";
+%>

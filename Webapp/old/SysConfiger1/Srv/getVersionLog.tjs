@@ -1,0 +1,23 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			data:[]
+		};
+		//
+		result.flag=true;
+		var log=TSS.JSON.decode(System.Basic.GetVersionInfo()).log;
+		for(var i=0;i<log.length;i++)
+		{
+			result.data[i]=[i+1,
+							log[i].time,
+							log[i].content,
+							log[i].ver];
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

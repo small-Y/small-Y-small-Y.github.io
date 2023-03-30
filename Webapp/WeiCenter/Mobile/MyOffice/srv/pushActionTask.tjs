@@ -1,0 +1,19 @@
+/// <reference path="../vsdoc/api.js" />
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	var OPCFilter = Request.Form("OPCFilter");
+    var RuleID = Request.Form("RuleID");
+    //
+	Response.clear();
+	Response.write(function(){
+	    var result={flag:false,info:""};
+		//
+	    Server.Execute("/pm/srv/excuteControl.ejs?OPCFilter="+OPCFilter+"&TimeOut=0&id="+RuleID);
+		//
+	    Response.clear();
+	    result.flag=true;
+	    return IOT.JSON.encode(result);
+	}());
+	Response.ContentType = "text/plain";
+%>

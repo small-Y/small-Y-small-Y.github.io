@@ -1,0 +1,152 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+Response.Buffer=false;
+	Response.clear();
+		var result = {
+				flag:false,
+				info:"",
+				key:"H",
+				complete:false,
+				count:0,
+				total:0,
+				completeinfo:"",
+				score:0
+		};
+		Response.Write("|"+TSS.JSON.encode(result));
+		var score = Request.QueryString("score");
+		var buildlist = Request.QueryString("buildlist");
+		var isall = Request.QueryString("isall"); 
+		var kpiObject=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/BCPS/ObjectClass/Building",""));
+		var tc=new Date();
+		var unit=0;
+		if(isall=="true"){
+			unit=score/kpiObject.length/2;
+			result.info="总共需诊断"+kpiObject.length+"栋建筑！";
+			result.total=kpiObject.length;
+		}else{
+			unit=score/buildlist.split(",").length/2;
+			result.info="总共需诊断"+buildlist.split(",").length+"栋建筑！";
+			result.total=buildlist.split(",").length;	
+		}
+		Response.Write("|"+TSS.JSON.encode(result));
+		var progress=0;
+		for(var i=0;i<kpiObject.length;i++){
+			if(isall=="false"){
+				if(buildlist.indexOf(kpiObject[i].GroupID)==-1){
+					continue;
+				}
+			}
+			progress++;
+			result.score=0;
+			result.info="开始诊断"+kpiObject[i].GroupName+"！";
+			Response.Write("|"+TSS.JSON.encode(result));
+
+			result.score=0;
+			result.info="检查设施设备在线率！";
+			Response.Write("|"+TSS.JSON.encode(result));
+			var path=kpiObject[i].GroupFullTag.split(".").join("/").replace("BCPS/","")+"/F";
+			//var o=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/BCPS/Facility/"+path,""));
+			//if(o.MyGroup==undefined){
+				result.score=0;
+				result.info=kpiObject[i].GroupName+"未发现太阳能光伏发电设备，不做检查！";
+				Response.Write("|"+TSS.JSON.encode(result));
+				continue;			
+			//}
+			var listNode=o.MyGroup.listNode;
+			if(listNode.length==0){
+				result.score=0;
+				result.info=kpiObject[i].GroupName+"未发现太阳能光伏发电设备，不做检查！";
+				Response.Write("|"+TSS.JSON.encode(result));
+				continue;
+			}
+			var online=0,nodecount=0;
+			for(var j=0;j<listNode.length;j++){
+				nodecount++;
+				if(listNode[j].bOnLineFlag=="在线"){
+					online++;
+				}			
+			}
+			if(nodecount==0){
+				result.score=0;
+				result.info=kpiObject[i].GroupName+"未发现太阳能光伏发电设备，不做检查！";
+				Response.Write("|"+TSS.JSON.encode(result));
+				continue;
+			}
+			var percent=TSS.Utils.floatPrecision(online*100/nodecount,0);
+			if(percent<85){
+				result.score=unit;
+				result.count++;
+				result.info=kpiObject[i].GroupName+"太阳能光伏发电的关联设备在线率偏低，为："+percent+"%！";		
+			}else{
+				result.score=0;
+				result.info=kpiObject[i].GroupName+"太阳能光伏发电的关联设备在线率为："+percent+"%！";			
+			}
+			Response.Write("|"+TSS.JSON.encode(result));
+
+			result.score=0;
+			result.info="光伏发电使用率检查！";
+			Response.Write("|"+TSS.JSON.encode(result));
+			var t1 = tc.DateAdd("d",-2);
+			var t2 = tc;
+			var UseTotalE=0,RecycleTotalE=0,TotalE=0;
+			//使用电量
+			var restUrl="/API/System/BCPS/Mining/Statistics/Day?keyvalue=UseTotalE&iscache=true&groupby=NodeObject&NodeFullTag="+kpiObject[i].GroupFullTag+".F.KPI$&startTime="+t1.Format("yyyy-MM-dd hh:mm:ss")+"&endTime="+t2.Format("yyyy-MM-dd hh:mm:ss");
+			var restObject=TSS.JSON.decode(Server.ExecuteAPI("GET",restUrl,""));
+			if(restObject.flag)
+			{
+				if(restObject.data.length>0
+					&& restObject.data[0].value.DayMeasure!=null)
+				{
+					UseTotalE=restObject.data[0].value.DayMeasure;
+				}
+			}
+			//并网电量
+			var restUrl="/API/System/BCPS/Mining/Statistics/Day?keyvalue=RecycleTotalE&iscache=true&groupby=NodeObject&NodeFullTag="+kpiObject[i].GroupFullTag+".F.KPI$&startTime="+t1.Format("yyyy-MM-dd hh:mm:ss")+"&endTime="+t2.Format("yyyy-MM-dd hh:mm:ss");
+			var restObject=TSS.JSON.decode(Server.ExecuteAPI("GET",restUrl,""));
+			if(restObject.flag)
+			{
+				if(restObject.data.length>0
+					&& restObject.data[0].value.DayMeasure!=null)
+				{
+					RecycleTotalE=restObject.data[0].value.DayMeasure;
+				}
+			}
+			//总用电量
+			var restUrl="/API/System/BCPS/Mining/Statistics/Day?keyvalue=TotalE&iscache=true&groupby=NodeObject&NodeFullTag="+kpiObject[i].GroupFullTag+".A.KPI$&startTime="+t1.Format("yyyy-MM-dd hh:mm:ss")+"&endTime="+t2.Format("yyyy-MM-dd hh:mm:ss");
+			var restObject=TSS.JSON.decode(Server.ExecuteAPI("GET",restUrl,""));
+			if(restObject.flag)
+			{
+				if(restObject.data.length>0
+					&& restObject.data[0].value.DayMeasure!=null)
+				{
+					TotalE=restObject.data[0].value.DayMeasure;
+				}
+			}
+			var percent=TSS.Utils.floatPrecision(UseTotalE/(TotalE+UseTotalE)*100,1)
+			if(RecycleTotalE>UseTotalE&&percent<30){
+				result.count++;
+				result.score=unit;
+				result.info="太阳能光伏发电使用量不足，太阳能光伏用电占比："+percent+"%，并网电量："+RecycleTotalE+"千瓦时，使用电量："+UseTotalE+"千瓦时，建议进行线路改造！";			
+			}else{
+				result.score=0;
+				result.info="太阳能光伏用电占比"+percent+"%，未发现异常情况！";
+			}
+
+			Response.Write("|"+TSS.JSON.encode(result));
+		}
+		if(progress==result.total){
+			result.complete=true;
+			if(result.count==0){
+				result.score=0;
+				result.info="";
+				result.completeinfo="完成诊断，未发现存在异常点！";
+			}else{
+				result.score=0;
+				result.info="";
+				result.completeinfo="完成诊断，共发现"+result.count+"处存在异常点！";
+			}
+			Response.Write("|"+TSS.JSON.encode(result));
+		}		
+	Response.ContentType = "text/plain";
+%>

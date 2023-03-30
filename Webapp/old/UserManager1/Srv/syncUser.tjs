@@ -1,0 +1,993 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Server.ScriptTimeout=7200;
+	//
+	Response.Write(function () {
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQLExt("broker","select \"userid\" as \"USERID\", \"name\" as \"NAME\", \"deptcode\" as \"DEPTCODE\" , \"deptname\" as \"DEPTNAME\", \"xb\" as \"XB\", CASE WHEN  \"metier\"='3' THEN 1 WHEN \"metier\" like '21%' THEN 2 WHEN \"metier\" like '22%' THEN 3 WHEN \"metier\" like '23%' THEN 4 WHEN \"metier\" like '24%' THEN 5 WHEN \"metier\" LIKE '25%' THEN 6 else 7 END AS \"METIER\", \"zymc\" as \"ZYMC\", \"bjmc\" as \"BJMC\", \"rxnj\"  as \"RXNJ\", \"updatetime\" as \"UPDATETIME\", \"email\" as \"EMAIL\" from userinfo"))[0];
+		if(record.MessageCode>0)
+		{
+			return "读取师生信息表失败："+record.MessageText;
+		}
+		//
+//		var result=TSS.JSON.decode(System.RDC.ExcuteSQLExt("URPDB","select * from Usr_datai.v_ykt_id"))[0];
+//		if(record.MessageCode>0)
+//		{
+//			return "读取物理卡号信息表失败："+record.MessageText;
+//		}
+		var userCardNO=[];
+//		for(var i=0;i<result.Record.length;i++)
+//		{
+//			userCardNO[result.Record[i].XGH]=parseInt(result.Record[i].CARDID,16);
+//		}
+		//
+		var result=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserRoleTable order by \"T_RoleInfo\""))[0];
+		if(result.MessageCode>0)
+		{
+			return "读取角色信息表失败："+result.MessageText;
+		}
+		//
+		var userRole=[];
+		for(var i=0;i<result.Record.length;i++)
+		{
+			userRole[result.Record[i].T_RoleInfo]=result.Record[i];
+		}
+		//
+		var result=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_OrgID\",\"T_OrgName\" from OrganizationDataTable"))[0];
+		if(result.MessageCode>0)
+		{
+			return "读取部门信息表失败："+result.MessageText;
+		}
+		//
+		var userOrganization=[];
+		for(var i=0;i<result.Record.length;i++)
+		{
+			userOrganization[result.Record[i].T_OrgName]=result.Record[i].T_OrgID;
+		}
+		//
+		var result=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_UserID\",\"T_OrgID\",\"T_UserCardNO\",\"T_UserName\",\"T_FullName\" from UserDataTable"))[0];
+		if(result.MessageCode>0)
+		{
+			return "读取账户信息表失败："+result.MessageText;
+		}
+		//
+		var userMap=[];
+		for(var i=0;i<result.Record.length;i++)
+		{
+			userMap[result.Record[i].T_UserName]=result.Record[i];
+		}
+		//
+		var newCount=0;
+		var updateCount=0;
+		var now = new Date();
+		for(var i=0;i<record.Record.length;i++)
+		{
+			//部门
+			var parentId=0;
+			if(record.Record[i].DEPTNAME!="")
+			{
+				//学院
+				if(userOrganization[record.Record[i].DEPTNAME]==undefined)
+				{
+					var result=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into OrganizationDataTable (\"T_ParentID\",\"T_OrgID\",\"T_CreateUserID\",\"T_CreateTime\",\"T_OrgCode\",\"T_OrgName\",\"T_FullName\",\"T_Children\") values (2,"+(now.getTime()+i)+",0,'"+now.Format("yyyy-MM-dd hh:mm:ss")+"','"+record.Record[i].DEPTCODE+"','"+record.Record[i].DEPTNAME+"','北京工业大学."+record.Record[i].DEPTNAME+"',0)"))[0];
+					if(result.MessageCode>0)
+					{
+						return "插入部门信息表失败："+result.MessageText;
+					}
+					//
+					var result=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"update OrganizationDataTable set \"T_Children\"=\"T_Children\"+1 where \"T_OrgID\"="+parentId))[0];
+					if(result.MessageCode>0)
+					{
+						return "更新部门信息表失败："+result.MessageText;
+					}
+					parentId=now.getTime()+i;
+					userOrganization[record.Record[i].DEPTNAME]=parentId;
+				}
+				else
+				{
+					parentId=userOrganization[record.Record[i].DEPTNAME];
+				}
+			}
+			//专业系
+			if(record.Record[i].ZYMC!="")
+			{
+				if(userOrganization[record.Record[i].ZYMC]==undefined)
+				{
+					if(parentId>0)
+					{
+						var now = new Date();
+						var result=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into OrganizationDataTable (\"T_ParentID\",\"T_OrgID\",\"T_CreateUserID\",\"T_CreateTime\",\"T_OrgName\",\"T_FullName\",\"T_Children\") values ("+parentId+","+(now.getTime()+record.Record.length+i)+",0,'"+now.Format("yyyy-MM-dd hh:mm:ss")+"','"+record.Record[i].ZYMC+"','北京工业大学."+record.Record[i].DEPTNAME+"."+record.Record[i].ZYMC+"',0)"))[0];
+						if(result.MessageCode>0)
+						{
+							return "插入专业信息表失败："+result.MessageText;
+						}
+						//
+						var result=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"update OrganizationDataTable set \"T_Children\"=\"T_Children\"+1 where \"T_OrgID\"="+parentId))[0];
+						if(result.MessageCode>0)
+						{
+							return "更新专业信息表失败："+result.MessageText;
+						}
+						parentId=now.getTime()+record.Record.length+i;
+						userOrganization[record.Record[i].ZYMC]=parentId;
+					}
+				}
+				else
+				{
+					parentId=userOrganization[record.Record[i].ZYMC];
+				}
+			}
+			//班级
+			if(record.Record[i].BJMC!="")
+			{
+				if(userOrganization[record.Record[i].BJMC]==undefined)
+				{
+					if(parentId>0)
+					{
+						var now = new Date();
+						var result=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into OrganizationDataTable (\"T_ParentID\",\"T_OrgID\",\"T_CreateUserID\",\"T_CreateTime\",\"T_OrgName\",\"T_FullName\",\"T_Children\") values ("+parentId+","+(now.getTime()+record.Record.length*2+i)+",0,'"+now.Format("yyyy-MM-dd hh:mm:ss")+"','"+record.Record[i].BJMC+"','北京工业大学."+record.Record[i].DEPTNAME+"."+record.Record[i].ZYMC+"."+record.Record[i].BJMC+"',0)"))[0];
+						if(result.MessageCode>0)
+						{
+							return "插入班级信息表失败："+result.MessageText;
+						}
+						//
+						var result=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"update OrganizationDataTable set \"T_Children\"=\"T_Children\"+1 where \"T_OrgID\"="+parentId))[0];
+						if(result.MessageCode>0)
+						{
+							return "更新班级信息表失败："+result.MessageText;
+						}
+						parentId=now.getTime()+record.Record.length*2+i;
+						userOrganization[record.Record[i].BJMC]=parentId;
+					}
+					else
+					{
+						parentId=2;
+					}
+				}
+				else
+				{
+					parentId=userOrganization[record.Record[i].BJMC];
+				}
+			}
+			//更新用户表
+			var GranduateYear=0;
+			var UserType=["教职工","本科生","研究生","留学生","继续教育生","普通高职学生","其他"];
+//			if(record.Record[i].RXNJ!=""
+//				&& record.Record[i].METIER<3)
+//				GranduateYear=parseInt(record.Record[i].RXNJ)+(record.Record[i].METIER==1?4:3);
+			//
+			if(parentId>0)
+			{
+				if(userMap[record.Record[i].USERID]==undefined)
+				{
+					var userId=(now.getTime()+i);
+					var result=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into UserDataTable (\"T_ParentID\",\"T_UserID\",\"T_CreateUserID\",\"T_CreateTime\",\"T_OrgID\",\"T_UserName\",\"T_UserPass\",\"T_FullName\",\"T_UserType\",\"T_UserSN\",\"T_UserCardNO\",\"T_Sex\",\"T_InstitureName\",\"T_MajorName\",\"T_ClassName\",\"T_StudentType\",\"T_GranduateYear\",\"T_GranduateMonth\") values (2147483647,"+userId+",2147483647,'"+now.Format("yyyy-MM-dd hh:mm:ss")+"',"+parentId+",'"+record.Record[i].USERID+"','','"+record.Record[i].NAME+"',1,'"+record.Record[i].USERID+"',"+(userCardNO[record.Record[i].USERID]==undefined?0:userCardNO[record.Record[i].USERID])+",'"+record.Record[i].XB+"','"+record.Record[i].DEPTNAME+"','"+record.Record[i].ZYMC+"','"+record.Record[i].BJMC+"','"+UserType[record.Record[i].METIER-1]+"',"+GranduateYear+",7)"))[0];
+					if(result.MessageCode>0)
+					{
+						return "插入账户信息表失败："+result.MessageText;
+					}
+					//
+					if(userRole[UserType[record.Record[i].METIER-1]]!=undefined)
+					{
+						var result=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into UserRoleRelationTable (\"T_UserID\",\"T_RoleID\") values ("+userId+","+userRole[UserType[record.Record[i].METIER-1]].T_RoleID+")"))[0];
+						if(result.MessageCode>0)
+						{
+							return "插入账户角色表失败："+result.MessageText;
+						}
+						userRole[UserType[record.Record[i].METIER-1]].T_Children++;
+					}
+					//
+					newCount++;
+					Server.DebugPrint("已新增"+newCount+"个账户("+record.Record[i].NAME+")");
+				}
+				else
+				{
+					if(userMap[record.Record[i].USERID].T_OrgID!=parentId)
+					{
+						var result=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"update UserDataTable set \"T_OrgID\"="+parentId+",\"T_UserCardNO\"="+(userCardNO[record.Record[i].USERID]==undefined?0:userCardNO[record.Record[i].USERID])+",\"T_Sex\"='"+record.Record[i].XB+"',\"T_InstitureName\"='"+record.Record[i].DEPTNAME+"',\"T_MajorName\"='"+record.Record[i].ZYMC+"',\"T_ClassName\"='"+record.Record[i].BJMC+"',\"T_StudentType\"='"+UserType[record.Record[i].METIER-1]+"',\"T_GranduateYear\"="+GranduateYear+",\"T_GranduateMonth\"=7 where \"T_UserName\"='"+record.Record[i].USERID+"'"))[0];
+						if(result.MessageCode>0)
+						{
+							return "更新账户信息表失败："+result.MessageText;
+						}
+						updateCount++;
+						Server.DebugPrint(i+"、已更新"+updateCount+"个账户("+record.Record[i].NAME+")"+record.Record[i].DEPTNAME+record.Record[i].ZYMC+record.Record[i].BJMC);
+					}
+					else
+					{
+						if(userCardNO[record.Record[i].USERID]!=undefined
+							&& userMap[record.Record[i].USERID].T_UserCardNO!=userCardNO[record.Record[i].USERID])
+						{
+							var result=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"update UserDataTable set \"T_UserCardNO\"="+userCardNO[record.Record[i].USERID]+" where \"T_UserName\"='"+record.Record[i].USERID+"'"))[0];
+							if(result.MessageCode>0)
+							{
+								return "更新账户信息表失败："+result.MessageText;
+							}
+							Server.DebugPrint(i+"、更新"+record.Record[i].NAME+"账户物理卡号（"+userCardNO[record.Record[i].USERID]+"）");
+						}
+					}
+				}
+			}
+		}
+		//应用新账户
+		if(newCount>0 || updateCount>0)
+		{
+			var userType=["管理员账户","访问者账户","接口账户","禁用账户"];
+			var orgMap=new Array();
+			var basic = TSS.JSON.decode(System.Basic.GetServerStatus());
+			orgMap[2]=basic.AuthName;
+			//
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_ParentID\",\"T_OrgID\",\"T_OrgName\",\"T_FullName\" from OrganizationDataTable order by \"T_FullName\""))[0];
+			if(record.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record.Record.length;i++)
+			{
+				orgMap[record.Record[i].T_OrgID]=record.Record[i].T_FullName;
+			}
+			//
+			var userMap=new Array(); 
+			var record0=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserDataTable"))[0];
+			if(record0.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record0.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record0.Record.length;i++)
+			{
+				userMap[record0.Record[i].T_UserID]=record0.Record[i];
+				userMap[record0.Record[i].T_UserID].T_OrgName=orgMap[record0.Record[i].T_OrgID];
+				userMap[record0.Record[i].T_UserID].T_UserTypeName=userType[record0.Record[i].T_UserType];
+				userMap[record0.Record[i].T_UserID].T_RightList={};
+				userMap[record0.Record[i].T_UserID].T_ResourceList={};
+				userMap[record0.Record[i].T_UserID].T_VideoList={};
+			}
+			//获取用户权限
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserRightRelationTable"))[0];
+			if(record.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record.Record.length;i++)
+			{
+				if(userMap[record.Record[i].T_UserID]!=undefined)
+				{
+					var rLength=0;
+					if(userMap[record.Record[i].T_UserID].T_RightList[record.Record[i].T_AppID]==undefined)
+						userMap[record.Record[i].T_UserID].T_RightList[record.Record[i].T_AppID]=[];
+					else
+						rLength=userMap[record.Record[i].T_UserID].T_RightList[record.Record[i].T_AppID].length;
+					//
+					var bFind=false;
+					for(var k=0;k<rLength;k++)
+					{
+						if(userMap[record.Record[i].T_UserID].T_RightList[record.Record[i].T_AppID][k]==record.Record[i].T_RightTag)
+						{
+							bFind=true;
+							break;
+						}
+					}
+					//
+					if(!bFind)
+						userMap[record.Record[i].T_UserID].T_RightList[record.Record[i].T_AppID][rLength]=record.Record[i].T_RightTag;
+				}
+			}
+			//获取用户组权限
+			var record1=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserGroupRelationTable"))[0];
+			if(record1.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record1.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from GroupRightRelationTable"))[0];
+			if(record2.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record2.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//获取用户组角色权限
+			var record3=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from GroupRoleRelationTable"))[0];
+			if(record3.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record3.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			var record4=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from RoleRightRelationTable"))[0];
+			if(record4.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record4.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record1.Record.length;i++)
+			{
+				for(var j=0;j<record2.Record.length;j++)
+				{
+					if(record1.Record[i].T_GroupID==record2.Record[j].T_GroupID
+						&& userMap[record1.Record[i].T_UserID]!=undefined)
+					{
+						var rLength=0;
+						if(userMap[record1.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID]==undefined)
+							userMap[record1.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID]=[];
+						else
+							rLength=userMap[record1.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID].length;
+						//
+						var bFind=false;
+						for(var k=0;k<rLength;k++)
+						{
+							if(userMap[record1.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID][k]==record2.Record[j].T_RightTag)
+							{
+								bFind=true;
+								break;
+							}
+						}
+						//
+						if(!bFind)
+							userMap[record1.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID][rLength]=record2.Record[j].T_RightTag;
+					}
+				}
+				//
+				for(var j=0;j<record3.Record.length;j++)
+				{
+					if(record1.Record[i].T_GroupID==record3.Record[j].T_GroupID)
+					{
+						for(var k=0;k<record4.Record.length;k++)
+						{
+							if(record3.Record[j].T_RoleID==record4.Record[k].T_RoleID
+								&& userMap[record1.Record[i].T_UserID]!=undefined)
+							{
+								var rLength=0;
+								if(userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID]==undefined)
+									userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID]=[];
+								else
+									rLength=userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID].length;
+								//
+								var bFind=false;
+								for(var k=0;k<rLength;k++)
+								{
+									if(userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID][k]==record4.Record[k].T_RightTag)
+									{
+										bFind=true;
+										break;
+									}
+								}
+								//
+								if(!bFind)
+									userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID][rLength]=record4.Record[k].T_RightTag;
+							}
+						}
+					}
+				}
+			}
+			//获取部门权限
+			var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from OrgRightRelationTable"))[0];
+			if(record2.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record2.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//获取部门角色权限
+			var record3=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from OrgRoleRelationTable"))[0];
+			if(record3.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record3.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record0.Record.length;i++)
+			{
+				for(var j=0;j<record2.Record.length;j++)
+				{
+					if(record0.Record[i].T_OrgID==record2.Record[j].T_OrgID
+						&& userMap[record0.Record[i].T_UserID]!=undefined)
+					{
+						var rLength=0;
+						if(userMap[record0.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID]==undefined)
+							userMap[record0.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID]=[];
+						else
+							rLength=userMap[record0.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID].length;
+						//
+						var bFind=false;
+						for(var k=0;k<rLength;k++)
+						{
+							if(userMap[record0.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID][k]==record2.Record[j].T_RightTag)
+							{
+								bFind=true;
+								break;
+							}
+						}
+						//
+						if(!bFind)
+							userMap[record0.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID][rLength]=record2.Record[j].T_RightTag;
+					}
+				}
+				//
+				for(var j=0;j<record3.Record.length;j++)
+				{
+					if(record0.Record[i].T_OrgID==record3.Record[j].T_OrgID)
+					{
+						for(var k=0;k<record4.Record.length;k++)
+						{
+							if(record3.Record[j].T_RoleID==record4.Record[k].T_RoleID
+								&& userMap[record0.Record[i].T_UserID]!=undefined)
+							{
+								var rLength=0;
+								if(userMap[record0.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID]==undefined)
+									userMap[record0.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID]=[];
+								else
+									rLength=userMap[record0.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID].length;
+								//
+								var bFind=false;
+								for(var k=0;k<rLength;k++)
+								{
+									if(userMap[record0.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID][k]==record4.Record[k].T_RightTag)
+									{
+										bFind=true;
+										break;
+									}
+								}
+								//
+								if(!bFind)
+									userMap[record0.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID][rLength]=record4.Record[k].T_RightTag;
+							}
+						}
+					}
+				}
+			}
+			//获取用户角色权限
+			var record1=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserRoleRelationTable"))[0];
+			if(record1.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record1.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record1.Record.length;i++)
+			{
+				for(var j=0;j<record4.Record.length;j++)
+				{
+					if(record1.Record[i].T_RoleID==record4.Record[j].T_RoleID
+						&& userMap[record1.Record[i].T_UserID]!=undefined)
+					{
+						var rLength=0;
+						if(userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[j].T_AppID]==undefined)
+							userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[j].T_AppID]=[];
+						else
+							rLength=userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[j].T_AppID].length;
+						//
+						var bFind=false;
+						for(var k=0;k<rLength;k++)
+						{
+							if(userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[j].T_AppID][k]==record4.Record[j].T_RightTag)
+							{
+								bFind=true;
+								break;
+							}
+						}
+						//
+						if(!bFind)
+							userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[j].T_AppID][rLength]=record4.Record[j].T_RightTag;
+					}
+				}
+			}
+			//获取用户资源权限
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserResourceRelationTable"))[0];
+			if(record.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record.Record.length;i++)
+			{
+				if(userMap[record.Record[i].T_UserID]!=undefined)
+				{
+					var rLength=0;
+					if(userMap[record.Record[i].T_UserID].T_ResourceList[record.Record[i].T_AppID]==undefined)
+						userMap[record.Record[i].T_UserID].T_ResourceList[record.Record[i].T_AppID]=[];
+					else
+						rLength=userMap[record.Record[i].T_UserID].T_ResourceList[record.Record[i].T_AppID].length;
+					//
+					var bFind=false;
+					for(var k=0;k<rLength;k++)
+					{
+						if(userMap[record.Record[i].T_UserID].T_ResourceList[record.Record[i].T_AppID][k]==record.Record[i].T_ResourceTag)
+						{
+							bFind=true;
+							break;
+						}
+					}
+					//
+					if(!bFind)
+						userMap[record.Record[i].T_UserID].T_ResourceList[record.Record[i].T_AppID][rLength]=record.Record[i].T_ResourceTag;
+				}
+			}
+			//获取用户组资源权限
+			var record1=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserGroupRelationTable"))[0];
+			if(record1.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record1.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from GroupResourceRelationTable"))[0];
+			if(record2.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record2.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//获取用户组角色资源权限
+			var record3=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from GroupRoleRelationTable"))[0];
+			if(record3.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record3.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			var record4=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from RoleResourceRelationTable"))[0];
+			if(record4.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record4.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record1.Record.length;i++)
+			{
+				for(var j=0;j<record2.Record.length;j++)
+				{
+					if(record1.Record[i].T_GroupID==record2.Record[j].T_GroupID
+						&& userMap[record1.Record[i].T_UserID]!=undefined)
+					{
+						var rLength=0;
+						if(userMap[record1.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID]==undefined)
+							userMap[record1.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID]=[];
+						else
+							rLength=userMap[record1.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID].length;
+						//
+						var bFind=false;
+						for(var k=0;k<rLength;k++)
+						{
+							if(userMap[record1.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID][k]==record2.Record[j].T_ResourceTag)
+							{
+								bFind=true;
+								break;
+							}
+						}
+						//
+						if(!bFind)
+							userMap[record1.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID][rLength]=record2.Record[j].T_ResourceTag;
+					}
+				}
+				//
+				for(var j=0;j<record3.Record.length;j++)
+				{
+					if(record1.Record[i].T_GroupID==record3.Record[j].T_GroupID)
+					{
+						for(var k=0;k<record4.Record.length;k++)
+						{
+							if(record3.Record[j].T_RoleID==record4.Record[k].T_RoleID
+								&& userMap[record1.Record[i].T_UserID]!=undefined)
+							{
+								var rLength=0;
+								if(userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID]==undefined)
+									userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID]=[];
+								else
+									rLength=userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID].length;
+								//
+								var bFind=false;
+								for(var k=0;k<rLength;k++)
+								{
+									if(userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID][k]==record4.Record[k].T_ResourceTag)
+									{
+										bFind=true;
+										break;
+									}
+								}
+								//
+								if(!bFind)
+									userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID][rLength]=record4.Record[k].T_ResourceTag;
+							}
+						}
+					}
+				}
+			}
+			//获取部门资源权限
+			var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from OrgResourceRelationTable"))[0];
+			if(record2.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record2.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//获取部门角色资源权限
+			var record3=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from OrgRoleRelationTable"))[0];
+			if(record3.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record3.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record0.Record.length;i++)
+			{
+				for(var j=0;j<record2.Record.length;j++)
+				{
+					if(record0.Record[i].T_OrgID==record2.Record[j].T_OrgID
+						&& userMap[record0.Record[i].T_UserID]!=undefined)
+					{
+						var rLength=0;
+						if(userMap[record0.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID]==undefined)
+							userMap[record0.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID]=[];
+						else
+							rLength=userMap[record0.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID].length;
+						//
+						var bFind=false;
+						for(var k=0;k<rLength;k++)
+						{
+							if(userMap[record0.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID][k]==record2.Record[j].T_ResourceTag)
+							{
+								bFind=true;
+								break;
+							}
+						}
+						//
+						if(!bFind)
+							userMap[record0.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID][rLength]=record2.Record[j].T_ResourceTag;
+					}
+				}
+				//
+				for(var j=0;j<record3.Record.length;j++)
+				{
+					if(record0.Record[i].T_OrgID==record3.Record[j].T_OrgID)
+					{
+						for(var k=0;k<record4.Record.length;k++)
+						{
+							if(record3.Record[j].T_RoleID==record4.Record[k].T_RoleID
+								&& userMap[record0.Record[i].T_UserID]!=undefined)
+							{
+								var rLength=0;
+								if(userMap[record0.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID]==undefined)
+									userMap[record0.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID]=[];
+								else
+									rLength=userMap[record0.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID].length;
+								//
+								var bFind=false;
+								for(var k=0;k<rLength;k++)
+								{
+									if(userMap[record0.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID][k]==record4.Record[k].T_ResourceTag)
+									{
+										bFind=true;
+										break;
+									}
+								}
+								//
+								if(!bFind)
+									userMap[record0.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID][rLength]=record4.Record[k].T_ResourceTag;
+							}
+						}
+					}
+				}
+			}
+			//获取用户角色资源权限
+			var record1=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserRoleRelationTable"))[0];
+			if(record1.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record1.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record1.Record.length;i++)
+			{
+				for(var j=0;j<record4.Record.length;j++)
+				{
+					if(record1.Record[i].T_RoleID==record4.Record[j].T_RoleID
+						&& userMap[record1.Record[i].T_UserID]!=undefined)
+					{
+						var rLength=0;
+						if(userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[j].T_AppID]==undefined)
+							userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[j].T_AppID]=[];
+						else
+							rLength=userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[j].T_AppID].length;
+						//
+						var bFind=false;
+						for(var k=0;k<rLength;k++)
+						{
+							if(userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[j].T_AppID][k]==record4.Record[j].T_ResourceTag)
+							{
+								bFind=true;
+								break;
+							}
+						}
+						//
+						if(!bFind)
+							userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[j].T_AppID][rLength]=record4.Record[j].T_ResourceTag;
+					}
+				}
+			}
+			//获取用户视频权限
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserVideoRelationTable"))[0];
+			if(record.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record.Record.length;i++)
+			{
+				if(userMap[record.Record[i].T_UserID]!=undefined)
+				{
+					var rLength=0;
+					if(userMap[record.Record[i].T_UserID].T_VideoList[record.Record[i].T_RecordID]==undefined)
+						userMap[record.Record[i].T_UserID].T_VideoList[record.Record[i].T_RecordID]=[];
+					else
+						rLength=userMap[record.Record[i].T_UserID].T_VideoList[record.Record[i].T_RecordID].length;
+					//
+					var bFind=false;
+					for(var k=0;k<rLength;k++)
+					{
+						if(userMap[record.Record[i].T_UserID].T_VideoList[record.Record[i].T_RecordID][k]==record.Record[i].T_VideoID)
+						{
+							bFind=true;
+							break;
+						}
+					}
+					//
+					if(!bFind)
+						userMap[record.Record[i].T_UserID].T_VideoList[record.Record[i].T_RecordID][rLength]=record.Record[i].T_VideoID;
+				}
+			}
+			//获取用户组视频权限
+			var record1=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserGroupRelationTable"))[0];
+			if(record1.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record1.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from GroupVideoRelationTable"))[0];
+			if(record2.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record2.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//获取用户组角色资源权限
+			var record3=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from GroupRoleRelationTable"))[0];
+			if(record3.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record3.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			var record4=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from RoleVideoRelationTable"))[0];
+			if(record4.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record4.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record1.Record.length;i++)
+			{
+				for(var j=0;j<record2.Record.length;j++)
+				{
+					if(record1.Record[i].T_GroupID==record2.Record[j].T_GroupID
+						&& userMap[record1.Record[i].T_UserID]!=undefined)
+					{
+						var rLength=0;
+						if(userMap[record1.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID]==undefined)
+							userMap[record1.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID]=[];
+						else
+							rLength=userMap[record1.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID].length;
+						//
+						var bFind=false;
+						for(var k=0;k<rLength;k++)
+						{
+							if(userMap[record1.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID][k]==record2.Record[j].T_VideoID)
+							{
+								bFind=true;
+								break;
+							}
+						}
+						//
+						if(!bFind)
+							userMap[record1.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID][rLength]=record2.Record[j].T_VideoID;
+					}
+				}
+				//
+				for(var j=0;j<record3.Record.length;j++)
+				{
+					if(record1.Record[i].T_GroupID==record3.Record[j].T_GroupID
+						&& userMap[record1.Record[i].T_UserID]!=undefined)
+					{
+						for(var k=0;k<record4.Record.length;k++)
+						{
+							if(record3.Record[j].T_RoleID==record4.Record[k].T_RoleID)
+							{
+								var rLength=0;
+								if(userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID]==undefined)
+									userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID]=[];
+								else
+									rLength=userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID].length;
+								//
+								var bFind=false;
+								for(var k=0;k<rLength;k++)
+								{
+									if(userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID][k]==record4.Record[k].T_VideoID)
+									{
+										bFind=true;
+										break;
+									}
+								}
+								//
+								if(!bFind)
+									userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID][rLength]=record4.Record[k].T_VideoID;
+							}
+						}
+					}
+				}
+			}
+			//获取部门视频权限
+			var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from OrgVideoRelationTable"))[0];
+			if(record2.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record2.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//获取部门角色资源权限
+			var record3=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from OrgRoleRelationTable"))[0];
+			if(record3.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record3.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record0.Record.length;i++)
+			{
+				for(var j=0;j<record2.Record.length;j++)
+				{
+					if(record0.Record[i].T_OrgID==record2.Record[j].T_OrgID
+						&& userMap[record0.Record[i].T_UserID]!=undefined)
+					{
+						var rLength=0;
+						if(userMap[record0.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID]==undefined)
+							userMap[record0.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID]=[];
+						else
+							rLength=userMap[record0.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID].length;
+						//
+						var bFind=false;
+						for(var k=0;k<rLength;k++)
+						{
+							if(userMap[record0.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID][k]==record2.Record[j].T_VideoID)
+							{
+								bFind=true;
+								break;
+							}
+						}
+						//
+						if(!bFind)
+							userMap[record0.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID][rLength]=record2.Record[j].T_VideoID;
+					}
+				}
+				//
+				for(var j=0;j<record3.Record.length;j++)
+				{
+					if(record0.Record[i].T_OrgID==record3.Record[j].T_OrgID)
+					{
+						for(var k=0;k<record4.Record.length;k++)
+						{
+							if(record3.Record[j].T_RoleID==record4.Record[k].T_RoleID
+								&& userMap[record0.Record[i].T_UserID]!=undefined)
+							{
+								var rLength=0;
+								if(userMap[record0.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID]==undefined)
+									userMap[record0.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID]=[];
+								else
+									rLength=userMap[record0.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID].length;
+								//
+								var bFind=false;
+								for(var k=0;k<rLength;k++)
+								{
+									if(userMap[record0.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID][k]==record4.Record[k].T_VideoID)
+									{
+										bFind=true;
+										break;
+									}
+								}
+								//
+								if(!bFind)
+									userMap[record0.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID][rLength]=record4.Record[k].T_VideoID;
+							}
+						}
+					}
+				}
+			}
+			//获取用户角色视频权限
+			var record1=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserRoleRelationTable"))[0];
+			if(record1.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record1.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record1.Record.length;i++)
+			{
+				for(var j=0;j<record4.Record.length;j++)
+				{
+					if(record1.Record[i].T_RoleID==record4.Record[j].T_RoleID
+						&& userMap[record1.Record[i].T_UserID]!=undefined)
+					{
+						var rLength=0;
+						if(userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[j].T_RecordID]==undefined)
+							userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[j].T_RecordID]=[];
+						else
+							rLength=userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[j].T_RecordID].length;
+						//
+						var bFind=false;
+						for(var k=0;k<rLength;k++)
+						{
+							if(userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[j].T_RecordID][k]==record4.Record[j].T_VideoID)
+							{
+								bFind=true;
+								break;
+							}
+						}
+						//
+						if(!bFind)
+							userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[j].T_RecordID][rLength]=record4.Record[j].T_VideoID;
+					}
+				}
+			}
+			//
+			for(var i=0;i<record0.Record.length;i++)
+			{
+				if(userMap[record0.Record[i].T_UserID]!=undefined)
+				{
+					if (!System.KVDB.PkrSet("sysconfig", "UserEntry", record0.Record[i].T_UserName, TSS.JSON.encode(userMap[record0.Record[i].T_UserID]), (i==(record0.Record.length-1)?true:false)))
+					{
+						result.flag=false;
+						result.text=System.KVDB.GetLastError();
+						return TSS.JSON.encode(result);
+					}
+				}
+				else
+				{
+					Server.DebugPrint(record0.Record[i].T_UserName+"("+record0.Record[i].T_UserID+")");
+				}
+			}
+			//
+			System.OAuth.ApplyUserList();
+		}
+		//
+		return "与数据中心同步新增"+newCount+"个账户，更新"+updateCount+"个账户。";
+	}());
+	Response.ContentType = "text/plain";
+%>

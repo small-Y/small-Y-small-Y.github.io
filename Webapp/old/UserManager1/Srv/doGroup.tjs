@@ -1,0 +1,407 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	//递归更新子节点完整路径名称
+	function UpdateFullName(fullname,pid)
+	{
+		if(fullname=="")
+		{
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select T_FullName from UserGroupTable where T_GroupID="+pid))[0];
+			if(record.MessageCode>0)
+			{
+				TSS.Utils.log(record.MessageText);
+				return TSS.JSON.encode(result);
+			}
+			//
+			if(record.Record.length>0)
+				fullname=record.Record[0].T_FullName;
+		}
+		else
+		{
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"update UserGroupTable set T_FullName='"+fullname+"' where T_GroupID="+pid))[0];
+			if(record.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record.MessageText;
+				return TSS.JSON.encode(result);
+			}
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select T_GroupID,T_GroupName from UserGroupTable where T_ParentID="+pid))[0];
+		if(record.MessageCode>0)
+		{
+			TSS.Utils.log(record.MessageText);
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<record.Record.length;i++)
+		{
+			UpdateFullName(fullname+"."+record.Record[i].T_GroupName,record.Record[i].T_GroupID);
+		}
+	}
+	//
+	Response.Write(function () {
+		var result={
+			flag:true,
+			parentId:0,
+			groupId:0,
+			text:""
+		};
+		//
+		var todo=parseInt(Request.Form("todo"));
+		var parentId=Request.Form("parentId");
+		var groupId=Request.Form("groupId");
+		var groupName=Request.Form("groupName");
+		var fullName=Request.Form("fullName");
+		var groupInfo=Request.Form("groupInfo");
+		//
+		var loginInfo = TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		if(!loginInfo.loginStatus)
+		{
+			result.flag=false;
+			result.text="尚未登录";
+			return TSS.JSON.encode(result);
+		}
+		//
+		switch(todo)
+		{
+			case 0:
+				{
+					var now = new Date();
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into UserGroupTable (T_ParentID,T_GroupID,T_CreateUserID,T_CreateTime,T_GroupName,T_FullName,T_Children,T_GroupInfo) values ("+parentId+","+now.getTime()+","+loginInfo.userID+",'"+now.Format("yyyy-MM-dd hh:mm:ss")+"','"+groupName+"','"+fullName+"',0,'"+groupInfo+"')"))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"update UserGroupTable set T_Children=T_Children+1 where T_GroupID="+parentId))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					var roleList=TSS.JSON.decode(Request.Form("role"));
+					for(var i=0;i<roleList.length;i++)
+					{
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into GroupRoleRelationTable (T_GroupID,T_RoleID) values ("+now.getTime()+","+roleList[i]+")"))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					//
+					var funcList=TSS.JSON.decode(Request.Form("func"));
+					for(var i=0;i<funcList.length;i++)
+					{
+						var appid=funcList[i];
+						var tag="*";
+						//
+						if(funcList[i].indexOf(".")>0)
+						{
+							appid=funcList[i].substr(0,funcList[i].indexOf("."));
+							tag=funcList[i].substr(funcList[i].indexOf(".")+1);
+						}
+						//
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into GroupRightRelationTable (T_GroupID,T_RightTag,T_AppID) values ("+now.getTime()+",'"+tag+"','"+appid+"')"))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					//
+					var resList=TSS.JSON.decode(Request.Form("res"));
+					for(var i=0;i<resList.length;i++)
+					{
+						var appid=resList[i];
+						var tag="*";
+						//
+						if(resList[i].indexOf(".")>0)
+						{
+							appid=resList[i].substr(0,resList[i].indexOf("."));
+							tag=resList[i].substr(resList[i].indexOf(".")+1);
+						}
+						//
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into GroupResourceRelationTable (T_GroupID,T_ResourceTag,T_AppID) values ("+now.getTime()+",'"+tag+"','"+appid+"')"))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					//
+					var videoList=TSS.JSON.decode(Request.Form("video"));
+					for(var i=0;i<videoList.length;i++)
+					{
+						var recordid=videoList[i];
+						var tag="*";
+						//
+						if(videoList[i].indexOf(".")>0)
+						{
+							recordid=videoList[i].substr(0,videoList[i].indexOf("."));
+							tag=videoList[i].substr(videoList[i].indexOf(".")+1);
+						}
+						//
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into GroupVideoRelationTable (T_GroupID,T_VideoID,T_RecordID) values ("+now.getTime()+",'"+tag+"','"+recordid+"')"))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					//
+					result.parentId=parentId;
+					result.groupId=groupId;
+				}
+				break;
+			case 1:
+				{
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"update UserGroupTable set T_GroupName='"+groupName+"',T_GroupInfo='"+groupInfo+"' where T_GroupID="+groupId))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//更新子节点
+					UpdateFullName(fullName,groupId);
+					//
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from GroupRoleRelationTable where T_GroupID="+groupId))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					var roleList=TSS.JSON.decode(Request.Form("role"));
+					for(var i=0;i<roleList.length;i++)
+					{
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into GroupRoleRelationTable (T_GroupID,T_RoleID) values ("+groupId+","+roleList[i]+")"))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					//
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from GroupRightRelationTable where T_GroupID="+groupId))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					var funcList=TSS.JSON.decode(Request.Form("func"));
+					for(var i=0;i<funcList.length;i++)
+					{
+						var appid=funcList[i];
+						var tag="*";
+						//
+						if(funcList[i].indexOf(".")>0)
+						{
+							appid=funcList[i].substr(0,funcList[i].indexOf("."));
+							tag=funcList[i].substr(funcList[i].indexOf(".")+1);
+						}
+						//
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into GroupRightRelationTable (T_GroupID,T_RightTag,T_AppID) values ("+groupId+",'"+tag+"','"+appid+"')"))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					//
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from GroupResourceRelationTable where T_GroupID="+groupId))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					var resList=TSS.JSON.decode(Request.Form("res"));
+					for(var i=0;i<resList.length;i++)
+					{
+						var appid=resList[i];
+						var tag="*";
+						//
+						if(resList[i].indexOf(".")>0)
+						{
+							appid=resList[i].substr(0,resList[i].indexOf("."));
+							tag=resList[i].substr(resList[i].indexOf(".")+1);
+						}
+						//
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into GroupResourceRelationTable (T_GroupID,T_ResourceTag,T_AppID) values ("+groupId+",'"+tag+"','"+appid+"')"))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					//
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from GroupVideoRelationTable where T_GroupID="+groupId))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					var videoList=TSS.JSON.decode(Request.Form("video"));
+					for(var i=0;i<videoList.length;i++)
+					{
+						var recordid=videoList[i];
+						var tag="*";
+						//
+						if(videoList[i].indexOf(".")>0)
+						{
+							recordid=videoList[i].substr(0,videoList[i].indexOf("."));
+							tag=videoList[i].substr(videoList[i].indexOf(".")+1);
+						}
+						//
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into GroupVideoRelationTable (T_GroupID,T_VideoID,T_RecordID) values ("+groupId+",'"+tag+"','"+recordid+"')"))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					//
+					result.parentId=parentId;
+					result.groupId=groupId;
+				}
+				break;
+			case 2:
+				{
+					var sql="WITH RECURSIVE  down(T_GroupID,T_GroupName,T_ParentID) AS "  
+							+"   ( SELECT T_GroupID,T_GroupName,T_ParentID from UserGroupTable " 
+							+"	 WHERE T_GroupID="+groupId
+							+"	 UNION    " 
+							+"	 SELECT a.T_GroupID,a.T_GroupName,a.T_ParentID FROM    " 
+							+"		 UserGroupTable a,down b WHERE b.T_GroupID = a.T_ParentID" 
+							+"   ) SELECT * from down";
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,sql))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+
+					for(var i=0;i<record.Record.length;i++)
+					{
+						var record0=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"update UserGroupTable set T_Children=T_Children-1 where T_GroupID="+record.Record[i].T_ParentID))[0];
+						if(record0.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record0.MessageText;
+							return TSS.JSON.encode(result);
+						}
+
+						var record1=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from UserGroupTable where T_GroupID="+record.Record[i].T_GroupID))[0];
+						if(record1.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record1.MessageText;
+							return TSS.JSON.encode(result);
+						}
+
+						var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from UserGroupRelationTable where T_GroupID="+record.Record[i].T_GroupID))[0];
+						if(record2.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record2.MessageText;
+							return TSS.JSON.encode(result);
+						}
+
+						var record3=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from GroupRoleRelationTable where T_GroupID="+record.Record[i].T_GroupID))[0];
+						if(record3.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record3.MessageText;
+							return TSS.JSON.encode(result);
+						}
+
+						var record4=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from GroupRightRelationTable where T_GroupID="+record.Record[i].T_GroupID))[0];
+						if(record4.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record4.MessageText;
+							return TSS.JSON.encode(result);
+						}
+
+						var record4=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from GroupResourceRelationTable where T_GroupID="+record.Record[i].T_GroupID))[0];
+						if(record4.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record4.MessageText;
+							return TSS.JSON.encode(result);
+						}
+
+						var record5=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from GroupVideoRelationTable where T_GroupID="+record.Record[i].T_GroupID))[0];
+						if(record5.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record5.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+
+					result.parentId=parentId;
+					result.groupId=groupId;
+				}
+				break;
+			case 3:
+				{
+					var parentOldId=Request.Form("parentOldId");
+
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"update UserGroupTable set T_Children=T_Children+1 where T_GroupID="+parentId))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"update UserGroupTable set T_Children=T_Children-1 where T_GroupID="+parentOldId))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"update UserGroupTable set T_ParentID="+parentId+" where T_GroupID="+groupId))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					UpdateFullName("",parentId);
+					//
+					result.parentId=parentId;
+					result.groupId=groupId;
+				}
+				break;
+		}
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

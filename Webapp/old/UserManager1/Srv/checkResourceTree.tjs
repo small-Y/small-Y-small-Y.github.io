@@ -1,0 +1,408 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result=[];
+		var parent=Request.QueryString("parent");
+		var id=Request.QueryString("id");
+		var type=Request.QueryString("type");
+		//
+		var loginUser = TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		if(!loginUser.loginStatus)
+		{
+			result.flag=false;
+			result.text="尚未登录";
+			return TSS.JSON.encode(result);
+		}
+		//
+		function checkResource(appid,parent_tag)
+		{
+			if(loginUser.isUserSuper)
+				return true;
+			//
+			if(loginUser.resourceList!=undefined
+				&& loginUser.resourceList[appid]!=undefined)
+			{
+				for(var k=0;k<loginUser.resourceList[appid].length;k++)
+				{
+					if(loginUser.resourceList[appid][k].indexOf(parent_tag)>=0)
+						return true;
+				}
+			}
+			return false;
+		}
+		//
+		if(parent=="#")
+		{
+			var funcMap=new Array();
+			if(type=="org")
+			{
+				var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_ResourceTag\",\"T_AppID\" from OrgResourceRelationTable where \"T_OrgID\"="+id))[0];
+				if(record.MessageCode>0)
+				{
+					result.text=record.MessageText;
+					return TSS.JSON.encode(result);
+				}
+				//
+				for(var i=0;i<record.Record.length;i++)
+				{
+					if(record.Record[i].T_ResourceTag=="*")
+						funcMap[record.Record[i].T_AppID]=1;
+					else
+						funcMap[record.Record[i].T_AppID+"."+record.Record[i].T_ResourceTag]=1;
+				}
+			}
+			else if(type=="group")
+			{
+				var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_ResourceTag\",\"T_AppID\" from GroupResourceRelationTable where \"T_GroupID\"="+id))[0];
+				if(record.MessageCode>0)
+				{
+					result.text=record.MessageText;
+					return TSS.JSON.encode(result);
+				}
+				//
+				for(var i=0;i<record.Record.length;i++)
+				{
+					if(record.Record[i].T_ResourceTag=="*")
+						funcMap[record.Record[i].T_AppID]=1;
+					else
+						funcMap[record.Record[i].T_AppID+"."+record.Record[i].T_ResourceTag]=1;
+				}
+			}
+			else if(type=="role")
+			{
+				var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_ResourceTag\",\"T_AppID\" from RoleResourceRelationTable where \"T_RoleID\"="+id))[0];
+				if(record.MessageCode>0)
+				{
+					result.text=record.MessageText;
+					return TSS.JSON.encode(result);
+				}
+				//
+				for(var i=0;i<record.Record.length;i++)
+				{
+					if(record.Record[i].T_ResourceTag=="*")
+						funcMap[record.Record[i].T_AppID]=1;
+					else
+						funcMap[record.Record[i].T_AppID+"."+record.Record[i].T_ResourceTag]=1;
+				}
+			}
+			else if(type=="user")
+			{
+				var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_ResourceTag\",\"T_AppID\" from UserResourceRelationTable where \"T_UserID\"="+id))[0];
+				if(record.MessageCode>0)
+				{
+					result.text=record.MessageText;
+					return TSS.JSON.encode(result);
+				}
+				//
+				for(var i=0;i<record.Record.length;i++)
+				{
+					if(record.Record[i].T_ResourceTag=="*")
+						funcMap[record.Record[i].T_AppID]=1;
+					else
+						funcMap[record.Record[i].T_AppID+"."+record.Record[i].T_ResourceTag]=1;
+				}
+			}
+			//
+			var basic = TSS.JSON.decode(System.Basic.GetServerStatus());
+			result[0]={
+						"id":5,
+						"icon":"icon-social-dribbble font-blue-sharp",
+						"text":basic.AuthName,
+						"children":[],
+						"state": {
+									"selected": funcMap[5]==1?true:false,
+									"opened": true
+								},
+						"li_attr":basic,
+						"type":"root"
+					};
+			//
+			var appList=[];
+			var AppSystemList = TSS.JSON.decode(System.Storage.ListDir("/Webapp/", "*"));
+			for (var i = 0; i < AppSystemList.List.length; i++) {
+				if (AppSystemList.List[i].isDir
+					&& System.Storage.IsFileExist(AppSystemList.List[i].urlPath + "/manifest.json")) {
+					var appItem = TSS.JSON.decode(System.Storage.ReadTextFile(AppSystemList.List[i].urlPath + "/manifest.json"));
+					//
+					if(appItem.app.launch.container=="smartapp"
+						|| appItem.app.launch.container=="proxy")
+					{
+						if(!loginUser.isUserSuper)
+						{
+							if(loginUser.resourceList!=undefined 
+								&& loginUser.resourceList[appItem.appid]!=undefined)
+							{
+								appList[appList.length]=appItem;
+							}
+						}
+						else
+						{
+							appList[appList.length]=appItem;
+						}
+					}
+				}
+			}
+			//
+			appList.sort(function(x,y){
+				return (x.app.launch.sort<y.app.launch.sort)?-1:1;
+			});
+			//
+			var resMap=new Array();
+			if(!loginUser.isUserSuper)
+			{
+				if(loginUser.resourceList!=undefined)
+				{
+					var aid;
+					for(aid in loginUser.resourceList)
+					{
+						if(loginUser.resourceList[aid]!=undefined)
+						{
+							for(var k=0;k<loginUser.resourceList[aid].length;k++)
+							{
+								resMap[aid+"."+loginUser.resourceList[aid][k]]=1;
+							}
+						}
+					}
+				}
+			}
+			//
+			function getfacility(appid,parent_tag)
+			{
+				var child=[];
+				var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_ResourceTag\",\"T_ResourceName\",\"T_ResourceType\" from ResourceTable where \"T_AppID\"='"+appid+"' and \"T_ParentTag\"='"+parent_tag+"' and (\"T_ResourceType\"='Group' or \"T_ResourceType\"='Node')"))[0];
+				if(record.MessageCode>0)
+				{
+					TSS.Utils.log(record.MessageText);
+					return child;
+				}
+				//
+				var selectChildCount=0;
+				if(type=="group")
+				{
+					var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select count(*) as n from GroupResourceRelationTable where \"T_AppID\"='"+appid+"' and \"T_ResourceTag\" like 'facility."+parent_tag+"%' and \"T_GroupID\"="+id))[0];
+					if(record2.MessageCode>0)
+					{
+						TSS.Utils.log(record2.MessageText);
+						return child;
+					}
+					if(record2.Record.length>0)
+					{
+						selectChildCount=record2.Record[0].n;
+					}
+				}
+				else if(type=="role")
+				{
+					var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select count(*) as n from RoleResourceRelationTable where \"T_AppID\"='"+appid+"' and \"T_ResourceTag\" like 'facility."+parent_tag+"%' and \"T_RoleID\"="+id))[0];
+					if(record2.MessageCode>0)
+					{
+						TSS.Utils.log(record2.MessageText);
+						return child;
+					}
+					if(record2.Record.length>0)
+					{
+						selectChildCount=record2.Record[0].n;
+					}
+				}
+				else if(type=="user")
+				{
+					var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select count(*) as n from UserResourceRelationTable where \"T_AppID\"='"+appid+"' and \"T_ResourceTag\" like 'facility."+parent_tag+"%' and \"T_UserID\"="+id))[0];
+					if(record2.MessageCode>0)
+					{
+						TSS.Utils.log(record2.MessageText);
+						return child;
+					}
+					if(record2.Record.length>0)
+					{
+						selectChildCount=record2.Record[0].n;
+					}
+				}
+				//
+				for(var i=0;i<record.Record.length;i++)
+				{
+					if(checkResource(appid,"facility."+record.Record[i].T_ResourceTag))
+					{
+						child[child.length]={
+							"id":appid+".facility."+record.Record[i].T_ResourceTag,
+							"text":record.Record[i].T_ResourceName,
+							"children":(record.Record[i].T_ResourceType=="Node")?false:((funcMap[appid+".facility."+record.Record[i].T_ResourceTag]==1 || selectChildCount==0)?true:getfacility(appid,record.Record[i].T_ResourceTag)),
+							"state": {
+										"selected": funcMap[appid+".facility."+record.Record[i].T_ResourceTag]==1?true:false,
+										"opened": false
+									},
+							"type":(record.Record[i].T_ResourceType=="Node")?"file":"default"
+						};
+					}
+				}
+				return child;
+			}
+			//
+			function getorganize(appid,parent_tag)
+			{
+				var child=[];
+				var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_ResourceTag\",\"T_ResourceName\",\"T_ResourceType\" from ResourceTable where \"T_AppID\"='"+appid+"' and \"T_ParentTag\"='"+parent_tag+"' and (\"T_ResourceType\"='Organize' or \"T_ResourceType\"='Node' or \"T_ResourceType\"='People')"))[0];
+				if(record.MessageCode>0)
+				{
+					TSS.Utils.log(record.MessageText);
+					return child;
+				}
+				//
+				var selectChildCount=0;
+				if(type=="group")
+				{
+					var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select count(*) as n from GroupResourceRelationTable where \"T_AppID\"='"+appid+"' and \"T_ResourceTag\" like 'organize."+parent_tag+"%' and \"T_GroupID\"="+id))[0];
+					if(record2.MessageCode>0)
+					{
+						TSS.Utils.log(record2.MessageText);
+						return child;
+					}
+					if(record2.Record.length>0)
+					{
+						selectChildCount=record2.Record[0].n;
+					}
+				}
+				else if(type=="role")
+				{
+					var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select count(*) as n from RoleResourceRelationTable where \"T_AppID\"='"+appid+"' and \"T_ResourceTag\" like 'organize."+parent_tag+"%' and \"T_RoleID\"="+id))[0];
+					if(record2.MessageCode>0)
+					{
+						TSS.Utils.log(record2.MessageText);
+						return child;
+					}
+					if(record2.Record.length>0)
+					{
+						selectChildCount=record2.Record[0].n;
+					}
+				}
+				else if(type=="user")
+				{
+					var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select count(*) as n from UserResourceRelationTable where \"T_AppID\"='"+appid+"' and \"T_ResourceTag\" like 'organize."+parent_tag+"%' and \"T_UserID\"="+id))[0];
+					if(record2.MessageCode>0)
+					{
+						TSS.Utils.log(record2.MessageText);
+						return child;
+					}
+					if(record2.Record.length>0)
+					{
+						selectChildCount=record2.Record[0].n;
+					}
+				}
+				//
+				for(var i=0;i<record.Record.length;i++)
+				{
+					if(checkResource(appid,"organize."+record.Record[i].T_ResourceTag))
+					{
+						child[child.length]={
+							"id":appid+".organize."+record.Record[i].T_ResourceTag,
+							"text":record.Record[i].T_ResourceName,
+							"children":(record.Record[i].T_ResourceType=="Node" || record.Record[i].T_ResourceType=="People")?false:((funcMap[appid+"."+record.Record[i].T_ResourceTag]==1 || selectChildCount==0)?true:getorganize(appid,record.Record[i].T_ResourceTag)),
+							"state": {
+										"selected": funcMap[appid+".organize."+record.Record[i].T_ResourceTag]==1?true:false,
+										"opened": false
+									},
+							"type":(record.Record[i].T_ResourceType=="Node" || record.Record[i].T_ResourceType=="People")?"file":"default"
+						};
+					}
+				}
+				return child;
+			}
+			//
+			function getchildren(pid)
+			{
+				var child=[];
+				//物理模型
+				if(checkResource(pid,"facility"))
+				{
+					child[child.length]={
+						"id":pid+".facility",
+						"text":"物理模型",
+						"children":funcMap[pid+".facility"]==1?true:getfacility(pid,""),
+						"state": {
+									"selected": funcMap[pid+".facility"]==1?true:false,
+									"opened": funcMap[pid+".facility"]==1?true:false
+								},
+						"type":"default"
+					};
+				}
+				//管理模型
+				if(checkResource(pid,"organize"))
+				{
+					child[child.length]={
+						"id":pid+".organize",
+						"text":"管理模型",
+						"children":funcMap[pid+".organize"]==1?true:getorganize(pid,""),
+						"state": {
+									"selected": funcMap[pid+".organize"]==1?true:false,
+									"opened": funcMap[pid+".organize"]==1?true:false
+								},
+						"type":"default"
+					};
+				}
+				return child;
+			}
+			//
+			for (var i = 0; i < appList.length; i++) {
+				result[0].children[result[0].children.length]={
+					"id":appList[i].appid,
+					"text":appList[i].name,
+					"children":getchildren(appList[i].appid),
+					"state": {
+                                "selected": funcMap[appList[i].appid]==1?true:false,
+								"opened": funcMap[appList[i].appid]==1?true:false
+                            },
+					"type":"default"
+				};
+			}
+		}
+		else
+		{
+			var appid=parent.substr(0,parent.indexOf("."));
+			var parent_tag=parent.substr(parent.indexOf(".")+1);
+			var mytype=parent_tag;
+			if(parent_tag.indexOf(".")>0)
+			{
+				mytype=parent_tag.substr(0,parent_tag.indexOf("."));
+				parent_tag=parent_tag.substr(parent_tag.indexOf(".")+1);
+			}
+			else
+			{
+				parent_tag="";
+			}
+			//
+			var record=null;
+			if(mytype=="facility")
+			{
+				record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_ResourceTag\",\"T_ResourceName\",\"T_ResourceType\" from ResourceTable where \"T_AppID\"='"+appid+"' and \"T_ParentTag\"='"+parent_tag+"' and (\"T_ResourceType\"='Group' or \"T_ResourceType\"='Node')"))[0];
+			}
+			else if(mytype=="organize")
+			{
+				record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_ResourceTag\",\"T_ResourceName\",\"T_ResourceType\" from ResourceTable where \"T_AppID\"='"+appid+"' and \"T_ParentTag\"='"+parent_tag+"' and (\"T_ResourceType\"='Organize' or \"T_ResourceType\"='Node' or \"T_ResourceType\"='People')"))[0];
+			}
+			//
+			if(record.MessageCode>0)
+			{
+				TSS.Utils.log(record.MessageText);
+				return child;
+			}
+			//
+			for(var i=0;i<record.Record.length;i++)
+			{
+				if(checkResource(appid,mytype+"."+record.Record[i].T_ResourceTag))
+				{
+					result[result.length]={
+						"id":appid+"."+mytype+"."+record.Record[i].T_ResourceTag,
+						"text":record.Record[i].T_ResourceName,
+						"children":(record.Record[i].T_ResourceType=="Node" || record.Record[i].T_ResourceType=="People")?false:true,
+						"state": {
+									"selected": false,
+									"opened":false
+								},
+						"type":(record.Record[i].T_ResourceType=="Node" || record.Record[i].T_ResourceType=="People")?"file":"default"
+					};
+				}
+			}
+		}
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

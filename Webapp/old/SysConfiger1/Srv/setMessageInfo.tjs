@@ -1,0 +1,42 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+Response.Write(function () {
+	var result={
+		flag:true,
+		msg:""
+	};
+	//
+	var MailAddr=Request.Form("MailAddr");
+	var MailName=Request.Form("MailName");
+	var MailSmtp=Request.Form("MailSmtp");
+	var MailPop3=Request.Form("MailPop3");
+	var MailUser=Request.Form("MailUser");
+	var MailPass=Request.Form("MailPass");
+	var SmsUser=Request.Form("SmsUser");
+	var SmsPass=Request.Form("SmsPass");
+	var AppID=Request.Form("AppID");
+	var AppSecret=Request.Form("AppSecret");
+	//
+	if (!System.Basic.SetMailConfig(MailPass==""?false:true,true,MailAddr,MailName,MailSmtp,MailPop3,MailUser,MailPass))
+	{
+		result.flag=false;
+		result.msg="没有权限修改邮件服务参数！";
+	}
+	//
+	if (!System.Basic.SetSmsConfig(SmsPass==""?false:true,true,SmsUser,SmsPass,30))
+	{
+		result.flag=false;
+		result.msg="没有权限修改短信服务参数！";
+	}
+	//
+	if (!System.Basic.SetWeixinConfig(AppSecret==""?false:true,AppID,AppSecret,7200))
+	{
+		result.flag=false;
+		result.msg="没有权限修改微信服务参数！";
+	}
+    //
+    return TSS.JSON.encode(result);
+} ());
+Response.ContentType = "text/plain";
+%>

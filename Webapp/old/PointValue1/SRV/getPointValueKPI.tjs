@@ -1,0 +1,631 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+
+		var result={
+			"flag":false,
+			"msg":"",
+			"payView":[{
+				name:"积分汇总",
+				n1:"——",
+				n2:"——",
+				n3:"——",
+				n4:"——",
+				n5:"——"
+			},{
+				name:"积分峰值",
+				n1:"——",
+				n2:"——",
+				n3:"——",
+				n4:"——",
+				n5:"——"
+			},{
+				name:"峰值时间",
+				n1:"——",
+				n2:"——",
+				n3:"——",
+				n4:"——",
+				n5:"——"
+			},{
+				name:"交易评估",
+				n1:"——",
+				n2:"——",
+				n3:"——",
+				n4:"——",
+				n5:"——"
+			}],
+			"paymentChart":[{type: 'column',name:"产生积分",data:[],color:"#00cc00"},{type: 'column',name:"扣除积分",data:[],color:"#ff9900"}],
+			"orderChart":[{type: 'column',name:"获得金币",data:[],color:"#009999"},{type: 'column',name:"抵扣金币",data:[],color:"#cc3300"}],
+		};
+		//
+		var startTime = Request.QueryString("startTime");
+		var endTime = Request.QueryString("endTime");
+		if(startTime=="" || startTime==undefined)
+		{
+			var tc = new Date();
+			startTime = new Date();
+			startTime.setFullYear(tc.getFullYear(),tc.getMonth(),tc.getDate());
+			startTime.setHours(0,0,0,0);
+			startTime=startTime.DateAdd("d",-2);
+		}
+		else
+		{
+			startTime = TSS.Utils.parseDate(startTime);
+		}
+
+		if(endTime=="" || endTime==undefined)
+		{
+			endTime = new Date();
+		}
+		else
+		{
+			endTime = TSS.Utils.parseDate(endTime);
+			endTime=endTime.DateAdd("d",1);
+		}
+		//
+		var selPayApp = Request.QueryString("selPayApp");
+		var selOrderType = Request.QueryString("selOrderType");
+		var selOrderUser = Request.QueryString("selOrderUser");
+		var kpiType = Request.QueryString("kpiType");
+		//
+		var ifwhere="\"T_OrderTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"T_OrderTime\"<'"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"'";
+		var ifgold="\"T_OrderTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"T_OrderTime\"<'"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"'";
+		if(selPayApp!="" && selPayApp!=undefined)
+		{
+			var arr=selPayApp.split(",");
+			var arrT=[];
+			for(var i=0;i<arr.length;i++){
+				arrT.push("'"+arr[i]+"'");
+			}
+			ifwhere+=" AND \"T_AppID\" in ("+arrT.join(",")+")";
+			ifgold+=" AND \"T_AppID\" in ("+arrT.join(",")+")";
+		}
+		//
+		if(selOrderType!="" && selOrderType!=undefined)
+		{
+			ifwhere+=" AND \"T_Type\" in ("+selOrderType+")";
+		}
+		//
+		if(selOrderUser!="" && selOrderUser!=undefined)
+		{
+			var arr=selOrderUser.split(",");
+			var arrT=[];
+			for(var i=0;i<arr.length;i++){
+				arrT.push("'"+arr[i]+"'");
+			}
+			ifwhere+=" AND \"T_UserName\" in ("+arrT.join(",")+")";
+			ifgold+=" AND \"T_UserName\" in ("+arrT.join(",")+")";
+		}
+		//
+		var paid_max=-1;
+		var paid_maxtm="——";
+		var refund_max=-1;
+		var refund_maxtm="——";
+		var amount_max=-1;
+		var amount_maxtm="——";
+		var gold_max1=-1;
+		var gold_maxtm1="——";
+		var gold_max2=-1;
+		var gold_maxtm2="——";
+		//
+		var paid=0;
+		var refund=0;
+		var amount=0;
+		var gold_paid=0;
+		var gold_refund=0;
+		//
+		switch(kpiType)
+		{
+			case "hour":
+			{
+				var record1=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_Year\",\"T_Month\",\"T_Day\",\"T_Hour\",sum(\"T_Paid\") as paid,sum(\"T_Refund\") as refund from UserScoreOrderTable where "+ ifwhere+" group by \"T_Year\",\"T_Month\",\"T_Day\",\"T_Hour\""));
+				if(record1.length==0)
+				{
+					result.msg=System.RDC.GetLastError();
+					return TSS.JSON.encode(result);
+				}
+				if(record1[0].MessageCode>0)
+				{
+					result.msg=record1[0].MessageText;
+					return TSS.JSON.encode(result);
+				}
+				//
+				var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_Year\",\"T_Month\",\"T_Day\",\"T_Hour\",sum(\"T_GoldScore\"+\"T_Refund\") as paid,sum(\"T_Paid\") as refund from GoldScoreOrderTable where "+ ifgold+" group by \"T_Year\",\"T_Month\",\"T_Day\",\"T_Hour\""));
+				if(record2.length==0)
+				{
+					return System.RDC.GetLastError();
+				}
+				if(record2[0].MessageCode>0)
+				{
+					return record2[0].MessageText;
+				}
+				//
+				result.flag=true;
+				result.paymentChart[0].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+				result.paymentChart[1].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+				for(var i=0;i<record1[0].Record.length;i++)
+				{
+					paid+=(record1[0].Record[i].paid-0);
+					if(record1[0].Record[i].paid>paid_max)
+					{
+						paid_max=record1[0].Record[i].paid;
+						paid_maxtm=record1[0].Record[i].T_Month+"月"+record1[0].Record[i].T_Day+"日 "+record1[0].Record[i].T_Hour+"点";
+					}
+					//
+					refund+=(record1[0].Record[i].refund-0);
+					if(record1[0].Record[i].refund>refund_max)
+					{
+						refund_max=record1[0].Record[i].refund;
+						refund_maxtm=record1[0].Record[i].T_Month+"月"+record1[0].Record[i].T_Day+"日 "+record1[0].Record[i].T_Hour+"点";
+					}
+					//
+					amount+=(record1[0].Record[i].paid-record1[0].Record[i].refund);
+					if((record1[0].Record[i].paid-record1[0].Record[i].refund)>amount_max)
+					{
+						amount_max=(record1[0].Record[i].paid-record1[0].Record[i].refund);
+						amount_maxtm=record1[0].Record[i].T_Month+"月"+record1[0].Record[i].T_Day+"日 "+record1[0].Record[i].T_Hour+"点";
+					}
+					//
+					result.paymentChart[0].data[i+1]=[Date.UTC(record1[0].Record[i].T_Year,record1[0].Record[i].T_Month-1,record1[0].Record[i].T_Day,record1[0].Record[i].T_Hour,0,0), record1[0].Record[i].paid];
+					result.paymentChart[1].data[i+1]=[Date.UTC(record1[0].Record[i].T_Year,record1[0].Record[i].T_Month-1,record1[0].Record[i].T_Day,record1[0].Record[i].T_Hour,0,0), record1[0].Record[i].refund];
+				}
+				result.paymentChart[0].data[result.paymentChart[0].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+				result.paymentChart[1].data[result.paymentChart[1].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+				//
+				result.orderChart[0].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+				result.orderChart[1].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+				//
+				for(var i=0;i<record2[0].Record.length;i++)
+				{
+					gold_paid+=(record2[0].Record[i].paid-0);
+					if(record2[0].Record[i].paid>gold_max1)
+					{
+						gold_max1=record2[0].Record[i].paid;
+						gold_maxtm1=record2[0].Record[i].T_Month+"月"+record2[0].Record[i].T_Day+"日 "+record2[0].Record[i].T_Hour+"点";
+					}
+					//
+					gold_refund+=(record2[0].Record[i].refund-0);
+					if(record2[0].Record[i].refund>gold_max2)
+					{
+						gold_max2=record2[0].Record[i].refund;
+						gold_maxtm2=record2[0].Record[i].T_Month+"月"+record2[0].Record[i].T_Day+"日 "+record2[0].Record[i].T_Hour+"点";
+					}
+					//
+					result.orderChart[0].data[i+1]=[Date.UTC(record2[0].Record[i].T_Year,record2[0].Record[i].T_Month-1,record2[0].Record[i].T_Day,record2[0].Record[i].T_Hour,0,0), record2[0].Record[i].paid];
+					result.orderChart[1].data[i+1]=[Date.UTC(record2[0].Record[i].T_Year,record2[0].Record[i].T_Month-1,record2[0].Record[i].T_Day,record2[0].Record[i].T_Hour,0,0), record2[0].Record[i].refund];
+				}
+				result.orderChart[0].data[result.orderChart[0].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+				result.orderChart[1].data[result.orderChart[1].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+				//
+				result.payView[0].n1='<span class="text-success">'+TSS.Utils.formatNumber(paid,"#,###,##0")+'</span>';
+				result.payView[0].n2='<span class="text-danger">'+TSS.Utils.formatNumber(refund,"#,###,##0")+'</span>';
+				result.payView[0].n3=TSS.Utils.formatNumber(amount,"######0");
+				result.payView[0].n4=TSS.Utils.formatNumber(gold_paid,"#,###,##0");
+				result.payView[0].n5=TSS.Utils.formatNumber(gold_refund,"#,###,##0");
+				//
+				if(paid_max>0)
+					result.payView[1].n1='<span class="text-success">'+TSS.Utils.formatNumber(paid_max,"#,###,##0")+'</span>';
+				if(refund_max>0)
+					result.payView[1].n2='<span class="text-danger">'+TSS.Utils.formatNumber(refund_max,"#,###,##0")+'</span>';
+				if(amount_max>0)
+					result.payView[1].n3=TSS.Utils.formatNumber(amount_max,"######0");
+				if(gold_max1>0)
+					result.payView[1].n4=TSS.Utils.formatNumber(gold_max1,"#,###,##0");
+				if(gold_max2>0)
+					result.payView[1].n5=TSS.Utils.formatNumber(gold_max2,"#,###,##0");
+				//
+				result.payView[2].n1=paid_maxtm;
+				result.payView[2].n2=refund_maxtm;
+				result.payView[2].n3=amount_maxtm;
+				result.payView[2].n4=gold_maxtm1;
+				result.payView[2].n5=gold_maxtm2;
+				//
+				if(paid_max>0)
+				{
+					var xyList=[];
+					for(var i=1;i<result.paymentChart[0].data.length-1;i++)
+					{
+						xyList[xyList.length]=[Math.floor(result.paymentChart[0].data[i][0]/1000),result.paymentChart[0].data[i][1]];
+					}
+					var rate=TSS.Utils.computerSlope(xyList);
+					if(rate>0.000001)
+						result.payView[3].n1='<span class="text-success">上升</span>';
+					else if(rate<-0.000001)
+						result.payView[3].n1='<span class="text-danger">下降</span>';
+					else
+						result.payView[3].n1='<span class="text-info">平稳</span>';
+				}
+				//
+				if(refund_max>0)
+				{
+					var xyList=[];
+					for(var i=1;i<result.paymentChart[1].data.length-1;i++)
+					{
+						xyList[xyList.length]=[Math.floor(result.paymentChart[1].data[i][0]/1000),result.paymentChart[1].data[i][1]];
+					}
+					var rate=TSS.Utils.computerSlope(xyList);
+					if(rate>0.000001)
+						result.payView[3].n2='<span class="text-success">上升</span>';
+					else if(rate<-0.000001)
+						result.payView[3].n2='<span class="text-danger">下降</span>';
+					else
+						result.payView[3].n2='<span class="text-info">平稳</span>';
+				}
+				//
+				if(gold_max1>0)
+				{
+					var xyList=[];
+					for(var i=1;i<result.orderChart[0].data.length-1;i++)
+					{
+						xyList[xyList.length]=[Math.floor(result.orderChart[0].data[i][0]/1000),result.orderChart[0].data[i][1]];
+					}
+					var rate=TSS.Utils.computerSlope(xyList);
+					if(rate>0.000001)
+						result.payView[3].n4='<span class="text-success">上升</span>';
+					else if(rate<-0.000001)
+						result.payView[3].n4='<span class="text-danger">下降</span>';
+					else
+						result.payView[3].n4='<span class="text-info">平稳</span>';
+				}
+				//
+				if(gold_max2>0)
+				{
+					var xyList=[];
+					for(var i=1;i<result.orderChart[1].data.length-1;i++)
+					{
+						xyList[xyList.length]=[Math.floor(result.orderChart[1].data[i][0]/1000),result.orderChart[1].data[i][1]];
+					}
+					var rate=TSS.Utils.computerSlope(xyList);
+					if(rate>0.000001)
+						result.payView[3].n5='<span class="text-success">上升</span>';
+					else if(rate<-0.000001)
+						result.payView[3].n5='<span class="text-danger">下降</span>';
+					else
+						result.payView[3].n5='<span class="text-info">平稳</span>';
+				}
+			}
+			break;
+			case "day":
+			{
+				var record1=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_Year\",\"T_Month\",\"T_Day\",sum(\"T_Paid\") as paid,sum(\"T_Refund\") as refund from UserScoreOrderTable where "+ ifwhere+" group by \"T_Year\",\"T_Month\",\"T_Day\""));
+				if(record1.length==0)
+				{
+					result.msg=System.RDC.GetLastError();
+					return TSS.JSON.encode(result);
+				}
+				if(record1[0].MessageCode>0)
+				{
+					result.msg=record1[0].MessageText;
+					return TSS.JSON.encode(result);
+				}
+				//
+				var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_Year\",\"T_Month\",\"T_Day\",sum(\"T_GoldScore\"+\"T_Refund\") as paid,sum(\"T_Paid\") as refund from GoldScoreOrderTable where "+ ifgold+" group by \"T_Year\",\"T_Month\",\"T_Day\""));
+				if(record2.length==0)
+				{
+					return System.RDC.GetLastError();
+				}
+				if(record2[0].MessageCode>0)
+				{
+					return record2[0].MessageText;
+				}
+				//
+				result.flag=true;
+				//result.paymentChart[0].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+				//result.paymentChart[1].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+				for(var i=0;i<record1[0].Record.length;i++)
+				{
+					paid+=(record1[0].Record[i].paid-0);
+					if(record1[0].Record[i].paid>paid_max)
+					{
+						paid_max=record1[0].Record[i].paid;
+						paid_maxtm=record1[0].Record[i].T_Month+"月"+record1[0].Record[i].T_Day+"日";
+					}
+					//
+					refund+=(record1[0].Record[i].refund-0);
+					if(record1[0].Record[i].refund>refund_max)
+					{
+						refund_max=record1[0].Record[i].refund;
+						refund_maxtm=record1[0].Record[i].T_Month+"月"+record1[0].Record[i].T_Day+"日";
+					}
+					//
+					amount+=(record1[0].Record[i].paid-record1[0].Record[i].refund);
+					if((record1[0].Record[i].paid-record1[0].Record[i].refund)>amount_max)
+					{
+						amount_max=(record1[0].Record[i].paid-record1[0].Record[i].refund);
+						amount_maxtm=record1[0].Record[i].T_Month+"月"+record1[0].Record[i].T_Day+"日";
+					}
+					//
+					result.paymentChart[0].data[i]=[Date.UTC(record1[0].Record[i].T_Year,record1[0].Record[i].T_Month-1,record1[0].Record[i].T_Day,0,0,0), record1[0].Record[i].paid];
+					result.paymentChart[1].data[i]=[Date.UTC(record1[0].Record[i].T_Year,record1[0].Record[i].T_Month-1,record1[0].Record[i].T_Day,0,0,0), record1[0].Record[i].refund];
+				}
+				//result.paymentChart[0].data[result.paymentChart[0].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+				//result.paymentChart[1].data[result.paymentChart[1].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+				//
+				//result.orderChart[0].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+				//result.orderChart[1].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+				//
+				for(var i=0;i<record2[0].Record.length;i++)
+				{
+					gold_paid+=(record2[0].Record[i].paid-0);
+					if(record2[0].Record[i].paid>gold_max1)
+					{
+						gold_max1=record2[0].Record[i].paid;
+						gold_maxtm1=record2[0].Record[i].T_Month+"月"+record2[0].Record[i].T_Day+"日";
+					}
+					//
+					gold_refund+=(record2[0].Record[i].refund-0);
+					if(record2[0].Record[i].refund>gold_max2)
+					{
+						gold_max2=record2[0].Record[i].refund;
+						gold_maxtm2=record2[0].Record[i].T_Month+"月"+record2[0].Record[i].T_Day+"日";
+					}
+					//
+					result.orderChart[0].data[i]=[Date.UTC(record2[0].Record[i].T_Year,record2[0].Record[i].T_Month-1,record2[0].Record[i].T_Day,0,0,0), record2[0].Record[i].paid];
+					result.orderChart[1].data[i]=[Date.UTC(record2[0].Record[i].T_Year,record2[0].Record[i].T_Month-1,record2[0].Record[i].T_Day,0,0,0), record2[0].Record[i].refund];
+				}
+				//result.orderChart[0].data[result.orderChart[0].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+				//result.orderChart[1].data[result.orderChart[1].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+				//
+				result.payView[0].n1='<span class="text-success">'+TSS.Utils.formatNumber(paid,"#,###,##0")+'</span>';
+				result.payView[0].n2='<span class="text-danger">'+TSS.Utils.formatNumber(refund,"#,###,##0")+'</span>';
+				result.payView[0].n3=TSS.Utils.formatNumber(amount,"######0");
+				result.payView[0].n4=TSS.Utils.formatNumber(gold_paid,"#,###,##0");
+				result.payView[0].n5=TSS.Utils.formatNumber(gold_refund,"#,###,##0");
+				//
+				if(paid_max>0)
+					result.payView[1].n1='<span class="text-success">'+TSS.Utils.formatNumber(paid_max,"#,###,##0")+'</span>';
+				if(refund_max>0)
+					result.payView[1].n2='<span class="text-danger">'+TSS.Utils.formatNumber(refund_max,"#,###,##0")+'</span>';
+				if(amount_max>0)
+					result.payView[1].n3=TSS.Utils.formatNumber(amount_max,"######0");
+				if(gold_max1>0)
+					result.payView[1].n4=TSS.Utils.formatNumber(gold_max1,"#,###,##0");
+				if(gold_max2>0)
+					result.payView[1].n5=TSS.Utils.formatNumber(gold_max2,"#,###,##0");
+				//
+				result.payView[2].n1=paid_maxtm;
+				result.payView[2].n2=refund_maxtm;
+				result.payView[2].n3=amount_maxtm;
+				result.payView[2].n4=gold_maxtm1;
+				result.payView[2].n5=gold_maxtm2;
+				//
+				if(paid_max>0)
+				{
+					var xyList=[];
+					for(var i=1;i<result.paymentChart[0].data.length-1;i++)
+					{
+						xyList[xyList.length]=[Math.floor(result.paymentChart[0].data[i][0]/1000),result.paymentChart[0].data[i][1]];
+					}
+					var rate=TSS.Utils.computerSlope(xyList);
+					if(rate>0.000001)
+						result.payView[3].n1='<span class="text-success">上升</span>';
+					else if(rate<-0.000001)
+						result.payView[3].n1='<span class="text-danger">下降</span>';
+					else
+						result.payView[3].n1='<span class="text-info">平稳</span>';
+				}
+				//
+				if(refund_max>0)
+				{
+					var xyList=[];
+					for(var i=1;i<result.paymentChart[1].data.length-1;i++)
+					{
+						xyList[xyList.length]=[Math.floor(result.paymentChart[1].data[i][0]/1000),result.paymentChart[1].data[i][1]];
+					}
+					var rate=TSS.Utils.computerSlope(xyList);
+					if(rate>0.000001)
+						result.payView[3].n2='<span class="text-success">上升</span>';
+					else if(rate<-0.000001)
+						result.payView[3].n2='<span class="text-danger">下降</span>';
+					else
+						result.payView[3].n2='<span class="text-info">平稳</span>';
+				}
+				//
+				if(gold_max1>0)
+				{
+					var xyList=[];
+					for(var i=1;i<result.orderChart[0].data.length-1;i++)
+					{
+						xyList[xyList.length]=[Math.floor(result.orderChart[0].data[i][0]/1000),result.orderChart[0].data[i][1]];
+					}
+					var rate=TSS.Utils.computerSlope(xyList);
+					if(rate>0.000001)
+						result.payView[3].n4='<span class="text-success">上升</span>';
+					else if(rate<-0.000001)
+						result.payView[3].n4='<span class="text-danger">下降</span>';
+					else
+						result.payView[3].n4='<span class="text-info">平稳</span>';
+				}
+				//
+				if(gold_max2>0)
+				{
+					var xyList=[];
+					for(var i=1;i<result.orderChart[1].data.length-1;i++)
+					{
+						xyList[xyList.length]=[Math.floor(result.orderChart[1].data[i][0]/1000),result.orderChart[1].data[i][1]];
+					}
+					var rate=TSS.Utils.computerSlope(xyList);
+					if(rate>0.000001)
+						result.payView[3].n5='<span class="text-success">上升</span>';
+					else if(rate<-0.000001)
+						result.payView[3].n5='<span class="text-danger">下降</span>';
+					else
+						result.payView[3].n5='<span class="text-info">平稳</span>';
+				}
+			}
+			break;
+			case "month":
+			{
+				var record1=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_Year\",\"T_Month\",sum(\"T_Paid\") as paid,sum(\"T_Refund\") as refund from UserScoreOrderTable where "+ ifwhere+" group by \"T_Year\",\"T_Month\""));
+				if(record1.length==0)
+				{
+					result.msg=System.RDC.GetLastError();
+					return TSS.JSON.encode(result);
+				}
+				if(record1[0].MessageCode>0)
+				{
+					result.msg=record1[0].MessageText;
+					return TSS.JSON.encode(result);
+				}
+				//
+				var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_Year\",\"T_Month\",sum(\"T_GoldScore\"+\"T_Refund\") as paid,sum(\"T_Paid\") as refund from GoldScoreOrderTable where "+ ifgold+" group by \"T_Year\",\"T_Month\""));
+				if(record2.length==0)
+				{
+					return System.RDC.GetLastError();
+				}
+				if(record2[0].MessageCode>0)
+				{
+					return record2[0].MessageText;
+				}
+				//
+				result.flag=true;
+				//result.paymentChart[0].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+				//result.paymentChart[1].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+				for(var i=0;i<record1[0].Record.length;i++)
+				{
+					paid+=(record1[0].Record[i].paid-0);
+					if(record1[0].Record[i].paid>paid_max)
+					{
+						paid_max=record1[0].Record[i].paid;
+						paid_maxtm=record1[0].Record[i].T_Month+"月";
+					}
+					//
+					refund+=(record1[0].Record[i].refund-0);
+					if(record1[0].Record[i].refund>refund_max)
+					{
+						refund_max=record1[0].Record[i].refund;
+						refund_maxtm=record1[0].Record[i].T_Month+"月";
+					}
+					//
+					amount+=(record1[0].Record[i].paid-record1[0].Record[i].refund);
+					if((record1[0].Record[i].paid-record1[0].Record[i].refund)>amount_max)
+					{
+						amount_max=(record1[0].Record[i].paid-record1[0].Record[i].refund);
+						amount_maxtm=record1[0].Record[i].T_Month+"月";
+					}
+					//
+					result.paymentChart[0].data[i]=[Date.UTC(record1[0].Record[i].T_Year,record1[0].Record[i].T_Month-1,1,0,0,0), record1[0].Record[i].paid];
+					result.paymentChart[1].data[i]=[Date.UTC(record1[0].Record[i].T_Year,record1[0].Record[i].T_Month-1,1,0,0,0), record1[0].Record[i].refund];
+				}
+				//result.paymentChart[0].data[result.paymentChart[0].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+				//result.paymentChart[1].data[result.paymentChart[1].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+				//
+				//result.orderChart[0].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+				//result.orderChart[1].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+				//
+				for(var i=0;i<record2[0].Record.length;i++)
+				{
+					gold_paid+=(record2[0].Record[i].paid-0);
+					if(record2[0].Record[i].paid>gold_max1)
+					{
+						gold_max1=record2[0].Record[i].paid;
+						gold_maxtm1=record2[0].Record[i].T_Month+"月";
+					}
+					//
+					gold_refund+=(record2[0].Record[i].refund-0);
+					if(record2[0].Record[i].refund>gold_max2)
+					{
+						gold_max2=record2[0].Record[i].refund;
+						gold_maxtm2=record2[0].Record[i].T_Month+"月";
+					}
+					//
+					result.orderChart[0].data[i]=[Date.UTC(record2[0].Record[i].T_Year,record2[0].Record[i].T_Month-1,1,0,0,0), record2[0].Record[i].paid];
+					result.orderChart[1].data[i]=[Date.UTC(record2[0].Record[i].T_Year,record2[0].Record[i].T_Month-1,1,0,0,0), record2[0].Record[i].refund];
+				}
+				//result.orderChart[0].data[result.orderChart[0].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+				//result.orderChart[1].data[result.orderChart[1].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+				//
+				result.payView[0].n1='<span class="text-success">'+TSS.Utils.formatNumber(paid,"#,###,##0")+'</span>';
+				result.payView[0].n2='<span class="text-danger">'+TSS.Utils.formatNumber(refund,"#,###,##0")+'</span>';
+				result.payView[0].n3=TSS.Utils.formatNumber(amount,"######0");
+				result.payView[0].n4=TSS.Utils.formatNumber(gold_paid,"#,###,##0");
+				result.payView[0].n5=TSS.Utils.formatNumber(gold_refund,"#,###,##0");
+				//
+				if(paid_max>0)
+					result.payView[1].n1='<span class="text-success">'+TSS.Utils.formatNumber(paid_max,"#,###,##0")+'</span>';
+				if(refund_max>0)
+					result.payView[1].n2='<span class="text-danger">'+TSS.Utils.formatNumber(refund_max,"#,###,##0")+'</span>';
+				if(amount_max>0)
+					result.payView[1].n3=TSS.Utils.formatNumber(amount_max,"######0");
+				if(gold_max1>0)
+					result.payView[1].n4=TSS.Utils.formatNumber(gold_max1,"#,###,##0");
+				if(gold_max2>0)
+					result.payView[1].n5=TSS.Utils.formatNumber(gold_max2,"#,###,##0");
+				//
+				result.payView[2].n1=paid_maxtm;
+				result.payView[2].n2=refund_maxtm;
+				result.payView[2].n3=amount_maxtm;
+				result.payView[2].n4=gold_maxtm1;
+				result.payView[2].n5=gold_maxtm2;
+				//
+				if(paid_max>0)
+				{
+					var xyList=[];
+					for(var i=1;i<result.paymentChart[0].data.length-1;i++)
+					{
+						xyList[xyList.length]=[Math.floor(result.paymentChart[0].data[i][0]/1000),result.paymentChart[0].data[i][1]];
+					}
+					var rate=TSS.Utils.computerSlope(xyList);
+					if(rate>0.000001)
+						result.payView[3].n1='<span class="text-success">上升</span>';
+					else if(rate<-0.000001)
+						result.payView[3].n1='<span class="text-danger">下降</span>';
+					else
+						result.payView[3].n1='<span class="text-info">平稳</span>';
+				}
+				//
+				if(refund_max>0)
+				{
+					var xyList=[];
+					for(var i=1;i<result.paymentChart[1].data.length-1;i++)
+					{
+						xyList[xyList.length]=[Math.floor(result.paymentChart[1].data[i][0]/1000),result.paymentChart[1].data[i][1]];
+					}
+					var rate=TSS.Utils.computerSlope(xyList);
+					if(rate>0.000001)
+						result.payView[3].n2='<span class="text-success">上升</span>';
+					else if(rate<-0.000001)
+						result.payView[3].n2='<span class="text-danger">下降</span>';
+					else
+						result.payView[3].n2='<span class="text-info">平稳</span>';
+				}
+				//
+				if(gold_max1>0)
+				{
+					var xyList=[];
+					for(var i=1;i<result.orderChart[0].data.length-1;i++)
+					{
+						xyList[xyList.length]=[Math.floor(result.orderChart[0].data[i][0]/1000),result.orderChart[0].data[i][1]];
+					}
+					var rate=TSS.Utils.computerSlope(xyList);
+					if(rate>0.000001)
+						result.payView[3].n4='<span class="text-success">上升</span>';
+					else if(rate<-0.000001)
+						result.payView[3].n4='<span class="text-danger">下降</span>';
+					else
+						result.payView[3].n4='<span class="text-info">平稳</span>';
+				}
+				//
+				if(gold_max2>0)
+				{
+					var xyList=[];
+					for(var i=1;i<result.orderChart[1].data.length-1;i++)
+					{
+						xyList[xyList.length]=[Math.floor(result.orderChart[1].data[i][0]/1000),result.orderChart[1].data[i][1]];
+					}
+					var rate=TSS.Utils.computerSlope(xyList);
+					if(rate>0.000001)
+						result.payView[3].n5='<span class="text-success">上升</span>';
+					else if(rate<-0.000001)
+						result.payView[3].n5='<span class="text-danger">下降</span>';
+					else
+						result.payView[3].n5='<span class="text-info">平稳</span>';
+				}
+			}
+			break;
+		}
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

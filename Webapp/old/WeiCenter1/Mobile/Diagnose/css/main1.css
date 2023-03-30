@@ -1,0 +1,94 @@
+body, html {
+  height: 100%;
+  -webkit-tap-highlight-color: transparent;
+  background: #f7f7fa;
+  font-family: Arial,Tahoma,微软雅黑 !important;
+}
+
+.weui_title_bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    font-size: 12pt;
+    text-align: center;
+    padding: 0;
+    height: 43px;
+    line-height: 44px;
+    color: #333;
+    background: -webkit-linear-gradient(#fff,#fdfdfd);
+    background: -o-linear-gradient(#fff,#fdfdfd);
+    background: -moz-linear-gradient(#fff,#fdfdfd);
+    background: linear-gradient(#fff,#fdfdfd);
+    border-bottom: 1px solid #dcdbdb;
+}
+
+.weui_grid .weui_grid_select{
+	position: absolute;
+    top: 5px;
+    right: 10px;
+	color:#ccc;
+}
+
+.weui_grid.on .weui_grid_select{
+	color:#ff6600;
+}
+.actiondiv{
+    position: absolute;
+    top: 0px;
+    height: 260px;
+    left: 0px;
+    right: 0px;
+    background-color: #04be02;
+}
+.actionbtn{
+    box-shadow: 0 0 10px 2px rgba(0,0,0,.4);
+    position: absolute;
+    left: 25%;
+    width: 140px;
+    border: 5px rgb(4, 190, 2) solid;
+    height: 140px;
+    top: 45px;
+    border-radius: 50%;
+    background-color: #f7f7fa;
+    color: rgba(9, 187, 7, 0.78);
+    filter: alpha(opacity=100);
+    -webkit-animation-name: AlarmAnimation;
+    -webkit-animation-duration: 2s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-play-state:running;
+    animation-name: AlarmAnimation;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-play-state:running;
+    -moz-animation-name: AlarmAnimation;
+    -moz-animation-duration: 2s;
+    -moz-animation-iteration-count: infinite;
+    -moz-animation-timing-function: linear;
+    -moz-animation-play-state:running;
+}
+@-webkit-keyframes 'AlarmAnimation' {   
+    /* �ڶ�����ʼʱÿһ�е�͸���ȶ���0 */  
+    0%{opacity:0.5;}   
+    /* �ڶ����м�ʱÿһ�е�͸���ȶ���1 */  
+    50%{opacity:1;}   
+    /*�ڶ�������ʱÿһ�е�͸���ȶ���ԭ��0 */  
+    100%{opacity:0.5;}   
+}
+@keyframes AlarmAnimation{   
+    from, to { opacity: 1;transform: none; }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+}
+@-moz-keyframes 'AlarmAnimation' {   
+    /* �ڶ�����ʼʱÿһ�е�͸���ȶ���0 */  
+    0%{opacity:0.5;}   
+    /* �ڶ����м�ʱÿһ�е�͸���ȶ���1 */  
+    50%{opacity:1;}   
+    /*�ڶ�������ʱÿһ�е�͸���ȶ���ԭ��0 */  
+    100%{opacity:0.5;}   
+}

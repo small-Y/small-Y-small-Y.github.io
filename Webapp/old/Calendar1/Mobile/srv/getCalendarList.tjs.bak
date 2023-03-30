@@ -1,0 +1,257 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result = {
+				flag:false,
+				info:"",
+				weather:null,
+				msg:[]
+			};
+		//
+		var startTime = Request.QueryString("startTime");
+		var endTime = Request.QueryString("endTime");
+		//
+		if(startTime=="" || startTime==undefined)
+		{
+			var tc = new Date();
+			startTime = new Date();
+			startTime.setFullYear(tc.getFullYear(),tc.getMonth(),tc.getDate());
+			startTime.setHours(0,0,0,0);
+			startTime=startTime.DateAdd("d",-1);
+		}
+		else
+		{
+			startTime = TSS.Utils.parseDate(startTime);
+		}
+
+		if(endTime=="" || endTime==undefined)
+		{
+			endTime = new Date();
+		}
+		else
+		{
+			endTime = TSS.Utils.parseDate(endTime);
+		}
+		//读取用户信息
+		var userList = Session("Contact");
+		if(userList==undefined)
+		{
+			userList = TSS.JSON.decode(Server.ExecuteAPI("GET","/API/Contact",""));
+			Session("Contact") = userList;
+		}
+		//读取应用信息
+		var appList = Session("CPS");
+		if(appList==undefined)
+		{
+			appList = TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System",""));
+			Session("CPS") = appList;
+		}
+		//
+		var tc = new Date();
+		today1 = new Date();
+		today1.setFullYear(tc.getFullYear(),tc.getMonth(),tc.getDate());
+		today1.setHours(0,0,0,0);
+		today2=today1.DateAdd("d",1);
+		today3=today1.DateAdd("d",2);
+
+		if(startTime<today1)
+		{
+			var weather=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/Weather/Day?startTime="+startTime.Format("yyyy-MM-dd hh:mm:ss")+"&endTime="+endTime.Format("yyyy-MM-dd hh:mm:ss"),""));
+			if(weather.flag
+				&& weather.data.length>0)
+			{
+				result.weather=weather.data[0];
+			}
+		}
+		else if(startTime.Format("yyyy-MM-dd")==today1.Format("yyyy-MM-dd"))
+		{
+			var weather=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/Weather",""));
+			if(weather.flag
+				&& weather.data.future.length>0)
+			{
+				result.weather=weather.data.future[0];
+			}
+		}
+		else if(startTime.Format("yyyy-MM-dd")==today2.Format("yyyy-MM-dd"))
+		{
+			var weather=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/Weather",""));
+			if(weather.flag
+				&& weather.data.future.length>1)
+			{
+				result.weather=weather.data.future[1];
+			}
+		}
+		else if(startTime.Format("yyyy-MM-dd")==today3.Format("yyyy-MM-dd"))
+		{
+			var weather=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/Weather",""));
+			if(weather.flag
+				&& weather.data.future.length>2)
+			{
+				result.weather=weather.data.future[2];
+			}
+		}
+		//
+		var currentUser = TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		var record = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsOS",false,"SELECT T_EventCode,T_Title,T_Content,T_ImageFile,T_Time,T_AppID FROM CalendarTable  where ((T_Time>='"+startTime.Format("yyyy-MM-dd") +"' and T_Time<'"+endTime.Format("yyyy-MM-dd") +"') or (T_EndTime>'"+startTime.Format("yyyy-MM-dd") +"' and T_Time<'"+endTime.Format("yyyy-MM-dd") +"')) and T_UserName='"+currentUser.userName +"' ORDER BY T_Time DESC"));
+		if(record.length==0)
+		{
+			result.msg=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.msg=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		
+		var msgList=record[0].Record;
+		for(var i=0;i<msgList.length;i++)
+		{
+			if(appList.map[msgList[i].T_AppID]!=undefined)
+			{
+				var content=TSS.Utils.decode64(msgList[i].T_Content);
+				content = content.replace(/\n/g, "<br>");
+				content = content.replace(/\s/g, "&nbsp;");
+				content = content.replace(new RegExp('(["\"])', 'g'),"\\\"");
+				//
+				result.msg[result.msg.length]={
+												id:msgList[i].T_EventCode,
+												time:msgList[i].T_Time,
+												title:msgList[i].T_Title,
+												content:content,
+												imgfile:msgList[i].T_ImageFile,
+												appname:appList.data[appList.map[msgList[i].T_AppID]].short
+											};
+			}
+		}
+		//读取联络消息
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsOS",false,"select T_AskCode,T_ToUser,T_FromUser,T_CallText,T_CallDate,T_AnswerText,T_AnswerDate,T_AppID from SaymaDataTable where T_CallDate>='"+startTime.Format("yyyy-MM-dd") +"' and T_CallDate<'"+endTime.Format("yyyy-MM-dd") +"' and (T_ToUser='*' or T_ToUser='"+currentUser.userName+"') and T_FromUser!='"+currentUser.userName+"'  order by T_CallDate"));
+		if(record.length==0)
+		{
+			result.msg=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.msg=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		var msgList=record[0].Record;
+		for(var i=0;i<msgList.length;i++)
+		{
+			if(userList.map[msgList[i].T_FromUser]!=undefined)
+			{
+				result.msg[result.msg.length]={
+												id:msgList[i].T_AskCode,
+												time:msgList[i].T_CallDate,
+												title:userList.data[userList.map[msgList[i].T_FromUser]].fullName,
+												content:msgList[i].T_CallText,
+												appname:"工作联络"
+											};
+			}
+			//
+			if(appList.map[msgList[i].T_AppID]!=undefined
+				&& msgList[i].T_AnswerText.length>0)
+			{
+				result.msg[result.msg.length]={
+												id:msgList[i].T_AskCode,
+												time:msgList[i].T_AnswerDate,
+												title:msgList[i].T_CallText,
+												content:msgList[i].T_AnswerText,
+												appname:appList.data[appList.map[msgList[i].T_AppID]].short
+											};
+			}
+		}
+		//未读公共消息
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsOS",false,"select T_MessageID,T_Time,T_Title,T_Body,T_AppID from MessageDataTable where T_Time>='"+startTime.Format("yyyy-MM-dd") +"' and T_Time<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' and T_UserID!="+currentUser.userID+" and (T_ToUser='*' or T_ToUser='"+currentUser.userName+"') order by T_Time desc"));
+		if(record.length==0)
+		{
+			result.msg=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.msg=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		var msgList=record[0].Record;
+		for(var i=0;i<msgList.length;i++)
+		{
+			if(appList.map[msgList[i].T_AppID]!=undefined)
+			{
+				result.msg[result.msg.length]={
+												id:msgList[i].T_MessageID,
+												time:msgList[i].T_Time,
+												title:msgList[i].T_Title,
+												content:msgList[i].T_Body,
+												imgfile:"",
+												appname:appList.data[appList.map[msgList[i].T_AppID]].short
+											};
+			}
+		}
+		//读取短信消息
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsOS",false,"select T_SmsID,T_Time,T_SmsPhone,T_SmsMessage,T_Type,T_AppID from SMSDataTable where T_Time>='"+startTime.Format("yyyy-MM-dd") +"' and T_Time<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' and T_UserID!="+currentUser.userID+" and T_SmsPhone='"+currentUser.phoneNum+"'  order by T_Time desc"));
+		if(record.length==0)
+		{
+			result.msg=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.msg=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		var msgList=record[0].Record;
+		for(var i=0;i<msgList.length;i++)
+		{
+			if(appList.map[msgList[i].T_AppID]!=undefined)
+			{
+				result.msg[result.msg.length]={
+												id:msgList[i].T_SmsID,
+												time:msgList[i].T_Time,
+												title:msgList[i].T_Type==0?("发送至"+msgList[i].T_SmsPhone+"的短信"):("接受自"+msgList[i].T_SmsPhone+"的短信"),
+												content:msgList[i].T_SmsMessage,
+												imgfile:"",
+												appname:appList.data[appList.map[msgList[i].T_AppID]].short
+											};
+			}
+		}
+		//读取邮件消息
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsOS",false,"select T_MailID,T_MailTime,T_Subject,T_Body,T_AppID from MailDataTable where T_MailTime>='"+startTime.Format("yyyy-MM-dd") +"' and T_MailTime<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' and T_UserID!="+currentUser.userID+" and (T_Recipient='"+currentUser.eMail+"' or T_RecipientCC='"+currentUser.eMail+"') and T_Type=1 order by T_MailTime desc"));
+		if(record.length==0)
+		{
+			result.msg=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.msg=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		var msgList=record[0].Record;
+		for(var i=0;i<msgList.length;i++)
+		{
+			if(appList.map[msgList[i].T_AppID]!=undefined)
+			{
+				result.msg[result.msg.length]={
+												id:msgList[i].T_MailID,
+												time:msgList[i].T_MailTime,
+												title:msgList[i].T_Subject,
+												content:msgList[i].T_Body,
+												imgfile:"",
+												appname:appList.data[appList.map[msgList[i].T_AppID]].short
+											};
+			}
+		}
+		//
+		result.flag=true;
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

@@ -1,0 +1,30 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			text:""
+		};
+		//
+		var dbname=Request.Form("dbname");
+		var dbtype=parseInt(Request.Form("dbtype"));
+		if(dbtype==0)
+		{
+			if(!System.KVDB.CreateDataBase(dbname))
+				result.text=System.RDC.GetLastError();
+			else
+				result.flag=true;
+		}
+		else
+		{
+			if(!System.RDC.CreateDataBase(dbname,true))
+				result.text=System.RDC.GetLastError();
+			else
+				result.flag=true;
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "text/plain";
+%>

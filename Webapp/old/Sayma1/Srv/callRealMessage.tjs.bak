@@ -1,0 +1,355 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	var app=[];
+	var appList = Session("CPS");
+	if(appList==undefined)
+	{
+		appList = TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System",""));
+		Session("CPS") = appList;
+	}
+	//
+	if(appList.flag)
+	{
+		for(var i=0;i<appList.data.length;i++)
+		{
+			if(appList.data[i].app.launch.enable
+				&& appList.data[i].app.launch.container=="proxy")
+			{
+				app.push(appList.data[i]);
+			}
+		}
+	}
+	//匹配语句相似度
+	function MatchKeyWord(key,word)
+	{
+		var nCount=0;
+		var nSearchIdx=-1;
+		for(var k=0;k<key.length;k++)
+		{
+			for(var l=0;l<word.length;l++)
+			{
+				if(key[k]==word[l])
+				{
+					nCount++;
+					nSearchIdx=l+1;
+					break;
+				}
+			}
+		}
+		return (nCount*1.0/key.length+nCount*1.0/word.length);
+	}
+	//找关键词
+	function FindKeyWord(key,word,removeflag)
+	{
+		for(var k=0;k<key.length;k++)
+		{
+			if(key[k]==word.toLowerCase())
+			{
+				if(removeflag)
+				{
+					key.splice(k,1);
+					k--;
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+	//基于关键词固定回答
+	function AskKeyWord(call,from,sessionid)
+	{
+		var result = {
+					flag:false,
+					key:[],
+					match:0,
+					text:"",
+					kid:""
+				};
+		//分词
+		var keyWord=Server.SplitWord(call);
+		result.key=keyWord.split("/");
+		//去掉停顿词及标点
+		var stopword=["！","＂","＃","＄","％","＆","＇","（","）","＊","＋","，","－","．","／","：","；","＜","＝","＞","？","＠","［","＼","］","＾","＿","｀","｛","｜","｝","～","、","。","〃","〈","《","「","」","『","』","【","】","〒","〓","〔","〕","〖","〗","〝","〞","的","吗","不","我","们","起","就","最","在","人","有","是","为","以","于","上","他","而","后","之","来","由","及","了","下","可","到","这","与","也","因","此","但","并","个","其","已","无","小","今","去","再","好","只","又","或","很","亦","某","把","那","你","乃","它","吧","被","比","别","趁","当","从","到","得","打","凡","儿","尔","该","各","给","跟","和","何","还","即","几","既","看","据","距","靠","啦","了","另","么","每","们","嘛","拿","哪","那","您","凭","且","却","让","仍","啥","如","若","使","谁","虽","随","同","所","她","哇","嗡","往","哪","些","向","沿","哟","用","于","咱","则","怎","曾","至","致","着","诸","自","啊"];
+		//
+		for(var i=0;i<result.key.length;i++)
+		{
+			for(var j=0;j<stopword.length;j++)
+			{
+				if(result.key[i]==stopword[j])
+				{
+					result.key.splice(i,1);
+					i--;
+				}
+			}
+		}
+		//
+		if(call=="谢谢" || call=="谢谢！" || call=="谢谢!")
+		{
+			result.flag=true;
+			result.match=1;
+			result.text="不客气啦！";
+			return result;
+		}
+		else if(call.toLowerCase()=="hi" || call=="你好" || call=="您好" || call=="你好。" || call=="您好。" || call=="你好！" || call=="您好！")
+		{
+			var tc1 = new Date();
+			if(tc1.getHours()>=6 && tc1.getHours()<11)
+			{
+				result.flag=true;
+				result.match=1;
+				result.text="嗨，早安！";
+			}
+			else if(tc1.getHours()>=11 && tc1.getHours()<13)
+			{
+				result.flag=true;
+				result.match=1;
+				result.text="中午好，有什么需要帮忙？";
+			}
+			else if(tc1.getHours()>=13 && tc1.getHours()<17)
+			{
+				result.flag=true;
+				result.match=1;
+				result.text="下午好！";
+			}
+			else if(tc1.getHours()>=17 && tc1.getHours()<19)
+			{
+				result.flag=true;
+				result.match=1;
+				result.text="嗨，傍晚好！";
+			}
+			else if(tc1.getHours()>=19 && tc1.getHours()<22)
+			{
+				result.flag=true;
+				result.match=1;
+				result.text="嗨，晚上好！";
+			}
+			else if(tc1.getHours()>=22 || tc1.getHours()<6)
+			{
+				result.flag=true;
+				result.match=1;
+				result.text="有点晚了，注意休息！";
+			}
+			return result;
+		}
+		//
+		if(FindKeyWord(result.key,"天气"))
+		{
+			var weather=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/Weather",""));
+			if(weather.flag)
+			{
+				if(FindKeyWord(result.key,"今天"))
+				{
+					result.flag=true;
+					result.match=1;
+					result.text=('<div class="weui_media_box" style="font-size:12pt;padding:0px;height: 100px;overflow: hidden;">'
+						+'				<div class="lt"><span style="font-size:28pt;">'+weather.data.future[0].day+'</span><br><span style="font-size:14pt;">'+weather.data.future[0].cop+'</span></div>'
+						+'				<div class="rt1"><i class="icon-weather-'+weather.data.future[0].code1+'"></i></div>'
+						+'				<div class="rt2">'+weather.data.future[0].text+'<p>'+weather.data.future[0].low+'~'+weather.data.future[0].high+'℃</p></div>'
+						+'			</div>');
+					return result;
+				}
+				else if(FindKeyWord(result.key,"明天"))
+				{
+					result.flag=true;
+					result.match=1;
+					result.text=('<div class="weui_media_box" style="font-size:12pt;padding:0px;height: 100px;overflow: hidden;">'
+						+'				<div class="lt"><span style="font-size:28pt;">'+weather.data.future[1].day+'</span><br><span style="font-size:14pt;">'+weather.data.future[1].cop+'</span></div>'
+						+'				<div class="rt1"><i class="icon-weather-'+weather.data.future[1].code1+'"></i></div>'
+						+'				<div class="rt2">'+weather.data.future[1].text+'<p>'+weather.data.future[1].low+'~'+weather.data.future[1].high+'℃</p></div>'
+						+'			</div>');
+					return result;
+				}
+				else if(FindKeyWord(result.key,"后天"))
+				{
+					result.flag=true;
+					result.match=1;
+					result.text=('<div class="weui_media_box" style="font-size:12pt;padding:0px;height: 100px;overflow: hidden;">'
+						+'				<div class="lt"><span style="font-size:28pt;">'+weather.data.future[2].day+'</span><br><span style="font-size:14pt;">'+weather.data.future[2].cop+'</span></div>'
+						+'				<div class="rt1"><i class="icon-weather-'+weather.data.future[2].code1+'"></i></div>'
+						+'				<div class="rt2">'+weather.data.future[2].text+'<p>'+weather.data.future[2].low+'~'+weather.data.future[2].high+'℃</p></div>'
+						+'			</div>');
+					return result;
+				}
+				else if(FindKeyWord(result.key,"昨天"))
+				{
+					result.flag=true;
+					result.match=1;
+					result.text=('<div class="weui_media_box" style="font-size:12pt;padding:0px;height: 100px;overflow: hidden;">'
+						+'				<div class="lt"><span style="font-size:28pt;">'+weather.data.history[6].day+'</span><br><span style="font-size:14pt;">'+weather.data.history[6].cop+'</span></div>'
+						+'				<div class="rt1"><i class="icon-weather-'+weather.data.history[6].code1+'"></i></div>'
+						+'				<div class="rt2">'+weather.data.history[6].text+'<p>'+weather.data.history[6].low+'~'+weather.data.history[6].high+'℃</p></div>'
+						+'			</div>');
+					return result;
+				}
+				else if(FindKeyWord(result.key,"前天"))
+				{
+					result.flag=true;
+					result.match=1;
+					result.text=('<div class="weui_media_box" style="font-size:12pt;padding:0px;height: 100px;overflow: hidden;">'
+						+'				<div class="lt"><span style="font-size:28pt;">'+weather.data.history[5].day+'</span><br><span style="font-size:14pt;">'+weather.data.history[5].cop+'</span></div>'
+						+'				<div class="rt1"><i class="icon-weather-'+weather.data.history[5].code1+'"></i></div>'
+						+'				<div class="rt2">'+weather.data.history[5].text+'<p>'+weather.data.history[5].low+'~'+weather.data.history[5].high+'℃</p></div>'
+						+'			</div>');
+					return result;
+				}
+			}
+		}
+		else
+		{
+			//资源信息模型
+			for(var i=0;i<app.length;i++)
+			{
+				var answer=TSS.JSON.decode(Server.ExecuteAPIExt("PUT","/API/System/"+app[i].appPath+"/Sayma",encodeURI('call='+call),"2.0",from,sessionid));
+				if(answer!=null
+					&& answer.flag 
+					&& answer.match>result.match)
+				{
+					result.flag=true;
+					result.match=answer.match;
+					result.text=answer.text;
+				}
+				//
+				if(result.flag 
+					&& result.match>0.5)
+				{
+					break;
+				}
+			}
+			//
+			if(!result.flag)
+			{
+				//同类检索
+				var resSet =TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"SELECT T_AnswerText,T_CallKey FROM SaymaDataTable where T_CallText='"+escape(escape(call))+"' and T_CallKey!=''"));
+				if(resSet.length==0)
+				{
+					return System.RDC.GetLastError();
+				}
+				var record=resSet[0];
+				if(record.MessageCode>0)
+				{
+					return record.MessageText;
+				}
+				if(record.Record.length>0)
+				{
+					result.flag=true;
+					result.match=1;
+					result.text=unescape(unescape(record.Record[0].T_AnswerText));
+					result.kid=record.Record[0].T_CallKey;
+					return result;
+				}
+				//深度检索
+				var startOffset=0;
+				do
+				{
+					var resSet =TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"SELECT T_CommunityID,T_Time,T_UserName,T_Title,T_Body FROM CommunityDataTable where T_Review=1 LIMIT  "+startOffset+",100"));
+					if(resSet.length==0)
+					{
+						return System.RDC.GetLastError();
+					}
+					var record=resSet[0];
+					if(record.MessageCode>0)
+					{
+						return record.MessageText;
+					}
+					//
+					var articleList=record.Record;
+					for(var i=0;i<articleList.length;i++)
+					{
+						startOffset++;
+						var keyWord=Server.SplitWord(unescape(unescape(articleList[i].T_Title))+unescape(unescape(articleList[i].T_Body)));
+						var word=keyWord.split("/");
+						var match=MatchKeyWord(result.key,word);
+						if(match>1
+							&& match>result.match)
+						{
+							result.flag=true;
+							result.match=match;
+							result.text="<h4>"+unescape(unescape(articleList[i].T_Title))+"</h4>"+unescape(unescape(articleList[i].T_Body));
+							result.kid=articleList[i].T_CommunityID;
+						}
+						//
+						if(result.flag 
+							&& result.match>1)
+						{
+							break;
+						}
+					}
+					//
+					if(result.flag)
+					{
+						Server.DebugPrint(result.text);
+						break;
+					}
+				}
+				while (startOffset%100==0);
+			}
+		}
+		return result;
+	}
+	//
+	Response.clear();
+	Response.write(function(){
+		var nCount=1;
+		var nAsk=0;
+		var fromUser = Request.QueryString("fromUser");
+		//
+		var tc=new Date();
+		var resSet =TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"SELECT T_AskCode,T_FromUser,T_CallText,T_CallDate,T_AnswerText,T_AnswerDate,T_SessionID,T_AppID FROM SaymaDataTable where T_FromUser='"+fromUser+"' and T_ToUser='Sayma' and T_CallDate>='"+tc.Format("yyyy-MM-dd") +"' and T_Match is null"));
+		if(resSet.length==0)
+		{
+			return System.RDC.GetLastError();
+		}
+		var record=resSet[0];
+		if(record.MessageCode>0)
+		{
+			return record.MessageText;
+		}
+		//
+		var askList=record.Record;
+		if(askList.length==0)
+		{
+			System.Basic.MSleep(1000);
+			nCount++;
+		}
+		else
+		{
+			for(var i=0;i<askList.length;i++)
+			{
+				var ret=AskKeyWord(unescape(unescape(askList[i].T_CallText)),askList[i].T_FromUser,askList[i].T_SessionID);
+				if(ret.flag)
+				{
+					var tc=new Date();
+					var resSet =TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"UPDATE SaymaDataTable SET T_CallKey='"+ret.kid+"',T_AnswerText='"+escape(ret.text)+"',T_AnswerDate='"+tc.Format("yyyy-MM-dd hh:mm:ss")+"',T_Match="+ret.match+" where T_AskCode="+askList[i].T_AskCode));
+					if(resSet.length==0)
+					{
+						return System.RDC.GetLastError();
+					}
+					var record=resSet[0];
+					if(record.MessageCode>0)
+					{
+						return record.MessageText;
+					}
+					//
+					nAsk++;
+				}
+				else
+				{
+					var tc=new Date();
+					var resSet =TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"UPDATE SaymaDataTable SET T_Match=0 where T_AskCode="+askList[i].T_AskCode));
+					if(resSet.length==0)
+					{
+						return System.RDC.GetLastError();
+					}
+					var record=resSet[0];
+					if(record.MessageCode>0)
+					{
+						return record.MessageText;
+					}
+				}
+			}
+		}
+		return "机器对话"+nAsk+"个";
+	}());
+	Response.ContentType = "text/plain";
+%>

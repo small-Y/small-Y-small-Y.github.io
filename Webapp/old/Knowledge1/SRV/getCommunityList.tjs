@@ -1,0 +1,74 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result = {
+				flag:true,
+				info:"",
+				data:[]
+			};
+		//
+		var startTime=Request.QueryString("startTime");
+		var endTime=Request.QueryString("endTime");
+		//
+		var szSql="";
+		var userInfo=TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		if(userInfo.userTypeNum<1)
+		{
+
+			var text = "";
+			text += "SELECT ";
+			text += " AA.*, B.\"TypeName\"";
+			text += " FROM ";
+			text += " CommunityDataTable AS AA";
+			text += " LEFT JOIN CommunityTypeTable AS B ON AA.\"TypeID\" = B.\"TypeID\" ";
+			text += " WHERE";
+			text += " AA.\"T_Time\" >= '"+startTime+"'";
+			text += " AND AA.\"T_Time\" <= '"+endTime+"'";
+
+			var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,text))[0];
+			if(resSet.length==0)
+			{
+				return System.RDC.GetLastError();
+			}
+			if (resSet.MessageCode>0){
+				result.flag=false;
+				result.info=resSet.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			result.data=resSet.Record;
+			for(var i=0;i<resSet.Record.length;i++)
+			{
+				result.data[i]=resSet.Record[i];
+				result.data[i].ImageFile=[];
+				var szSql="select \"T_ImageFile\" from CommunityImageTable where \"T_CommunityID\"="+resSet.Record[i].T_CommunityID;
+				var resSet2 = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+				if (resSet2.MessageCode>0){
+					result.info=resSet2.MessageText;
+					return TSS.JSON.encode(result);
+				}
+				for(var j=0;j<resSet2.Record.length;j++)
+				{
+					result.data[i].ImageFile[j]=resSet2.Record[j].T_ImageFile;
+				}
+
+				result.data[i].Tags=[];
+				var szSql="select * from CommunityTagTable where \"T_CommunityID\"="+resSet.Record[i].T_CommunityID;
+				var resSet2 = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+				if (resSet2.MessageCode>0){
+					result.info=resSet2.MessageText;
+					return TSS.JSON.encode(result);
+				}
+				for(var j=0;j<resSet2.Record.length;j++)
+				{
+					result.data[i].Tags[j]={id:resSet2.Record[j].Tag,text:resSet2.Record[j].Tag};
+				}
+			}
+		}
+
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

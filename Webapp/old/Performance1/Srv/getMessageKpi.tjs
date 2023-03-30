@@ -1,0 +1,83 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:true,
+			info:"",
+			MessagePie1:[{name:"空闲CPU",y:0,color:"#00ccff"},{name:"使用CPU",y:0,color:"#ff8080"}],
+			MessagePie2:[{name:"剩余内存",y:0,color:"#c0c0c0"},{name:"使用内存",y:0,color:"#0099cc"}],
+			MessagePie3:[{name:"活跃会话",y:0,color:"#00cc99"},{name:"挂起会话",y:0,color:"#663399"}],
+			cpuLine:[{type: 'areaspline',name:"CPU占用量",color:"#ff8080",data:[]}],
+			memLine:[{type: 'areaspline',name:"内存使用量",color:"#0099cc",data:[]}],
+			linkLine:[{type: 'spline',name:"活跃会话量",color:"#00cc99",data:[]},{type: 'spline',name:"共计会话量",color:"#663399",data:[]}]
+		};
+		//
+		var startTime = Request.QueryString("startTime");
+		var endTime = Request.QueryString("endTime");
+		//
+		if(startTime=="" || startTime==undefined)
+		{
+			var tc = new Date();
+			startTime = new Date();
+			startTime.setFullYear(tc.getFullYear(),tc.getMonth(),tc.getDate());
+			startTime.setHours(0,0,0,0);
+			startTime=startTime.DateAdd("d",-2);
+		}
+		else
+		{
+			startTime = TSS.Utils.parseDate(startTime);
+			startTime.setHours(0,0,0,0);
+		}
+
+		if(endTime=="" || endTime==undefined)
+		{
+			endTime = new Date();
+		}
+		else
+		{
+			endTime = TSS.Utils.parseDate(endTime);
+		}
+		//
+		var serverInfo=TSS.JSON.decode(System.Basic.GetServerStatus());
+		result.MessagePie1[0].y=100-serverInfo.CpuUsage;
+		result.MessagePie1[1].y=serverInfo.CpuUsage;
+		result.MessagePie2[0].y=serverInfo.MemoryTotalPhys-serverInfo.MemoryUsagePhys;
+		result.MessagePie2[1].y=serverInfo.MemoryUsagePhys;
+		result.MessagePie3[0].y=serverInfo.ActiveSession;
+		result.MessagePie3[1].y=serverInfo.SessionTotal-serverInfo.ActiveSession;
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"updateTime\",\"nCpuUsage\",\"nMemoryUsagePhys\",\"nMemoryTotalPhys\",\"nActiveSessionTotal\",\"nSessionTotal\" from SystemPerformance where \"updateTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"updateTime\"<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' order by \"updateTime\""));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		result.cpuLine[0].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+		result.memLine[0].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+		result.linkLine[0].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+		result.linkLine[1].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			var updateTime=TSS.Utils.parseDate(record[0].Record[i].updateTime);
+			result.cpuLine[0].data[i+1]=[Date.UTC(updateTime.getFullYear(),updateTime.getMonth(),updateTime.getDate(),updateTime.getHours(),updateTime.getMinutes(),0),record[0].Record[i].nCpuUsage];
+			result.memLine[0].data[i+1]=[Date.UTC(updateTime.getFullYear(),updateTime.getMonth(),updateTime.getDate(),updateTime.getHours(),updateTime.getMinutes(),0),record[0].Record[i].nMemoryUsagePhys];
+			result.linkLine[0].data[i+1]=[Date.UTC(updateTime.getFullYear(),updateTime.getMonth(),updateTime.getDate(),updateTime.getHours(),updateTime.getMinutes(),0),record[0].Record[i].nActiveSessionTotal];
+			result.linkLine[1].data[i+1]=[Date.UTC(updateTime.getFullYear(),updateTime.getMonth(),updateTime.getDate(),updateTime.getHours(),updateTime.getMinutes(),0),record[0].Record[i].nSessionTotal];
+		}
+		result.cpuLine[0].data[result.cpuLine[0].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+		result.memLine[0].data[result.memLine[0].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+		result.linkLine[0].data[result.linkLine[0].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+		result.linkLine[1].data[result.linkLine[1].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

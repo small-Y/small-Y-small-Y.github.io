@@ -1,0 +1,33 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			dbname:"",
+			text:""
+		};
+		//
+		var dbname=Request.Form("dbname");
+		var dbtype=parseInt(Request.Form("dbtype"));
+		if(dbtype==0)
+		{
+			if(!System.KVDB.RemoveDataBase(dbname))
+				result.text=System.RDC.GetLastError();
+			else
+				result.flag=true;
+			result.dbname=dbname;
+		}
+		else
+		{
+			if(!System.RDC.RemoveDataBase(dbname,true))
+				result.text=System.RDC.GetLastError();
+			else
+				result.flag=true;
+			result.dbname=dbname;
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "text/plain";
+%>

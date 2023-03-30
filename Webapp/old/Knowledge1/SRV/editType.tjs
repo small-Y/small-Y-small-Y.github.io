@@ -1,0 +1,33 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result = {
+				flag:true,
+				info:"±à¼­³É¹¦£¡"
+			};
+		//
+		//
+		var typeID = Request.Form("typeID");
+		var typeName = Request.Form("typeName");
+		var typeMemo = Request.Form("typeMemo");
+		var szSql="";
+		var userInfo=TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		if(userInfo.userTypeNum<1)
+		{
+
+			szSql="update CommunityTypeTable set \"TypeName\"='"+typeName+"',\"Memo\"='"+typeMemo+"' where \"TypeID\"='"+typeID+"'";
+			var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+			if (resSet.MessageCode>0){
+				result.flag=false;
+				result.info=resSet.MessageText;
+				return TSS.JSON.encode(result);
+			}
+
+		}
+
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

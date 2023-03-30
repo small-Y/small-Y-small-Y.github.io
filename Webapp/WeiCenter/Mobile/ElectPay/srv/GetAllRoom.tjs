@@ -1,0 +1,73 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<!--#INCLUDE FILE="base_extend.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	function signResource(method,url,user,pass){
+		var now = new Date();
+		return "TOS username=\""+user+"\", uri=\""+encodeURI(url)+"\", response=\""+(System.Security.ComputerMD5(now.Format("yyyy-MM-dd")+":"+method+":"+encodeURI(url)+":"+pass,false)).toLowerCase()+"\"";
+	}
+
+	Response.clear();
+	Response.write(function(){
+	    var ret={"success":true,"gData":[],"nData":[],"msg":""};
+
+		var parent = Request.form("opcpath");
+
+		if(parent==undefined||parent==""){
+			parent="CCPS.BJUT";
+		}
+
+		var res=TSS.JSON.decode(Server.ExecuteAPI("GET","/Project/CCPS/srv/getGroupTree.ejs?parent="+parent,""));
+
+//		var xmlHttp = Server.CreateObject("MSXML2.ServerXMLHTTP.6.0");
+//		var url= 'https://hqiot.bjut.edu.cn/API/System/CCPS/Facility?type=node&opcpath=CCPS.BJUT';
+//		xmlHttp.open('GET',url,false);
+//		xmlHttp.setOption(2, 13056);  //https
+//		xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+//		xmlHttp.setRequestHeader("Authorization",signResource("GET",url,TSS.Project.ApiUser,TSS.Project.ApiPass));
+//		xmlHttp.send();
+//		return xmlHttp.responseText;
+//		Server.DebugPrint("1####"+xmlHttp.responseText);
+//		var res=TSS.JSON.decode(xmlHttp.responseText);
+
+
+
+		for(var i=0;i<res.length;i++){
+			var o={
+				szOPCFullPath:res[i].li_attr.GroupFullTag,
+				ObjectTag:res[i].li_attr.ObjectInfo.ObjectTag,
+				szOPCFullName:res[i].li_attr.GroupFullName
+			}
+			ret.gData.push(o);
+		}
+		if(res.length==0){
+			var nRes=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/CCPS/Facility?type=node&opcpath="+parent,""));
+//			var xmlHttp = Server.CreateObject("MSXML2.ServerXMLHTTP.6.0");
+//			var url= TSS.Project.ElectPayUrl+"/API/System/CCPS/Facility?type=node&opcpath="+parent;
+//			xmlHttp.open('GET',url,false);
+//			xmlHttp.setOption(2, 13056);  //https
+//			xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+//			xmlHttp.setRequestHeader("Authorization",signResource("GET",url,TSS.Project.ApiUser,TSS.Project.ApiPass));
+//			xmlHttp.send();
+//			Server.DebugPrint("####2"+xmlHttp.responseText);
+//			var nRes=TSS.JSON.decode(xmlHttp.responseText);
+
+			for(var i=0;i<nRes.length;i++){
+				if(nRes[i].NodeTag=="Account"){
+					var o={
+						bOnLineFlag:nRes[i].OnLineFlag,
+						szOPCFullPath:nRes[i].NodeFullTag,
+						szOPCFullName:nRes[i].NodeFullName.split(".").slice(0,nRes[i].NodeFullName.split(".").length-1).join(".")
+					}
+					ret.nData.push(o);
+				}
+			}
+
+		}
+		
+		 return TSS.JSON.encode(ret);
+		
+		
+	}());
+	Response.ContentType = "text/plain";
+%>

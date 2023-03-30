@@ -1,0 +1,24 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:true,
+			text:""
+		};
+		//
+		var smsList=TSS.JSON.decode(Request.Form("smsList"));
+		for(var i=0;i<smsList.length;i++)
+		{
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from SMSDataTable where \"T_SmsID\"='"+smsList[i]+"'"))[0];
+			if(record.MessageCode>0)
+			{
+				result.flag=false;
+				result.text=record.MessageText;
+				return TSS.JSON.encode(result);
+			}
+		}
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

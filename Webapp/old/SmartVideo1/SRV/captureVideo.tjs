@@ -1,0 +1,29 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+    Response.Write(function () {
+		var n1=0;
+		var n2=0;
+		var videoList=TSS.JSON.decode(System.Net.GetVideoList());
+		for(var i=0;i<videoList.length;i++)
+		{
+			var now=new Date();
+			var imgFile=videoList[i].VideoID+"-"+now.getTime()+".jpg";
+			if(System.Net.CaptureVideoPicture(videoList[i].VideoID,"/API/Video/Data/"+imgFile))
+			{
+				n1++;
+				var szSql="Insert into VideoImageTable (T_VideoID,T_Time,T_File) values ('"+videoList[i].VideoID+"','"+(new Date()).Format("yyyy-MM-dd hh:mm:ss")+"','"+imgFile+"')";
+				var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("sysdoc",true,szSql))[0];
+				if (resSet.MessageCode>0){
+					return resSet.MessageText;
+				}
+			}
+			else
+			{
+				n2++;
+			}
+		}
+        return "定时抓拍"+n1+"个成功，"+n2+"个失败。";
+    } ());
+    Response.ContentType = "text/plain";
+%>

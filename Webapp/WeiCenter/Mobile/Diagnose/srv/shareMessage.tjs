@@ -1,0 +1,45 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:true,
+			text:""
+		};
+		var touser=Request.Form("to");
+		var title=Request.Form("title");
+		var msgid=Request.Form("msgid");
+		var msgtext=Request.Form("msgtext");
+		var tc=new Date();
+		var call=msgtext+(title==""?'Çë×ÃÇé¹Ø×¢£¡':title);
+		//
+		var ret=TSS.JSON.decode(Server.ExecuteAPI("PUT","/API/Sayma","to="+touser+"&call="+call.replace(/%/g, "%25")));
+		if(!ret.flag)
+		{
+			result.flag=false;
+			result.text=ret.info;
+			return TSS.JSON.encode(result);
+		}
+		//
+		if(title.length>0)
+		{
+			var userInfo = TSS.JSON.decode(System.OAuth.GetCurrentUser());
+			//
+			var resSet =TSS.JSON.decode(System.RDC.ExcuteSQL("syslog",true,"Insert into SuggestionDataTable (T_MessageID,T_Time,T_User,T_Name,T_Body) values ("+msgid+",'"+tc.Format("yyyy-MM-dd hh:mm:ss")+"','"+userInfo.userName+"','"+userInfo.fullName+"','"+title+"')"));
+			if(resSet.length==0)
+			{
+				result.text=System.RDC.GetLastError();
+				return TSS.JSON.encode(result);
+			}
+			var record=resSet[0];
+			if(record.MessageCode>0)
+			{
+				result.text=record.MessageText;
+				return TSS.JSON.encode(result);
+			}
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

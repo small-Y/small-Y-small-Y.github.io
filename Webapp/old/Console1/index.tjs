@@ -1,0 +1,71 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+    if(!System.Storage.IsFileExist(Request.ServerVariables("PATH_INFO")+"manifest.json"))
+	{
+        Response.Write("该应用程序未正确安装！");
+        Response.End();
+    }
+
+    var  appItem = TSS.JSON.decode(System.Storage.ReadTextFile(Request.ServerVariables("PATH_INFO") + "manifest.json"));
+    if(appItem)
+    {
+        Response.Cookies("AppID") = appItem.appid;
+	    Response.Cookies("AppID").path = Request.ServerVariables("PATH_INFO");
+    }
+%>
+<html>
+ <head>
+  <title><%=appItem.name+" "+appItem.version%></title>
+  <meta charset="utf-8" />
+  <meta name="copyright" content= "<%=appItem.author%>" />
+  <script type="text/javascript" src="/AppEngine/jQuery/jquery2.min.js"></script>
+  <script type="text/javascript" src="/AppEngine/CoreExt/ThingsUI/base.js"></script>
+  <script type="text/javascript" src="js/console.js"></script>
+  <style type="text/css">
+	body {
+		width: 100%;
+		height: 100%;
+		background: black;
+		padding:0px;margin:0px;
+	}
+
+	#console {
+		height:100%;
+		width:100%;
+		overflow: hidden;
+	}
+
+	.inputStyle{
+		color: #fff;
+		background: #000;
+		border-top:1px  solid #aaa;
+		border-bottom:0px  solid #ffffff;
+		border-left:0px  solid #ffffff;
+		border-right:0px  solid #ffffff;
+		position: absolute;
+		right: 0px;
+		left: 0px;
+		bottom: 0px;
+		height: 24px;
+		width:100%;
+		padding:4px;
+		font-family:Arial,Tahoma,微软雅黑;
+		font-size:12px;
+	}
+
+	.inputStyle:focus {
+		outline: none;
+	}
+
+  </style>
+ </head>
+
+ <body>
+	<script type="text/javascript">
+		$(function() {
+			new jConsol();
+		});
+	</script>
+ </body>
+</html>

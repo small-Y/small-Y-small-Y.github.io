@@ -1,0 +1,367 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			data:[]
+		};
+		//
+		var type=parseInt(Request.QueryString("type"));
+		var id=parseInt(Request.QueryString("id"));
+		//
+		var UserType=["分级管理账户","普通访问账户","应用接口账户","临时禁用账户"];
+		var orgMap=new Array();
+		var basic = TSS.JSON.decode(System.Basic.GetServerStatus());
+		orgMap[2]=basic.AuthName;
+		//
+		var loginInfo = TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		if(!loginInfo.loginStatus)
+		{
+			result.flag=false;
+			result.text="尚未登录";
+			return TSS.JSON.encode(result);
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_ParentID\",\"T_OrgID\",\"T_OrgName\",\"T_FullName\" from OrganizationDataTable order by \"T_FullName\""))[0];
+		if(record.MessageCode>0)
+		{
+			TSS.Utils.log(record.MessageText);
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<record.Record.length;i++)
+		{
+			orgMap[record.Record[i].T_OrgID]=record.Record[i].T_FullName;
+		}
+		//
+		var now=new Date();
+		switch(type)
+		{
+			case 0:
+			{
+				if(id==1)
+				{
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_UserID\",\"T_UserName\",\"T_UserPass\",\"T_FullName\",\"T_OrgID\",\"T_UserType\",\"T_LoginTime\",\"T_LoginIPAddr\" from UserDataTable where \"T_CreateUserID\"="+loginInfo.userID))[0];
+					if(record.MessageCode>0)
+					{
+						TSS.Utils.log(record.MessageText);
+						return TSS.JSON.encode(result);
+					}
+					//
+					result.flag=true;
+					for(var i=0;i<record.Record.length;i++)
+					{
+						result.data[result.data.length]=['<input type="checkbox" id="'+record.Record[i].T_UserID+'" name="selUserID" class="checkboxes"  value="'+record.Record[i].T_UserName+'">',
+															record.Record[i].T_FullName,
+															orgMap[record.Record[i].T_OrgID],
+															UserType[record.Record[i].T_UserType],
+															record.Record[i].T_UserName,
+															TSS.Utils.dateMessage(record.Record[i].T_LoginTime),
+															record.Record[i].T_UserPass==""?"<span class='text-danger'>——</span>":record.Record[i].T_LoginIPAddr,
+															'<a href="javascript:App.doUser(1,'+record.Record[i].T_UserID+');" class="btn btn-sm btn-outline green-haze sbold"><i class="fa fa-pencil"></i> 修改</a>'];
+					}
+				}
+				else if(id==10)
+				{
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_UserID\",\"T_UserName\",\"T_UserPass\",\"T_FullName\",\"T_OrgID\",\"T_UserType\",\"T_LoginTime\",\"T_LoginIPAddr\" from UserDataTable where \"T_UserID\" not in (select \"T_UserID\" from UserGroupRelationTable)"))[0];
+					if(record.MessageCode>0)
+					{
+						TSS.Utils.log(record.MessageText);
+						return TSS.JSON.encode(result);
+					}
+					//
+					result.flag=true;
+					for(var i=0;i<record.Record.length;i++)
+					{
+						result.data[result.data.length]=['<input type="checkbox" id="'+record.Record[i].T_UserID+'" name="selUserID" class="checkboxes"  value="'+record.Record[i].T_UserName+'">',
+															record.Record[i].T_FullName,
+															orgMap[record.Record[i].T_OrgID],
+															UserType[record.Record[i].T_UserType],
+															record.Record[i].T_UserName,
+															TSS.Utils.dateMessage(record.Record[i].T_LoginTime),
+															record.Record[i].T_UserPass==""?"<span class='text-danger'>——</span>":record.Record[i].T_LoginIPAddr,
+															'<a href="javascript:App.doUser(1,'+record.Record[i].T_UserID+');" class="btn btn-sm btn-outline green-haze sbold"><i class="fa fa-pencil"></i> 修改</a>'];
+					}
+				}
+				else
+				{
+					var sql="WITH RECURSIVE userlist (\"T_GroupID\",\"T_GroupName\",\"T_ParentID\") AS "  
+							+"   ( SELECT \"T_GroupID\",\"T_GroupName\",\"T_ParentID\" from UserGroupTable " 
+							+"	 WHERE \"T_GroupID\"="+id
+							+"	 UNION   ALL " 
+							+"	 SELECT a.\"T_GroupID\",a.\"T_GroupName\",a.\"T_ParentID\" FROM    " 
+							+"		 UserGroupTable a,userlist b WHERE b.\"T_GroupID\" = a.\"T_ParentID\"" 
+							+"   ) SELECT * from userlist";
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,sql))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					
+					var idList=[];
+					for(var i=0;i<record.Record.length;i++)
+					{
+						idList[idList.length]=record.Record[i].T_GroupID;
+					}
+					//
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserDataTable where \"T_UserID\" in (select \"T_UserID\" from UserGroupRelationTable where \"T_GroupID\" in ("+idList.join(",")+")) and \"T_CreateUserID\"="+loginInfo.userID))[0];
+					if(record.MessageCode>0)
+					{
+						TSS.Utils.log(record.MessageText);
+						return TSS.JSON.encode(result);
+					}
+					//
+					result.flag=true;
+					for(var i=0;i<record.Record.length;i++)
+					{
+						result.data[result.data.length]=['<input type="checkbox" id="'+record.Record[i].T_UserID+'" name="selUserID" class="checkboxes"  value="'+record.Record[i].T_UserName+'">',
+															record.Record[i].T_FullName,
+															orgMap[record.Record[i].T_OrgID],
+															UserType[record.Record[i].T_UserType],
+															record.Record[i].T_UserName,
+															TSS.Utils.dateMessage(record.Record[i].T_LoginTime),
+															record.Record[i].T_UserPass==""?"<span class='text-danger'>——</span>":record.Record[i].T_LoginIPAddr,
+															'<a href="javascript:App.doUser(1,'+record.Record[i].T_UserID+');" class="btn btn-sm btn-outline green-haze sbold"><i class="fa fa-pencil"></i> 修改</a>'];
+					}
+				}
+			}
+			break;
+			case 1:
+			{
+				if(id==2)
+				{
+					var sql="select * from UserDataTable where \"T_UserType\">0 and \"T_UserID\"!="+loginInfo.userID;
+					if(loginInfo.isUserSuper || loginInfo.isUserAdmin)
+						sql="select * from UserDataTable where \"T_UserID\"!="+loginInfo.userID;
+					//
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,sql))[0];
+					if(record.MessageCode>0)
+					{
+						TSS.Utils.log(record.MessageText);
+						return TSS.JSON.encode(result);
+					}
+					//
+					result.flag=true;
+					for(var i=0;i<record.Record.length;i++)
+					{
+						if(record.Record[i].T_CreateUserID==loginInfo.userID)
+						{
+							result.data[result.data.length]=['<input type="checkbox" id="'+record.Record[i].T_UserID+'" name="selUserID" class="checkboxes"  value="'+record.Record[i].T_UserName+'">',
+															record.Record[i].T_FullName,
+															orgMap[record.Record[i].T_OrgID],
+															UserType[record.Record[i].T_UserType],
+															record.Record[i].T_UserName,
+															TSS.Utils.dateMessage(record.Record[i].T_LoginTime),
+															record.Record[i].T_UserPass==""?"<span class='text-danger'>——</span>":record.Record[i].T_LoginIPAddr,
+															'<a href="javascript:App.doUser(1,'+record.Record[i].T_UserID+');" class="btn btn-sm btn-outline green-haze sbold"><i class="fa fa-pencil"></i> 修改</a>'];
+						}
+						else
+						{
+							result.data[result.data.length]=['&raquo;',
+															record.Record[i].T_FullName,
+															orgMap[record.Record[i].T_OrgID],
+															UserType[record.Record[i].T_UserType],
+															record.Record[i].T_UserName,
+															TSS.Utils.dateMessage(record.Record[i].T_LoginTime),
+															record.Record[i].T_UserPass==""?"<span class='text-danger'>——</span>":record.Record[i].T_LoginIPAddr,
+															'<a href="javascript:App.doAuth('+record.Record[i].T_UserID+');" class="btn btn-sm btn-outline red sbold"><i class="fa fa-pencil"></i> 授权</a>'];
+						}
+					}
+				}
+				else if(id==20)
+				{
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_UserID\",\"T_UserName\",\"T_UserPass\",\"T_FullName\",\"T_OrgID\",\"T_UserType\",\"T_LoginTime\",\"T_LoginIPAddr\" from UserDataTable where \"T_OrgID\" not in (select \"T_OrgID\" from OrganizationDataTable)"))[0];
+					if(record.MessageCode>0)
+					{
+						TSS.Utils.log(record.MessageText);
+						return TSS.JSON.encode(result);
+					}
+					//
+					result.flag=true;
+					for(var i=0;i<record.Record.length;i++)
+					{
+						result.data[result.data.length]=['<input type="checkbox" id="'+record.Record[i].T_UserID+'" name="selUserID" class="checkboxes"  value="'+record.Record[i].T_UserName+'">',
+															record.Record[i].T_FullName,
+															orgMap[record.Record[i].T_OrgID],
+															UserType[record.Record[i].T_UserType],
+															record.Record[i].T_UserName,
+															TSS.Utils.dateMessage(record.Record[i].T_LoginTime),
+															record.Record[i].T_UserPass==""?"<span class='text-danger'>——</span>":record.Record[i].T_LoginIPAddr,
+															'<a href="javascript:App.doUser(1,'+record.Record[i].T_UserID+');" class="btn btn-sm btn-outline green-haze sbold"><i class="fa fa-pencil"></i> 修改</a>'];
+					}
+				}
+				else
+				{
+					var sql="";
+					if(id==2)
+					{
+						if(loginInfo.isUserSuper || loginInfo.isUserAdmin)
+							sql="select * from UserDataTable where \"T_OrgID\"=2 and \"T_UserID\"!="+loginInfo.userID;
+						else
+							sql="select * from UserDataTable where \"T_OrgID\"=2 and \"T_UserType\">0 and \"T_UserID\"!="+loginInfo.userID;
+					}
+					else
+					{
+						var sql="WITH RECURSIVE userlist (\"T_OrgID\",\"T_OrgName\",\"T_ParentID\") AS "  
+								+"   ( SELECT \"T_OrgID\",\"T_OrgName\",\"T_ParentID\" from OrganizationDataTable " 
+								+"	 WHERE \"T_OrgID\"="+id
+								+"	 UNION  ALL " 
+								+"	 SELECT a.\"T_OrgID\",a.\"T_OrgName\",a.\"T_ParentID\" FROM    " 
+								+"		 OrganizationDataTable a,userlist b WHERE b.\"T_OrgID\" = a.\"T_ParentID\"" 
+								+"   ) SELECT * from userlist";
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,sql))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+						
+						var idList=[];
+						for(var i=0;i<record.Record.length;i++)
+						{
+							idList[idList.length]=record.Record[i].T_OrgID;
+						}
+						//
+						if(loginInfo.isUserSuper || loginInfo.isUserAdmin)
+							sql="select * from UserDataTable where \"T_OrgID\"  in ("+idList.join(",")+") and \"T_UserID\"!="+loginInfo.userID;
+						else
+							sql="select * from UserDataTable where \"T_OrgID\"  in ("+idList.join(",")+") and \"T_UserType\">0 and \"T_UserID\"!="+loginInfo.userID;
+					}
+					//
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,sql))[0];
+					if(record.MessageCode>0)
+					{
+						TSS.Utils.log(record.MessageText);
+						return TSS.JSON.encode(result);
+					}
+					//
+					result.flag=true;
+					for(var i=0;i<record.Record.length;i++)
+					{
+						if(record.Record[i].T_CreateUserID==loginInfo.userID)
+						{
+							result.data[result.data.length]=['<input type="checkbox" id="'+record.Record[i].T_UserID+'" name="selUserID" class="checkboxes"  value="'+record.Record[i].T_UserName+'">',
+															record.Record[i].T_FullName,
+															orgMap[record.Record[i].T_OrgID],
+															UserType[record.Record[i].T_UserType],
+															record.Record[i].T_UserName,
+															TSS.Utils.dateMessage(record.Record[i].T_LoginTime),
+															record.Record[i].T_UserPass==""?"<span class='text-danger'>——</span>":record.Record[i].T_LoginIPAddr,
+															'<a href="javascript:App.doUser(1,'+record.Record[i].T_UserID+');" class="btn btn-sm btn-outline green-haze sbold"><i class="fa fa-pencil"></i> 修改</a>'];
+						}
+						else
+						{
+							result.data[result.data.length]=['&raquo;',
+															record.Record[i].T_FullName,
+															orgMap[record.Record[i].T_OrgID],
+															UserType[record.Record[i].T_UserType],
+															record.Record[i].T_UserName,
+															TSS.Utils.dateMessage(record.Record[i].T_LoginTime),
+															record.Record[i].T_UserPass==""?"<span class='text-danger'>——</span>":record.Record[i].T_LoginIPAddr,
+															'<a href="javascript:App.doAuth('+record.Record[i].T_UserID+');" class="btn btn-sm btn-outline red sbold"><i class="fa fa-pencil"></i> 授权</a>'];
+						}
+					}
+				}
+			}
+			break;
+			case 2:
+			{
+				if(id==3)
+				{
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserDataTable where \"T_CreateUserID\"="+loginInfo.userID))[0];
+					if(record.MessageCode>0)
+					{
+						TSS.Utils.log(record.MessageText);
+						return TSS.JSON.encode(result);
+					}
+					//
+					result.flag=true;
+					for(var i=0;i<record.Record.length;i++)
+					{
+						result.data[result.data.length]=['<input type="checkbox" id="'+record.Record[i].T_UserID+'" name="selUserID" class="checkboxes"  value="'+record.Record[i].T_UserName+'">',
+															record.Record[i].T_FullName,
+															orgMap[record.Record[i].T_OrgID],
+															UserType[record.Record[i].T_UserType],
+															record.Record[i].T_UserName,
+															TSS.Utils.dateMessage(record.Record[i].T_LoginTime),
+															record.Record[i].T_UserPass==""?"<span class='text-danger'>——</span>":record.Record[i].T_LoginIPAddr,
+															'<a href="javascript:App.doUser(1,'+record.Record[i].T_UserID+');" class="btn btn-sm btn-outline green-haze sbold"><i class="fa fa-pencil"></i> 修改</a>'];
+					}
+				}
+				else if(id==30)
+				{
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_UserID\",\"T_UserName\",\"T_UserPass\",\"T_FullName\",\"T_OrgID\",\"T_UserType\",\"T_LoginTime\",\"T_LoginIPAddr\" from UserDataTable where \"T_UserID\" not in (select \"T_UserID\" from UserRoleRelationTable)"))[0];
+					if(record.MessageCode>0)
+					{
+						TSS.Utils.log(record.MessageText);
+						return TSS.JSON.encode(result);
+					}
+					//
+					result.flag=true;
+					for(var i=0;i<record.Record.length;i++)
+					{
+						result.data[result.data.length]=['<input type="checkbox" id="'+record.Record[i].T_UserID+'" name="selUserID" class="checkboxes"  value="'+record.Record[i].T_UserName+'">',
+															record.Record[i].T_FullName,
+															orgMap[record.Record[i].T_OrgID],
+															UserType[record.Record[i].T_UserType],
+															record.Record[i].T_UserName,
+															TSS.Utils.dateMessage(record.Record[i].T_LoginTime),
+															record.Record[i].T_UserPass==""?"<span class='text-danger'>——</span>":record.Record[i].T_LoginIPAddr,
+															'<a href="javascript:App.doUser(1,'+record.Record[i].T_UserID+');" class="btn btn-sm btn-outline green-haze sbold"><i class="fa fa-pencil"></i> 修改</a>'];
+					}
+				}
+				else
+				{
+					var sql="WITH RECURSIVE userlist(\"T_RoleID\",\"T_RoleName\",\"T_ParentID\") AS "  
+							+"   ( SELECT \"T_RoleID\",\"T_RoleName\",\"T_ParentID\" from UserRoleTable " 
+							+"	 WHERE \"T_RoleID\"="+id
+							+"	 UNION  ALL " 
+							+"	 SELECT a.\"T_RoleID\",a.\"T_RoleName\",a.\"T_ParentID\" FROM    " 
+							+"		 UserRoleTable a,userlist b WHERE b.\"T_RoleID\" = a.\"T_ParentID\"" 
+							+"   ) SELECT * from userlist";
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,sql))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					
+					var idList=[];
+					for(var i=0;i<record.Record.length;i++)
+					{
+						idList[idList.length]=record.Record[i].T_RoleID;
+					}
+					//
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserDataTable where \"T_UserID\" in (select \"T_UserID\" from UserRoleRelationTable where \"T_RoleID\" in ("+idList.join(",")+")) and \"T_CreateUserID\"="+loginInfo.userID))[0];
+					if(record.MessageCode>0)
+					{
+						TSS.Utils.log(record.MessageText);
+						return TSS.JSON.encode(result);
+					}
+					//
+					result.flag=true;
+					for(var i=0;i<record.Record.length;i++)
+					{
+						result.data[result.data.length]=['<input type="checkbox" id="'+record.Record[i].T_UserID+'" name="selUserID" class="checkboxes"  value="'+record.Record[i].T_UserName+'">',
+															record.Record[i].T_FullName,
+															orgMap[record.Record[i].T_OrgID],
+															UserType[record.Record[i].T_UserType],
+															record.Record[i].T_UserName,
+															TSS.Utils.dateMessage(record.Record[i].T_LoginTime),
+															record.Record[i].T_UserPass==""?"<span class='text-danger'>——</span>":record.Record[i].T_LoginIPAddr,
+															'<a href="javascript:App.doUser(1,'+record.Record[i].T_UserID+');" class="btn btn-sm btn-outline green-haze sbold"><i class="fa fa-pencil"></i> 修改</a>'];
+					}
+				}
+			}
+			break;
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

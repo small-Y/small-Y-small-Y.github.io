@@ -1,0 +1,86 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result=[];
+		var parent=Request.QueryString("parent");
+		var id=Request.QueryString("id");
+		var type=Request.QueryString("type");
+		//
+		var loginInfo = TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		if(!loginInfo.loginStatus)
+		{
+			result.flag=false;
+			result.text="ÉÐÎ´µÇÂ¼";
+			return TSS.JSON.encode(result);
+		}
+		//
+		var groupMap=new Array();
+		if(type=="user")
+		{
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_GroupID\" from UserGroupRelationTable where \"T_UserID\"="+id))[0];
+			if(record.MessageCode>0)
+			{
+				TSS.Utils.log(record.MessageText);
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record.Record.length;i++)
+			{
+				groupMap[record.Record[i].T_GroupID]=1;
+			}
+		}
+		//
+		if(parent=="#")
+		{
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_ParentID\",\"T_GroupID\",\"T_GroupName\" from UserGroupTable where \"T_CreateUserID\"="+loginInfo.userID))[0];
+			if(record.MessageCode>0)
+			{
+				TSS.Utils.log(record.MessageText);
+				return TSS.JSON.encode(result);
+			}
+			//
+			function getchildren(pid)
+			{
+				var child=[];
+				for(var i=0;i<record.Record.length;i++)
+				{
+					if(record.Record[i].T_ParentID==pid)
+					{
+						child[child.length]={
+							"id":record.Record[i].T_GroupID,
+							"text":record.Record[i].T_GroupName,
+							"children":getchildren(record.Record[i].T_GroupID),
+							"state": {
+										"selected": groupMap[record.Record[i].T_GroupID]==1?true:false,
+										"opened": groupMap[record.Record[i].T_GroupID]==1?true:false
+									},
+							"type":"default"
+						};
+					}
+				}
+				return child;
+			}
+			//
+			var basic = TSS.JSON.decode(System.Basic.GetServerStatus());
+			result[0]={
+						"id":1,
+						"icon":"icon-social-dribbble font-blue-sharp",
+						"text":basic.AuthName,
+						"children":getchildren(1),
+						"state": {
+									"selected": groupMap[1]==1?true:false,
+									"opened": true
+								},
+						"type":"root"
+					};
+			//
+		}
+		else
+		{
+
+		}
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

@@ -1,0 +1,187 @@
+﻿{
+"update_url": "http://webstore.thingslabs.com/service/update/tax",
+"appid": "6CE92A2B-F533-40E2-BC12-6BABDCF7DDDB",
+"apptype": "Things",
+"name": "变电所参数监管系统",
+"short": "变电所管理",
+"description": "基于资源信息模型(RIM)的新思联信息物理系统。",
+"author": "ThingsLabs",
+"version": "1.0",
+"app": {
+"launch": {
+"enable": true,
+"local_path": "/Project/PCPS/",
+"container": "proxy",
+"sort": 4000,
+"height": 600,
+"width": 800,
+"webapp": [
+{
+"id": "Situation",
+"text": "运行态势",
+"info": "全局总揽资源的态势感知，为了决策与行动提供支持",
+"children": []
+},
+{
+"id": "AppMap",
+"text": "变电所分布",
+"info": "全局总揽资源的态势感知，为了决策与行动提供支持",
+"children": []
+},
+{
+"id": "PhysicalSpace",
+"text": "校园变电所",
+"info": "全局总揽地图信息汇聚、功能导航，用于实现空间维度的监管业务的细节穿透",
+"children": []
+},
+{
+"id": "CyberSpace",
+"text": "变电所对象",
+"info": "基于赛博空间的对象、属性、方法及业务逻辑关系，便于迭代业务的轻应用扩展",
+"children": []
+},
+{
+"id": "IoTNetwork",
+"text": "变电所联网",
+"info": "基于网络空间的设备、人员定位与管理，便于运维业务的细节穿透",
+"children": []
+},
+{
+"id": "workflow",
+"text": "运行保障",
+"info": "基于业务流程模型的运行管理及服务中心",
+"children": [
+{
+"id": "taskReal",
+"text": "待处理任务单",
+"info": "",
+"children": []
+},
+{
+"id": "taskHistory",
+"text": "历史工单任务",
+"info": "",
+"children": []
+},
+{
+"id": "taskSetup",
+"text": "工作人员设置",
+"info": "",
+"children": []
+},
+{
+"id": "taskReport",
+"text": "工单绩效分析",
+"info": "",
+"children": []
+}
+]
+},
+{
+"id": "alarm",
+"text": "运行报警",
+"info": "基于资源信息模型的设施运行预警管理及报警中心",
+"children": [
+{
+"id": "realalarm",
+"text": "实时报警一览",
+"info": "",
+"children": []
+},
+{
+"id": "alarmhistory",
+"text": "历史报警明细",
+"info": "",
+"children": []
+},
+{
+"id": "alarmsetup",
+"text": "报警通知设置",
+"info": "",
+"children": []
+},
+{
+"id": "alarmreport",
+"text": "报警统计分析",
+"info": "",
+"children": []
+}
+]
+},
+{
+"id": "mining",
+"text": "运行分析",
+"info": "基于资源信息模型的自定义数据挖掘工具",
+"children": [
+{
+"id": "addMining",
+"text": "添加数据分析...",
+"info": "",
+"children": []
+}
+]
+},
+{
+"id": "tools",
+"text": "管理工具",
+"info": "",
+"children": [
+{
+"id": "mySayma",
+"text": "机器对话",
+"info": "",
+"children": []
+},
+{
+"id": "myInspect",
+"text": "巡检记录",
+"info": "",
+"children": []
+},
+{
+"id": "myTransition",
+"text": "异动日志",
+"info": "",
+"children": []
+},
+{
+"id": "myPublish",
+"text": "运行日志",
+"info": "",
+"children": []
+},
+{
+"id": "myProject",
+"text": "工程管理",
+"info": "",
+"children": []
+}
+]
+}
+]
+},
+"pad": {
+"enable": false,
+"local_path": "/WebApp/SmartApp/Pad/",
+"container": "webapp",
+"webapp": [
+{
+"id": "p1",
+"text": "XXXX",
+"icons": "icon.png",
+"info": "",
+"local_path": "/WebApp/SmartApp/Pad/XXX"
+}
+]
+},
+"mobile": {
+"enable": false,
+"local_path": "/WebApp/SmartApp/Mobile/",
+"container": "webapp",
+"webapp": []
+}
+},
+"icons": {
+"logo": "icon.png"
+}
+}

@@ -1,0 +1,65 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			data:[]
+		};
+		//
+		var startTime = Request.QueryString("startTime");
+		var endTime = Request.QueryString("endTime");
+		//
+		if(startTime=="" || startTime==undefined)
+		{
+			var tc = new Date();
+			startTime = new Date();
+			startTime.setFullYear(tc.getFullYear(),tc.getMonth(),tc.getDate());
+			startTime.setHours(0,0,0,0);
+			startTime=startTime.DateAdd("d",-2);
+		}
+		else
+		{
+			startTime = TSS.Utils.parseDate(startTime);
+			startTime.setHours(0,0,0,0);
+		}
+
+		if(endTime=="" || endTime==undefined)
+		{
+			endTime = new Date();
+		}
+		else
+		{
+			endTime = TSS.Utils.parseDate(endTime);
+		}
+		//
+		var record = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"SELECT wh_date,wh_day,wh_text,wh_code1,wh_code2,high,low,cop,wind FROM WeatherDayTable where wh_date>='"+startTime.Format("yyyy-MM-dd")+"' and wh_date<'"+endTime.Format("yyyy-MM-dd hh:mm:ss")+"' ORDER BY wh_date"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		result.flag=true;
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			result.data[result.data.length]=[i+1,
+											record[0].Record[i].wh_date,
+											record[0].Record[i].wh_day,
+											record[0].Record[i].wh_text,
+											record[0].Record[i].low+' ¡æ',
+											record[0].Record[i].high+' ¡æ',
+											record[0].Record[i].cop];
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

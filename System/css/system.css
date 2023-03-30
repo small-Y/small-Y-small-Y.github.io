@@ -1,0 +1,4525 @@
+.applypanel {
+    position: absolute;
+    top: 39px;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background: transparent url(../style/images/20bg.png);
+    opacity: 0;
+    display: none
+}
+
+.applypanel .appcloud {
+    position: absolute;
+    top: 0;
+    left: 120px;
+    right: 120px;
+    bottom: 0
+}
+
+.applypanel .menulist {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 40px;
+    width: 100%;
+    background: transparent url(../style/images/apply_line.png)
+}
+
+.applypanel .menuitem1 {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding-top: 14px;
+    height: 26px;
+    width: 100px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    color: #dfdfdf
+}
+
+.applypanel .menuitem1.active {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding-top: 14px;
+    height: 26px;
+    width: 100px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    background: transparent url(../style/images/apply_item.png)
+}
+
+.applypanel .menuitem1:hover {
+    color: #fff;
+    text-shadow: #09f 1px 1px 3px
+}
+
+.applypanel .menuitem2 {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 100px;
+    padding-top: 14px;
+    height: 26px;
+    width: 100px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    color: #dfdfdf
+}
+
+.applypanel .menuitem2.active {
+    position: absolute;
+    top: 0;
+    left: 100px;
+    padding-top: 14px;
+    height: 26px;
+    width: 100px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    background: transparent url(../style/images/apply_item.png)
+}
+
+.applypanel .menuitem2:hover {
+    color: #fff;
+    text-shadow: #09f 1px 1px 3px
+}
+
+.applypanel .menuitem3 {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 200px;
+    padding-top: 14px;
+    height: 26px;
+    width: 100px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    color: #dfdfdf
+}
+
+.applypanel .menuitem3.active {
+    position: absolute;
+    top: 0;
+    left: 200px;
+    padding-top: 14px;
+    height: 26px;
+    width: 100px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    background: transparent url(../style/images/apply_item.png)
+}
+
+.applypanel .menuitem3:hover {
+    color: #fff;
+    text-shadow: #09f 1px 1px 3px
+}
+
+.applypanel .menushop {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: -15px;
+    padding-top: 15px;
+    height: 25px;
+    width: 132px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    color: #eee;
+    background: transparent url(../style/images/appbar_manage.png) no-repeat left bottom
+}
+
+.applypanel .menushop:hover {
+    color: #fff;
+    text-shadow: #09f 1px 1px 3px
+}
+
+.applypanel .content {
+    position: absolute;
+    top: 45px;
+    left: 0;
+    bottom: 25px;
+    width: 100%;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: auto
+}
+
+.applypanel .content.loading {
+    background: transparent url(../style/images/waiting.gif) no-repeat center center
+}
+
+.applypanel .appPage1 {
+    opacity: 1
+}
+
+.applypanel .appPage2 {
+    opacity: 0
+}
+
+.applypanel .operate {
+    position: absolute;
+    left: -500px;
+    top: 0;
+    width: 202px;
+    height: 102px;
+    opacity: 0
+}
+
+.applypanel div.app_operate {
+    width: 258px;
+    height: 160px;
+    border: 1px solid #fff;
+    -moz-box-shadow: 1px 1px 5px #ffff80;
+    -webkit-box-shadow: 1px 1px 5px #ffff80;
+    box-shadow: 1px 1px 5px #ffff80;
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=3,Direction=135,Color='#ffff80')
+}
+
+.applypanel div.app_operate div.lable {
+    width: 180px;
+    height: 70px;
+    padding-top: 10px;
+    padding-left: 5px;
+    padding-right: 15px;
+    padding-bottom: 0;
+    top: 0;
+    left: 0;
+    text-align: left;
+    vertical-align: middle;
+    position: relative;
+    display: table-cell;
+    line-height: 20px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 13px
+}
+
+.applypanel div.app_operate div.lable span {
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 15px;
+    font-weight: bold;
+    width: 180px;
+    overflow: hidden
+}
+
+.applypanel div.app_operate div.lable span {
+    max-width: 170px;
+    width: auto!important;
+    float: left
+}
+
+.applypanel div.app_operate div.icon {
+    width: 80px;
+    top: 0;
+    right: 0;
+    padding-top: 10px;
+    padding-left: 10px;
+    text-align: center;
+    vertical-align: middle;
+    position: relative;
+    display: table-cell
+}
+
+.applypanel div.app_operate div.icon img {
+    width: 64px;
+    height: 64px
+}
+
+.applypanel div.app_operate div.info {
+    width: 230px;
+    height: 50px;
+    top: 100px;
+    right: 0;
+    padding-top: 0;
+    padding-right: 15px;
+    padding-bottom: 5px;
+    padding-left: 15px;
+    text-align: left;
+    line-height: 20px;
+    font-size: 13px
+}
+
+.applypanel div.app_operate div.btn {
+    width: 228px;
+    height: 20px;
+    top: 140px;
+    right: 0;
+    padding-top: 3px;
+    padding-right: 15px;
+    padding-bottom: 3px;
+    padding-left: 15px;
+    text-align: left;
+    line-height: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    background: rgba(0,0,0,0.15)
+}
+
+.applypanel div.app_operate div.btn img {
+    margin: 0 0 -3px 0
+}
+
+.applypanel .foot {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 25px;
+    text-align: center
+}
+
+.applypanel .foot .navbar {
+    float: center;
+    width: 22px;
+    height: 22px;
+    background: url(../style/images/bullets.png) no-repeat;
+    padding: 4px 8px;
+    border: 0
+}
+
+.applypanel .foot .navbar:hover {
+    background-position: 0 -22px
+}
+
+.applypanel .foot .navbar.active {
+    background-position: 0 -22px
+}
+
+.applypanel ul {
+    margin: 0;
+    padding: 10px
+}
+
+.applypanel .app_li {
+    float: center;
+    width: 200px;
+    height: 100px;
+    display: inline-block;
+    text-align: center;
+    padding-top: 0;
+    padding-right: 8px;
+    padding-bottom: 5px;
+    padding-left: 0
+}
+
+.applypanel .app_li div.zoom {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
+    background: url(../style/images/tr.png) no-repeat;
+    display: none
+}
+
+.applypanel div.app_item {
+    position: absolute;
+    width: 200px;
+    height: 100px;
+    border: 1px solid transparent;
+    -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    box-shadow: 0 0 10px rgba(0,0,0,0.5)
+}
+
+.applypanel div.app_item div.lable {
+    width: 120px;
+    height: 100px;
+    padding-top: 0;
+    padding-left: 15px;
+    padding-right: 5px;
+    padding-bottom: 0;
+    top: 0;
+    left: 0;
+    text-align: left;
+    vertical-align: middle;
+    position: relative;
+    display: table-cell;
+    line-height: 20px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 13px
+}
+
+.applypanel div.app_item div.lable span {
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 15px;
+    font-weight: bold;
+    width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+
+.applypanel div.app_item div.icon {
+    width: 80px;
+    top: 0;
+    right: 0;
+    padding-top: 10px;
+    padding-right: 10px;
+    text-align: center;
+    vertical-align: middle;
+    position: relative;
+    display: table-cell;
+    cursor: pointer
+}
+
+.applypanel div.app_item div.icon img {
+    width: 64px;
+    height: 64px
+}
+
+.applypanel .noapp {
+    width: 200px;
+    height: 100px;
+    border: 1px solid transparent
+}
+
+.applypanel div.app_item div.info {
+    width: 200px;
+    height: 100px;
+    padding-top: 0;
+    padding-left: 15px;
+    padding-right: 5px;
+    padding-bottom: 0;
+    top: 0;
+    left: 0;
+    text-align: left;
+    vertical-align: middle;
+    position: relative;
+    display: table-cell;
+    line-height: 20px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 13px
+}
+
+.applypanel div.app_item div.info span {
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 30px
+}
+
+.applypanel div.app_item div.title1 {
+    width: 190px;
+    height: 18px;
+    margin-left: 5px;
+    text-align: left;
+    font: 12px/1.5 Arial,Tahoma,微软雅黑
+}
+
+.applypanel div.app_item div.title2 {
+    width: 190px;
+    height: 18px;
+    margin-left: 5px;
+    text-align: right;
+    font: 12px/1.5 Arial,Tahoma,微软雅黑
+}
+
+.applypanel div.app_item div.icon2 {
+    width: 200px;
+    height: 64px;
+    padding-top: 16px;
+    text-align: center;
+    vertical-align: middle
+}
+
+.applypanel div.app_item div.icon2 img {
+    width: 64px;
+    height: 64px;
+    cursor: pointer
+}
+
+.applypanel .noapp {
+    width: 200px;
+    height: 100px;
+    border: 0 solid transparent
+}
+
+.applypanel div.app_metro1 {
+    background: #409da5 url('tiles/1.png')
+}
+
+.applypanel div.app_metro2 {
+    background: #4849a6 url('tiles/2.png')
+}
+
+.applypanel div.app_metro3 {
+    background: #cd432d url('tiles/3.png')
+}
+
+.applypanel div.app_metro4 {
+    background: #da8515 url('tiles/4.png')
+}
+
+.applypanel div.app_metro5 {
+    background: #7d9f2a url('tiles/5.png')
+}
+
+.applypanel div.app_metro6 {
+    background: #672c9b url('tiles/6.png')
+}
+
+.applypanel div.app_metro7 {
+    background: #621354 url('tiles/7.png')
+}
+
+.applypanel div.app_metro8 {
+    background: #409da5 url('tiles/8.png')
+}
+
+.applypanel div.app_metro9 {
+    background: #7d9f2a url('tiles/9.png')
+}
+
+.applypanel div.app_metro10 {
+    background: #03417a url('tiles/10.png')
+}
+
+.applypanel div.app_metro11 {
+    background: #409da5 url('tiles/11.png')
+}
+
+.applypanel div.app_metro12 {
+    background: #da8515 url('tiles/12.png')
+}
+
+@charset "utf-8";.dialog-overlay {
+    background: transparent url(../style/images/overlay1.png) repeat center top
+}
+
+.dialog {
+    background: #c0c0c0 url(../style/i/frame.png) repeat-x left top;
+    padding: 4px 0 33px 0;
+    -moz-box-shadow: 5px 5px 30px rgba(0,0,0,0.7);
+    -webkit-box-shadow: 5px 5px 30px rgba(0,0,0,0.7);
+    box-shadow: 5px 5px 30px rgba(0,0,0,0.7);
+    border: 1px solid rgba(255,255,255,0.2);
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=25,Direction=135,Color='#888')
+}
+
+.dialog .bar {
+    color: #5f5f5f;
+    padding: 0;
+    height: 32px;
+    cursor: pointer
+}
+
+.dialog .barMove {
+    position: absolute;
+    top: 0;
+    left: 36px;
+    right: 100px;
+    cursor: move;
+    color: #5f5f5f;
+    padding: 3px;
+    height: 32px
+}
+
+.dialog .barMenu {
+    position: absolute;
+    top: 35px;
+    left: 5px;
+    width: 90px;
+    height: auto;
+    padding: 5px;
+    background: #fff;
+    color: #666;
+    border: 1px solid #ddd;
+    -moz-box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=10,Direction=135,Color='#888');
+    display: none
+}
+
+.dialog .barMenu .item {
+    width: 80px;
+    height: 16px;
+    padding: 0 5px 5px 5px;
+    font-size: 14px;
+    cursor: pointer
+}
+
+.dialog .barMenu .item:hover {
+    color: #000;
+    background: rgba(0,0,0,0.1)
+}
+
+.dialog .barMenu hr {
+    border: 0 solid rgba(255,255,255,0);
+    border-top: 1px solid #eee
+}
+
+.dialog .barMenu .pointer {
+    position: absolute;
+    top: -8px;
+    left: 14px;
+    bottom: -8px;
+    margin-left: -8px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 0;
+    border-bottom: 8px solid #fff
+}
+
+.dialog .bar img {
+    float: left;
+    width: 26px;
+    height: 26px;
+    padding: 1px;
+    margin-left: 6px;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px
+}
+
+.dialog .bar img:hover {
+    background: rgba(255,255,255,0.5)
+}
+
+.dialog .bar .title {
+    float: left;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 14px;
+    margin-top: 4px;
+    margin-left: 4px
+}
+
+.dialog .bar .close {
+    float: right;
+    cursor: pointer;
+    margin: 5px 5px 0 5px;
+    width: 24px;
+    height: 24px;
+    background: url(../style/images/dialog-bt.png) no-repeat;
+    background-position: 0 -166px
+}
+
+.dialog .bar .close:hover {
+    background-position: 0 -142px
+}
+
+.dialog .bar .min {
+    float: right;
+    cursor: pointer;
+    margin: 3px 5px 0 5px;
+    width: 24px;
+    height: 24px;
+    background: url(../style/images/dialog-bt.png) no-repeat;
+    background-position: 0 -20px
+}
+
+.dialog .bar .min:hover {
+    background-position: 0 4px
+}
+
+.dialog .bar .max {
+    float: right;
+    cursor: pointer;
+    margin: 3px 5px 0 5px;
+    width: 24px;
+    height: 24px;
+    background: url(../style/images/dialog-bt.png) no-repeat;
+    background-position: 0 -69px
+}
+
+.dialog .bar .max:hover {
+    background-position: 0 -45px
+}
+
+.dialog .main {
+    width: 100%;
+    height: 100%;
+    border-top: 1px solid rgba(255,255,255,0.2)
+}
+
+.dialog .mask {
+    top: 35px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    position: absolute;
+    background: transparent url(../style/images/overlay3.png) repeat center center;
+    filter: alpha(opacity=1);
+    opacity: 1
+}
+
+.dialog .overlay {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    background: transparent url(../style/images/30bg.png) repeat center center;
+    filter: alpha(opacity=1);
+    opacity: 1
+}
+
+.dialog .main .winSize {
+    top: 30px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    position: absolute;
+    display: none
+}
+
+.dialog .main .winSize .sizeText {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -50px 0 0 -180px;
+    width: 360px;
+    height: 50px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 42px;
+    color: #ccc;
+    text-align: center
+}
+
+.dialog .main .leftbar {
+    top: 30px;
+    left: -5px;
+    bottom: 5px;
+    position: absolute;
+    cursor: e-resize;
+    width: 5px
+}
+
+.dialog .main .rightbar {
+    top: 30px;
+    right: -5px;
+    bottom: 5px;
+    position: absolute;
+    cursor: e-resize;
+    width: 5px
+}
+
+.dialog .main .content {
+    height: 100%;
+    background: white url(../style/i/ntp_background.png) repeat left bottom;
+    -webkit-overflow-scrolling: touch;
+    overflow: hidden
+}
+
+.dialog .main .content .msgBox {
+    width: 100%;
+    height: 100%;
+    background: #fff
+}
+
+.dialog .main .content .msgBox .msgIcon {
+    width: 100px;
+    height: 100px;
+    top: 0;
+    left: 0;
+    text-align: center;
+    vertical-align: middle;
+    position: relative;
+    display: table-cell
+}
+
+.dialog .main .content .msgBox .msgText {
+    height: 80px;
+    top: 0;
+    left: 0;
+    padding-right: 10px;
+    text-align: left;
+    vertical-align: middle;
+    position: relative;
+    display: table-cell;
+    line-height: 20px;
+    color: #000;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 15px
+}
+
+.dialog .main .content .msgBox .msgInput {
+    height: 65px;
+    top: 0;
+    left: 0;
+    padding: 15px 25px;
+    text-align: left;
+    vertical-align: middle;
+    position: relative;
+    display: table-cell;
+    line-height: 24px;
+    color: #000;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 11pt
+}
+
+.dialog .main .content .msgBox .msgInput input {
+    width: 300px;
+    border: 1px solid #ccc;
+    font-size: 11pt
+}
+
+.dialog .main .content .msgBox .msgPass {
+    height: 65px;
+    top: 0;
+    left: 0;
+    padding: 15px 25px;
+    text-align: left;
+    vertical-align: middle;
+    position: relative;
+    display: table-cell;
+    line-height: 40px;
+    color: #000;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 11pt
+}
+
+.dialog .main .content .msgBox .msgPass input {
+    width: 200px;
+    border: 1px solid #ccc;
+    font-size: 11pt
+}
+
+.dialog .main .content .msgBox .operate {
+    text-align: center;
+    background: #f3f3f3;
+    height: 40px;
+    padding-top: 15px;
+    border-top: 1px solid #c0c0c0
+}
+
+.dialog .foot {
+    height: 5px
+}
+
+.dialog .foot .leftbuttombar {
+    bottom: -10px;
+    left: -5px;
+    position: absolute;
+    cursor: ne-resize;
+    width: 10px;
+    height: 10px
+}
+
+.dialog .foot .buttombar {
+    bottom: -10px;
+    left: 5px;
+    right: 5px;
+    position: absolute;
+    cursor: n-resize;
+    height: 5px
+}
+
+.dialog .foot .rightbuttombar {
+    bottom: -10px;
+    right: -5px;
+    position: absolute;
+    cursor: nw-resize;
+    width: 10px;
+    height: 10px
+}
+
+.dialog iframe {
+    height: 100%;
+    width: 100%
+}
+
+.dialog-max {
+    background: #c0c0c0 url(../style/i/frame.png) repeat-x left top;
+    margin-top: 0;
+    padding: 0;
+    top: 0!important;
+    left: 0!important;
+    width: 100%!important;
+    height: 100%!important
+}
+
+.dialog-max .bar {
+    color: #5f5f5f;
+    padding: 5px 0;
+    height: 32px
+}
+
+.dialog-max .barMove {
+    display: none
+}
+
+.dialog-max .bar img {
+    float: left;
+    width: 24px;
+    height: 24px;
+    padding: 2px 0 2px 8px
+}
+
+.dialog-max .bar .title {
+    float: left;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 14px;
+    margin-top: 4px;
+    margin-left: 4px
+}
+
+.dialog-max .bar .close {
+    float: right;
+    cursor: pointer;
+    margin: 5px 5px 0 5px;
+    width: 24px;
+    height: 24px;
+    background: url(../style/images/dialog-bt.png) no-repeat;
+    background-position: 0 -166px
+}
+
+.dialog-max .bar .close:hover {
+    background-position: 0 -142px
+}
+
+.dialog-max .bar .min {
+    float: right;
+    cursor: pointer;
+    margin: 3px 5px 0 5px;
+    width: 24px;
+    height: 24px;
+    background: url(../style/images/dialog-bt.png) no-repeat;
+    background-position: 0 -20px
+}
+
+.dialog-max .bar .min:hover {
+    background-position: 0 4px
+}
+
+.dialog-max .bar .max {
+    float: right;
+    cursor: pointer;
+    margin: 3px 5px 0 5px;
+    width: 24px;
+    height: 24px;
+    background: url(../style/images/dialog-bt.png) no-repeat;
+    background-position: 0 -117px
+}
+
+.dialog-max .bar .max:hover {
+    background-position: 0 -93px
+}
+
+.dialog-max .main {
+    top: 38px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute
+}
+
+.dialog-max .main .winSize {
+    display: none
+}
+
+.dialog-max .main .leftbar {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    position: absolute;
+    cursor: e-resize;
+    width: 0
+}
+
+.dialog-max .main .rightbar {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    cursor: e-resize;
+    width: 0
+}
+
+.dialog-max .main .content {
+    margin-left: 0;
+    margin-right: 0;
+    height: 100%;
+    background: white url(../style/i/ntp_background.png) repeat left bottom;
+    -webkit-overflow-scrolling: touch;
+    overflow: hidden
+}
+
+.dialog-max .foot {
+    height: 0
+}
+
+.dialog-max .foot .leftbuttombar {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    cursor: ne-resize;
+    width: 0;
+    height: 0
+}
+
+.dialog-max .foot .buttombar {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+    cursor: n-resize;
+    height: 0
+}
+
+.dialog-max .foot .rightbuttombar {
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    cursor: nw-resize;
+    width: 0;
+    height: 0
+}
+
+.dialog-max iframe {
+    height: 100%;
+    width: 100%
+}
+
+.dialog-fullscreen {
+    background: #c0c0c0 url(../style/i/frame.png) repeat-x left top;
+    padding: 0
+}
+
+.dialog-fullscreen .bar {
+    display: none
+}
+
+.dialog-fullscreen .barMove {
+    display: none
+}
+
+.dialog-fullscreen .main {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute
+}
+
+.dialog-fullscreen .main .winSize {
+    display: none
+}
+
+.dialog-fullscreen .main .leftbar {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    position: absolute;
+    cursor: e-resize;
+    width: 0
+}
+
+.dialog-fullscreen .main .rightbar {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    cursor: e-resize;
+    width: 0
+}
+
+.dialog-fullscreen .main .content {
+    margin-left: 0;
+    margin-right: 0;
+    height: 100%;
+    background: white url(../style/i/ntp_background.png) repeat left bottom
+}
+
+.dialog-fullscreen .foot {
+    height: 0
+}
+
+.dialog-fullscreen .foot .leftbuttombar {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    cursor: ne-resize;
+    width: 0;
+    height: 0
+}
+
+.dialog-fullscreen .foot .buttombar {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+    cursor: n-resize;
+    height: 0
+}
+
+.dialog-fullscreen .foot .rightbuttombar {
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    cursor: nw-resize;
+    width: 0;
+    height: 0
+}
+
+.dialog-fullscreen iframe {
+    height: 100%;
+    width: 100%
+}
+
+.dialog .inputButton {
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    -webkit-user-select: none;
+    background: -webkit-linear-gradient(#fafafa,#f4f4f4 40%,#e5e5e5);
+    border: 1px solid #aaa;
+    color: #444;
+    margin-bottom: 0;
+    min-width: 4em;
+    padding: 3px 12px 3px 12px;
+    cursor: pointer;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 15px
+}
+
+.dialog .inputButton:hover {
+    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    background: #ebebeb -webkit-linear-gradient(#fefefe,#f8f8f8 40%,#e9e9e9);
+    border-color: #999;
+    color: #222
+}
+
+/* @group Animations */
+@-webkit-keyframes 'bounce' {
+    0% {
+        -webkit-transform: translateY(0)
+    }
+
+    100% {
+        -webkit-transform: translateY(-20px)
+    }
+}
+
+@-webkit-keyframes 'bounce-reflection' {
+    0% {
+        -webkit-transform: translateY(0)
+    }
+
+    100% {
+        -webkit-transform: translateY(20px)
+    }
+}
+
+@-webkit-keyframes 'indicator' {
+    0% {
+        opacity: 0
+    }
+
+    80% {
+        opacity: 0
+    }
+
+    100% {
+        opacity: 1
+    }
+}
+
+.dock {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    font: normal 14px/1 Arial,Tahoma,微软雅黑;
+    display: none
+}
+
+.dock .dragapp {
+    position: absolute;
+    z-index: 999999;
+    top: 0;
+    left: 0;
+    width: 70px;
+    height: 70px;
+    display: none;
+    cursor: move
+}
+
+.dock .dragapp .close {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 24px;
+    width: 24px;
+    background: url(./../style/images/remove.png) no-repeat center center
+}
+
+.dock .apps {
+    position: relative;
+    z-index: 100;
+    display: inline-block;
+    padding: 0 10px;
+    background: url(./../style/images/dock-bg-m.png) repeat-x bottom
+}
+
+.dock .apps .l,.dock .apps .r {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 40px
+}
+
+.dock .apps .l {
+    left: -40px;
+    background: url(./../style/images/dock-bg-l.png) no-repeat right bottom
+}
+
+.dock .apps .r {
+    right: -40px;
+    background: url(./../style/images/dock-bg-r.png) no-repeat left bottom
+}
+
+.dock ul {
+    display: inline-block;
+    padding: 0;
+    margin: 0
+}
+
+.dock .app {
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    width: 80px;
+    padding-bottom: 13px;
+    opacity: 0
+}
+
+.dock .app:hover {
+    cursor: pointer;
+    outline: 0
+}
+
+.dock .app:active .icon {
+    opacity: .9
+}
+
+.dock .app.active .icon {
+    -webkit-animation-name: 'bounce';
+    -webkit-animation-duration: .3s;
+    -webkit-animation-iteration-count: 6;
+    -webkit-animation-direction: alternate;
+    -webkit-animation-timing-function: ease-out
+}
+
+.dock .app.active .reflection {
+    -webkit-animation: 'bounce-reflection' .3s alternate 6 ease-out
+}
+
+.dock .app.active .indicator {
+    -webkit-animation: 'indicator' 2s;
+    opacity: 1
+}
+
+.dock .app .label {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    display: none;
+    width: 200px;
+    margin-left: -100px;
+    text-align: center;
+    color: #FFF
+}
+
+.dock .app:hover .label {
+    display: block
+}
+
+.dock .app .label em {
+    display: inline-block;
+    padding: 6px 10px;
+    font-style: normal;
+    background: #000;
+    background: rgba(0,0,0,.7);
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px
+}
+
+.dock .app .label .pointer {
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    margin-left: -5px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid rgba(0,0,0,.7);
+    border-bottom: 0
+}
+
+.dock .app .number {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 2px 5px 2px 5px;
+    background: rgba(255,0,0,.9);
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 13px;
+    border: 1px solid #fff;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    text-align: center;
+    display: none
+}
+
+.dock .app .close {
+    display: none;
+    padding: 2px 4px 1px 4px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #000;
+    background: rgba(0,0,0,.9);
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 13.5px;
+    font-weight: bold;
+    border: 2px solid #fff;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    text-align: center
+}
+
+.dock .indicator {
+    -webkit-transition-property: opacity;
+    -webkit-transition-duration: .7s;
+    -moz-transition-property: opacity;
+    -moz-transition-duration: .7s;
+    display: block;
+    width: 47px;
+    height: 24px;
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    z-index: 20;
+    margin-left: -23px;
+    background: url(./../style/images/indicator.png) no-repeat center bottom;
+    opacity: 0;
+    filter: alpha(opacity=0)
+}
+
+.dock .app .reflection {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    height: 21px;
+    z-index: 5;
+    text-align: center
+}
+
+.dock .app .reflection img {
+    progid: DXImageTransform.Microsoft.BasicImage(rotation=1);
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    display: inline-block;
+    opacity: .2;
+    filter: alpha(opacity=7)
+}
+
+.dock img {
+    -webkit-transition-property: width,height;
+    -webkit-transition-duration: .2s;
+    -moz-transition-property: width,height;
+    -moz-transition-duration: .2s
+}
+
+.dock img {
+    width: 64px
+}
+
+.dock .app:hover img {
+    width: 74px
+}
+
+html {
+    height: 100%;
+    max-height: 100%;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: black;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -ms-touch-action: none;
+    overflow: hidden
+}
+
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+    background-color: #F0F0F0;
+    width: 6px
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    background-clip: content-box;
+    background-color: #BFBFBF
+}
+
+::-webkit-scrollbar-corner {
+    background-color: #E6E6E6
+}
+
+body,input,textarea,select {
+    font: normal 12px/1.5 'Lucida Grande','Lucida Sans Unicode','STHeiti','Helvetica Neue',Tahoma,Arial,'Microsoft YaHei',\5fae\8f6f\96c5\9ed1;
+    *font-family: 'Microsoft YaHei',Tahoma,Arial;
+    color: #333
+}
+
+.noClearType body,.noClearType input,.noClearType textarea,.noClearType select {
+    font-family: Tahoma,Arial
+}
+
+.FontYahei body,.FontYahei input,.FontYahei textarea,.FontYahei select {
+    font-family: 'Lucida Grande','Lucida Sans Unicode','STHeiti','Helvetica Neue',Tahoma,Arial,'Microsoft YaHei',\5fae\8f6f\96c5\9ed1,sans-serif;
+    *font-family: 'Microsoft YaHei',Tahoma,Arial
+}
+
+.FontSimsun body,.FontSimsun input,.FontSimsun textarea,.FontSimsun select {
+    font-family: 'Lucida Grande','Lucida Sans Unicode','STHeiti','Helvetica Neue',Tahoma,Arial,SimSun,\5b8b\4f53;
+    *font-family: SimSun
+}
+
+.FontSys body,.FontSys input,.FontSys textarea,.FontSys select {
+    font-family: 'Lucida Grande','Lucida Sans Unicode','STHeiti','Helvetica Neue',Tahoma,Arial,sans-serif;
+    *font-family: 'Lucida Grande','Lucida Sans Unicode','STHeiti','Helvetica Neue',Tahoma,Arial
+}
+
+@media screen\0 {
+    .FontSys body,.FontSys input,.FontSys textarea,.FontSys select {
+        font-family: 'Lucida Grande','Lucida Sans Unicode','STHeiti','Helvetica Neue',Tahoma,Arial
+    }
+}
+
+input[type="text"],input[type="password"],textarea {
+    -webkit-appearance: none;
+    outline: 0
+}
+
+a {
+    font: 12px/1.5 tahoma,helvetica,clean,sans-serif;
+    color: #45649e
+}
+
+a:hover {
+    text-decoration: none
+}
+
+a:focus {
+    outline-style: none
+}
+
+.hiddenCFProxy {
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden;
+    width: 0;
+    height: 0
+}
+
+.hiddenIframe {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden
+}
+
+.radius3 {
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px
+}
+
+.radius5 {
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px
+}
+
+.clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0
+}
+
+.clearfix {
+    zoom:1}
+
+.hidden_div {
+    left: -9999px;
+    top: -9999px;
+    position: absolute
+}
+
+#startingCover {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1000000;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000
+}
+
+#startingLogo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -50px 0 0 -60px;
+    width: 120px;
+    height: 120px;
+    -webkit-animation-name: startingLogoAnimation;
+    -webkit-animation-duration: 1.2s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear
+}
+
+@-webkit-keyframes 'startingLogoAnimation' {
+    0% {
+        opacity: .5
+    }
+
+    50% {
+        opacity: 1
+    }
+
+    100% {
+        opacity: .5
+    }
+}
+
+#startingText {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: 60px 0 0 -80px;
+    width: 160px;
+    height: 50px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 20px;
+    color: white;
+    text-shadow: #666 1px 1px 2px;
+    text-align: center;
+    cursor: default
+}
+
+#warningCover {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1000000;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+    display: none
+}
+
+#warningLogo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -58px 0 0 -48px;
+    width: 96px;
+    height: 96px;
+    background: url(./../style/images/warning.png);
+    cursor: pointer
+}
+
+#warningText {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: 50px 0 0 -160px;
+    width: 340px;
+    height: 50px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 16px;
+    color: white;
+    text-shadow: #666 1px 1px 2px;
+    text-align: left;
+    cursor: default
+}
+
+.ssoLogin {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    margin: -75px 0 0 -75px;
+    width: 135px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 10.5pt;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    padding: 3px;
+    border: 1px solid rgba(255,255,255,0.7);
+    color: rgba(255,255,255,0.7);
+    background: rgba(0,0,0,0.3);
+    text-align: center;
+    cursor: pointer
+}
+
+.ssoLogin:hover {
+    border: 1px solid #fff
+}
+
+.ssoLogin a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 10.5pt
+}
+
+.startingVer {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    margin: -25px 0 0 -100px;
+    width: 200px;
+    height: 25px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 10.5px;
+    color: #ccc;
+    text-align: center;
+    cursor: default
+}
+
+#startingBar {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: 90px 0 0 -60px;
+    width: 120px;
+    height: 1px;
+    overflow: hidden;
+    font-size: 0;
+    border: 1px solid #999;
+    background: black url("../style/images/starting_bar.gif")
+}
+
+.growlTip {
+    position: absolute;
+    left: 50%;
+    bottom: 20px;
+    margin: 0 0 0 -149px
+}
+
+.debugTip {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 10.5px;
+    color: #fff;
+    text-shadow: #666 1px 1px 2px
+}
+
+.loginForm {
+    position: absolute;
+    width: 400px;
+    height: 300px;
+    left: 50%;
+    top: 50%;
+    margin: -150px 0 0 -200px;
+    color: #fff;
+    overflow: hidden;
+    background: url("../style/images/loginframe.png") no-repeat;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    opacity: 0
+}
+
+.loginTime {
+    position: absolute;
+    left: 50%;
+    top: 20px;
+    width: 300px;
+    margin: 0 0 0 -150px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 60px;
+    color: #fff;
+    text-align: center
+}
+
+.loginDate {
+    position: absolute;
+    left: 50%;
+    top: 86px;
+    width: 300px;
+    margin: 0 0 0 -150px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 16px;
+    color: #fff;
+    text-align: center
+}
+
+.loginLoading {
+    position: absolute;
+    width: 124px;
+    height: 124px;
+    left: 50%;
+    top: 50%;
+    margin: -62px 0 0 -62px;
+    background: transparent url(../style/images/waiting.gif) no-repeat center center;
+    display: none
+}
+
+.loginTitle {
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 48px;
+    height: 60px;
+    left: 60px;
+    top: 25px;
+    position: absolute
+}
+
+.loginsubTitle {
+    position: absolute;
+    left: 160px;
+    top: 63px;
+    font-size: 16px;
+    color: #eee
+}
+
+.loginUser {
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 16px;
+    height: 40px;
+    left: 95px;
+    top: 110px;
+    position: absolute
+}
+
+.loginPass {
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 16px;
+    height: 40px;
+    left: 95px;
+    top: 150px;
+    position: absolute
+}
+
+.loginInfo {
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 16px;
+    height: 20px;
+    color: #cff;
+    left: 122px;
+    top: 180px;
+    position: absolute
+}
+
+.loginText {
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 16px;
+    color: white;
+    width: 150px;
+    height: 18px;
+    padding: 0 5px 2px 5px;
+    border: 0 solid transparent;
+    border-bottom: 1px solid #ddd;
+    background-color: transparent
+}
+
+.loginSlider {
+    width: 273px;
+    height: 40px;
+    left: 64px;
+    top: 239px;
+    position: absolute
+}
+
+.track {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    height: 42px
+}
+
+.track-message {
+    width: 200px;
+    height: 30px;
+    left: 60px;
+    top: 0;
+    padding-top: 6px;
+    position: relative;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 22px;
+    text-align: center;
+    background: -webkit-gradient(linear,left top,right top,color-stop(0,#4d4d4d),color-stop(0.4,#4d4d4d),color-stop(0.5,white),color-stop(0.6,#4d4d4d),color-stop(1,#4d4d4d));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-animation: slidetounlock 2.5s infinite;
+    -webkit-text-size-adjust: none
+}
+
+@-webkit-keyframes slidetounlock {
+    0% {
+        background-position: -100px 0
+    }
+
+    100% {
+        background-position: 100px 0
+    }
+}
+
+.handle {
+    background-image: url(../style/images/lock-slider.png);
+    cursor: pointer;
+    width: 56px;
+    height: 38px;
+    left: 0;
+    top: -33px;
+    -webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+    border-radius: 7px;
+    position: relative
+}
+
+.handle:hover {
+    background-image: url(../style/images/lock-slider2.png)
+}
+
+.desktop {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 0;
+    overflow: hidden;
+    font: 12px Arial,Tahoma,微软雅黑;
+    color: #fff;
+    cursor: default;
+    display: none
+}
+
+.desktopPanel {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0
+}
+
+.desktopWrapper {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background: transparent url(../style/images/default.jpg) repeat center top;
+    z-index: -1
+}
+
+.desktopWrapper.blur {
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+    margin: -15px;
+    width: 110%;
+    height: 110%
+}
+
+.desktopCloud {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 580px;
+    height: 250px;
+    margin: -250px 0 0 -350px;
+    background: url("./../style/images/cloud.png") no-repeat;
+    opacity: .8
+}
+
+.desktopStart {
+    position: absolute;
+    bottom: 6px;
+    left: 10px;
+    width: 64px;
+    opacity: .5;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center
+}
+
+.desktopStart img {
+    -webkit-transition-property: width,height;
+    -webkit-transition-duration: .2s;
+    -moz-transition-property: width,height;
+    -moz-transition-duration: .2s
+}
+
+.desktopStart img {
+    width: 54px
+}
+
+.desktopStart:hover img {
+    width: 64px
+}
+
+.desktopStart:hover {
+    opacity: 1
+}
+
+.desktopStart.active {
+    opacity: 1
+}
+
+.desktopStart.active img {
+    width: 64px
+}
+
+.desktopSwitch {
+    position: absolute;
+    bottom: 2px;
+    right: 17px;
+    width: 64px;
+    opacity: .5;
+    display: inline-block;
+    text-align: center
+}
+
+.desktopSwitch img {
+    -webkit-transition-property: width,height;
+    -webkit-transition-duration: .2s;
+    -moz-transition-property: width,height;
+    -moz-transition-duration: .2s
+}
+
+.desktopSwitch img {
+    width: 54px
+}
+
+.desktopSwitch:hover img {
+    width: 64px
+}
+
+.desktopSwitch:hover {
+    opacity: 1
+}
+
+.desktopSwitch.active {
+    opacity: 1
+}
+
+.desktopSwitch.active img {
+    width: 64px
+}
+
+.desktopSwitch .tipSwitch {
+    position: absolute;
+    width: 80px;
+    top: -22px;
+    left: -12px;
+    display: inline-block;
+    padding: 3px 3px;
+    font-style: normal;
+    color: #5d5d5d;
+    background: #fff;
+    background: rgba(255,255,255,.7);
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    display: none
+}
+
+.desktopSwitch:hover .tipSwitch {
+    display: block
+}
+
+.desktopSwitch.active .tipSwitch {
+    display: none
+}
+
+.desktopSwitch .prev {
+    position: absolute;
+    top: 6px;
+    left: -18px;
+    width: 32px;
+    height: 48px;
+    cursor: pointer;
+    background: transparent url(../style/images/left-arrow.png) no-repeat left center;
+    opacity: .3;
+    display: none
+}
+
+.desktopSwitch .tipPrev {
+    position: absolute;
+    width: 80px;
+    top: 5px;
+    left: -88px;
+    display: inline-block;
+    padding: 3px 3px;
+    font-style: normal;
+    color: #5d5d5d;
+    background: #fff;
+    background: rgba(255,255,255,.7);
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    display: none
+}
+
+.desktopSwitch .next {
+    position: absolute;
+    top: 6px;
+    right: -16px;
+    width: 32px;
+    height: 48px;
+    cursor: pointer;
+    background: transparent url(../style/images/right-arrow.png) no-repeat right center;
+    opacity: .3;
+    display: none
+}
+
+.desktopSwitch .tipNext {
+    position: absolute;
+    width: 80px;
+    top: 5px;
+    left: 32px;
+    display: inline-block;
+    padding: 3px 3px;
+    font-style: normal;
+    color: #5d5d5d;
+    background: #fff;
+    background: rgba(255,255,255,.7);
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    display: none
+}
+
+.desktopSwitch.active .prev {
+    display: block
+}
+
+.desktopSwitch.active .next {
+    display: block
+}
+
+.desktopSwitch:hover .prev:hover {
+    opacity: 1
+}
+
+.desktopSwitch.active .prev:hover {
+    opacity: 1
+}
+
+.desktopSwitch:hover .next:hover {
+    opacity: 1
+}
+
+.desktopSwitch.active .next:hover {
+    opacity: 1
+}
+
+.desktopSwitch.active .prev:hover .tipPrev {
+    display: block
+}
+
+.desktopSwitch.active .next:hover .tipNext {
+    display: block
+}
+
+.desktop .TaskMenu {
+    position: absolute;
+    bottom: 92px;
+    left: 5px;
+    height: 275px;
+    width: 160px;
+    z-index: 999998;
+    background: #FAFAFA;
+    color: black;
+    background: -webkit-linear-gradient(top,rgba(250,250,250,0.95),rgba(250,250,250,0.8));
+    background: -moz-linear-gradient(top,rgba(250,250,250,0.95),rgba(250,250,250,0.8));
+    background: linear-gradient(to bottom,rgba(250,250,250,0.95),rgba(250,250,250,0.8));
+    -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    border-top: 1px solid #E6E6E6;
+    border-left: 1px solid #E6E6E6;
+    border-right: 1px solid #E6E6E6;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    display: none
+}
+
+.desktop .TaskMenu .pointer {
+    position: absolute;
+    bottom: -17px;
+    left: 35px;
+    width: 0;
+    height: 0;
+    z-index: 999999;
+    border-left: 0 solid transparent;
+    border-right: 30px solid transparent;
+    border-bottom: 0;
+    border-top: 17px solid rgba(250,250,250,0.8)
+}
+
+.desktop .TaskMenu input {
+    position: absolute;
+    top: 30px;
+    left: 8px;
+    width: 130px;
+    height: 18px;
+    padding: 1px 5px 1px 5px;
+    border: 1px solid #6c6c6c;
+    background-color: transparent;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px
+}
+
+.desktop .TaskMenu hr {
+    height: 1px;
+    border: 0;
+    border-top: 1px dotted #CACACA
+}
+
+.desktop .TaskMenu .myUser {
+    position: absolute;
+    top: 7px;
+    left: 5px;
+    width: 140px;
+    padding: 0 5px 0 5px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 16px
+}
+
+.desktop .TaskMenu .result {
+    position: absolute;
+    width: 144px;
+    height: 210px;
+    top: 58px;
+    left: 8px;
+    overflow: auto;
+    overflow-x: hidden;
+    display: none
+}
+
+.desktop .TaskMenu .close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    text-decoration: none;
+    color: #888;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: none
+}
+
+.desktop .TaskMenu .result .item {
+    width: 130px;
+    height: 22px;
+    border: 1px solid transparent;
+    padding: 1px 5px 1px 5px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    font-size: 14px
+}
+
+.desktop .TaskMenu .result .item:hover {
+    color: #444;
+    background: #e5e5e5;
+    background: -moz-linear-gradient(#fafafa,#f4f4f4 40%,#e5e5e5);
+    background: -webkit-linear-gradient(#fafafa,#f4f4f4 40%,#e5e5e5);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#fafafa', endColorstr='#e5e5e5')";
+    border: 1px solid #aaa;
+    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    -webkit-user-select: none
+}
+
+.desktop .TaskMenu .result .item img {
+    width: 20px;
+    height: 20px;
+    margin-top: 0;
+    margin-bottom: -4px
+}
+
+.desktop .TaskMenu .menu {
+    position: absolute;
+    width: 144px;
+    height: 210px;
+    top: 58px;
+    left: 8px;
+    overflow: auto;
+    overflow-x: hidden
+}
+
+.desktop .TaskMenu .menu .item {
+    width: 130px;
+    height: 22px;
+    border: 1px solid transparent;
+    padding: 1px 5px 1px 5px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    font-size: 14px
+}
+
+.desktop .TaskMenu .menu .item img {
+    width: 20px;
+    height: 20px;
+    margin-top: 0;
+    margin-bottom: -4px
+}
+
+.desktop .TaskMenu .menu .item:hover {
+    color: #444;
+    background: #e5e5e5;
+    background: -moz-linear-gradient(#fafafa,#f4f4f4 40%,#e5e5e5);
+    background: -webkit-linear-gradient(#fafafa,#f4f4f4 40%,#e5e5e5);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#fafafa', endColorstr='#e5e5e5')";
+    border: 1px solid #aaa;
+    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    -webkit-user-select: none
+}
+
+.desktop .about {
+    width: 100%;
+    height: 100%;
+    color: black;
+    text-align: center;
+    background: url(./tiles/handmadepaper.png)
+}
+
+.desktop .about .logo {
+    position: absolute;
+    left: 50%;
+    top: 8px;
+    margin: 45px 0 0 -45px;
+    width: 90px;
+    height: 90px;
+    background: url(/mylogo.png);
+    background-size: cover
+}
+
+.desktop .about img {
+    width: 80px;
+    height: 80px;
+    padding: 15px 0 5px 0
+}
+
+.desktop .about .name {
+    position: absolute;
+    left: 50%;
+    top: 140px;
+    margin: 10px 0 0 -100px;
+    width: 200px;
+    height: 20px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 16px;
+    text-align: center
+}
+
+.desktop .about .version {
+    position: absolute;
+    left: 50%;
+    top: 160px;
+    margin: 10px 0 0 -100px;
+    width: 200px;
+    height: 20px;
+    text-align: center
+}
+
+.desktop .about .resource hr {
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #BFBFBF
+}
+
+.desktop .about .resource {
+    position: absolute;
+    left: 50%;
+    top: 175px;
+    margin: 10px 0 0 -115px;
+    width: 230px;
+    height: 160px;
+    text-align: left;
+    line-height: 22px
+}
+
+.desktop .about .lable {
+    color: #888
+}
+
+.desktop .about .copy {
+    position: absolute;
+    left: 50%;
+    top: 345px;
+    margin: 10px 0 0 -120px;
+    width: 240px;
+    height: 20px;
+    text-decoration: none;
+    color: #888;
+    text-align: center
+}
+
+#pannelFrame {
+    position: absolute;
+    width: 420px;
+    height: 100%;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    background: transparent url(./tiles/carbon_fibre.png) repeat center top;
+    font: 12px Arial,Tahoma,微软雅黑;
+    color: #fff;
+    cursor: default;
+    display: none
+}
+
+.homepanel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: none
+}
+
+.homepanel div.shortcut {
+    width: 120px;
+    height: 100px;
+    position: absolute
+}
+
+.homepanel div.shortcut div.content {
+    width: 100px;
+    height: 100px;
+    border: 1px solid transparent;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle
+}
+
+.homepanel div.shortcut:hover .content {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.5);
+    cursor: pointer
+}
+
+.homepanel div.shortcut div.content div.name {
+    margin-top: 0;
+    width: 100px;
+    height: 20px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 14px;
+    text-align: center;
+    color: #fff;
+    text-shadow: #000 1px 1px 8px;
+    word-break: break-all
+}
+
+.homepanel div.shortcut div.content .number {
+    position: absolute;
+    top: 10px;
+    right: 38px;
+    padding: 1px 4px 0 5px;
+    background: rgba(255,0,0,.9);
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 13px;
+    border: 1px solid #fff;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    text-align: center;
+    display: none
+}
+
+.homepanel div.shortcut div.content .close {
+    position: absolute;
+    top: -8px;
+    right: 16px;
+    height: 24px;
+    width: 24px;
+    background: url(./../style/images/remove.png) no-repeat center center;
+    display: none
+}
+
+.homepanel div.shortcut div.content img {
+    width: 64px;
+    height: 64px;
+    padding: 2px 4px 0 4px
+}
+
+.homepanel div.shortcut div.bar {
+    top: 0;
+    right: 0;
+    position: absolute;
+    cursor: move;
+    color: #fff;
+    width: 21px;
+    height: 62px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border: 1px solid #808080;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    background: #000 url(../style/images/btn-drop.png) no-repeat bottom
+}
+
+.homepanel div.shortcut .bar .close {
+    float: right;
+    cursor: pointer;
+    width: 21px;
+    height: 21px;
+    background: url(../style/images/btn-close.png) no-repeat;
+    background-position: 0 -21px
+}
+
+.homepanel div.shortcut .bar .close:hover {
+    background-position: 0 0
+}
+
+.homepanel div.shortcut .bar .open {
+    float: right;
+    cursor: pointer;
+    width: 21px;
+    height: 21px;
+    background: url(../style/images/btn-open.png) no-repeat;
+    background-position: 0 -21px
+}
+
+.homepanel div.shortcut .bar .open:hover {
+    background-position: 0 0
+}
+
+.homepanel .message {
+    position: absolute;
+    top: 0;
+    right: -320px;
+    bottom: 0;
+    width: 320px;
+    font-size: 10.5pt;
+    background: rgba(0,0,0,0.25);
+    border-top: 1px solid rgba(255,255,255,0.2);
+    border-left: 1px solid rgba(255,255,255,0.2);
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 999999
+}
+
+.homepanel .message::-webkit-scrollbar {
+    background-color: rgba(0,0,0,0.1)
+}
+
+.homepanel .message .apptitle {
+    padding: 5px 10px
+}
+
+.homepanel .message .apptitle * {
+    vertical-align: middle
+}
+
+.homepanel .message .apptitle img {
+    height: 24px;
+    width: 24px;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px
+}
+
+.homepanel .message .apptitle .close {
+    float: right;
+    width: 40px;
+    padding: 2px 0 3px 10px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 12px;
+    -moz-border-radius: 12px;
+    -webkit-border-radius: 12px;
+    cursor: pointer
+}
+
+.homepanel .message .apptitle .close:hover {
+    background: rgba(0,0,0,0.8)
+}
+
+.homepanel .message .appcontent {
+    display: inline-block;
+    width: 100%;
+    padding: 10px 0;
+    margin: 0
+}
+
+.homepanel .message .appcontent li {
+    display: inline-block;
+    width: 100%;
+    width: 300px;
+    padding: 5px 10px 0 10px
+}
+
+.homepanel .message .appcontent li .title {
+    font-weight: bold
+}
+
+.homepanel .message .appcontent li .content p {
+    margin: 8px 8px 8px 0
+}
+
+.homepanel .message .appcontent li .dept {
+    padding: 5px 10px;
+    text-align: right
+}
+
+.homepanel .message .appcontent hr {
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid #aaa
+}
+
+/******* TASKBAR  *******/
+.taskbar {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    background: rgba(0,0,0,0.25);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 500;
+    display: none
+}
+
+.taskbar .TaskShowDesktop {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 40px;
+    width: 10px;
+    border-left: 1px solid rgba(255,255,255,0.3);
+    cursor: pointer
+}
+
+.taskbar .TaskShowDesktop:hover {
+    background: rgba(255,255,255,0.2)
+}
+
+.taskbar .TaskStatus {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    height: 40px;
+    width: 270px;
+    font-size: 16px;
+    color: #fff
+}
+
+.taskbar .TaskStatus .DashBoard {
+    position: absolute;
+    top: 0;
+    right: 270px;
+    height: 26px;
+    width: 26px;
+    padding: 8px 5px;
+    cursor: pointer
+}
+
+.taskbar .TaskStatus .DashBoard:hover {
+    background: rgba(255,255,255,.3)
+}
+
+.taskbar .TaskStatus .DashBoard img {
+    height: 26px;
+    width: 26px
+}
+
+.taskbar .TaskStatus .Search {
+    position: absolute;
+    top: 0;
+    right: 310px;
+    width: 240px;
+    border-right: 1px solid rgba(255,255,255,0.2);
+    display: none
+}
+
+.taskbar .TaskStatus .Search input {
+    width: 200px;
+    border: 1px solid #fff;
+    height: 28px;
+    color: black;
+    padding: 5px
+}
+
+.taskbar .TaskStatus .Search i {
+    cursor: pointer
+}
+
+.taskbar .TaskStatus .Sayma {
+    position: absolute;
+    top: 0;
+    right: 132px;
+    height: 24px;
+    width: 24px;
+    padding: 8px;
+    cursor: pointer
+}
+
+.taskbar .TaskStatus .Sayma:hover {
+    background: rgba(255,255,255,.3)
+}
+
+.taskbar .TaskStatus .Sayma img {
+    height: 24px;
+    width: 24px
+}
+
+.taskbar .TaskStatus .Message {
+    position: absolute;
+    top: 0;
+    right: 265px;
+    height: 24px;
+    width: 24px;
+    padding: 8px;
+    cursor: pointer
+}
+
+.taskbar .TaskStatus .Message:hover {
+    background: rgba(255,255,255,.3)
+}
+
+.taskbar .TaskStatus .Message img {
+    height: 24px;
+    width: 24px
+}
+
+.taskbar .TaskStatus .Message .number {
+    position: absolute;
+    top: 17px;
+    left: 24px;
+    height: 15px;
+    min-width: 11px;
+    padding: 0 2px;
+    line-height: 15px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    border: 1px solid #fff;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    text-align: center;
+    display: none
+}
+
+.taskbar .TaskStatus .Weather {
+    position: absolute;
+    top: 0;
+    right: 175px;
+    height: 40px;
+    width: 90px;
+    border-right: 1px solid rgba(255,255,255,0.2);
+    cursor: pointer
+}
+
+.taskbar .TaskStatus .Weather:hover {
+    border-right: 0 solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,.3)
+}
+
+.taskbar .TaskStatus .Weather .icon {
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    height: 30px;
+    width: 30px
+}
+
+.taskbar .TaskStatus .Weather .icon img {
+    height: 30px;
+    width: 30px
+}
+
+.taskbar .TaskStatus .Weather .info {
+    position: absolute;
+    top: 5px;
+    left: 35px;
+    height: 30px;
+    width: 50px;
+    text-align: center;
+    line-height: 32px
+}
+
+.taskbar .TaskStatus .WeatherList {
+    position: absolute;
+    top: 45px;
+    right: 60px;
+    height: 270px;
+    width: 350px;
+    padding: 5px 15px;
+    color: #aaa;
+    font-size: 10pt;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    -moz-box-shadow: 5px 5px 30px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 5px 5px 30px rgba(0,0,0,0.5);
+    box-shadow: 5px 5px 30px rgba(0,0,0,0.5);
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=25,Direction=135,Color='#888');
+    border-radius: 1px;
+    -moz-border-radius: 1px;
+    -webkit-border-radius: 1px;
+    z-index: 9998;
+    display: none
+}
+
+.taskbar .TaskStatus .WeatherList .pointer {
+    position: absolute;
+    top: -10px;
+    right: 172px;
+    bottom: -10px;
+    margin-left: -10px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 0;
+    border-bottom: 10px solid #fafafa
+}
+
+.taskbar .TaskStatus .WeatherList .today {
+    border-bottom: 1px solid #ccc
+}
+
+.taskbar .TaskStatus .WeatherList .future {
+    padding: 10px 0;
+    text-align: center;
+    font-size: 10.5pt;
+    color: #607D8B
+}
+
+.taskbar .TaskStatus .WeatherList .future i {
+    font-size: 48pt
+}
+
+.taskbar .TaskStatus .WeatherList ul {
+    display: inline-block;
+    padding: 0;
+    margin: 0
+}
+
+.taskbar .TaskStatus .WeatherList .today li {
+    display: inline-block;
+    width: auto;
+    height: auto;
+    padding: 5px;
+    line-height: 20px
+}
+
+.taskbar .TaskStatus .WeatherList .future li {
+    display: inline-block;
+    width: 115px;
+    height: auto;
+    padding: 5px 0;
+    line-height: 20px
+}
+
+.taskbar .TaskStatus .WeatherList .weather-icon {
+    padding: 0 5px 0 5px;
+    color: #FF9800;
+    font-size: 64pt
+}
+
+.taskbar .TaskStatus .WeatherList .city-name {
+    font-size: 24pt
+}
+
+.taskbar .TaskStatus .WeatherList .feels-like {
+    font-size: 28pt
+}
+
+.taskbar .TaskStatus .WeatherList .weather-text {
+    text-align: center
+}
+
+.taskbar .TaskStatus .Clock {
+    position: absolute;
+    top: 0;
+    right: 45px;
+    height: 30px;
+    width: 90px;
+    font-size: 12px;
+    text-align: center;
+    line-height: 16px;
+    padding: 5px 0
+}
+
+.taskbar .TaskStatus .Clock:hover {
+    background: rgba(255,255,255,.3)
+}
+
+.taskbar .TaskStatus .ClockList {
+    position: absolute;
+    top: 45px;
+    right: 0;
+    height: 200px;
+    width: 320px;
+    color: #aaa;
+    font-size: 10.5pt;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    -moz-box-shadow: 5px 5px 30px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 5px 5px 30px rgba(0,0,0,0.5);
+    box-shadow: 5px 5px 30px rgba(0,0,0,0.5);
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=25,Direction=135,Color='#888');
+    border-radius: 1px;
+    -moz-border-radius: 1px;
+    -webkit-border-radius: 1px;
+    z-index: 9998;
+    display: none
+}
+
+.taskbar .TaskStatus .ClockList .pointer {
+    position: absolute;
+    top: -10px;
+    right: 80px;
+    bottom: -10px;
+    margin-left: -10px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 0;
+    border-bottom: 10px solid #fafafa
+}
+
+.taskbar .TaskStatus .ClockList .now {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 150px;
+    width: 150px;
+    padding: 30px 0 30px 15px
+}
+
+.taskbar .TaskStatus .ClockList .day {
+    font-size: 48pt;
+    line-height: 64px;
+    color: #c00
+}
+
+.taskbar .TaskStatus .ClockList .today {
+    position: absolute;
+    top: 0;
+    left: 150px;
+    height: 150px;
+    width: 150px;
+    padding: 15px;
+    text-align: center
+}
+
+.taskbar .TaskStatus .Picture {
+    position: absolute;
+    top: 0;
+    right: 5px;
+    height: 32px;
+    width: 32px;
+    padding: 4px;
+    cursor: pointer
+}
+
+.taskbar .TaskStatus .Picture:hover {
+    background: rgba(255,255,255,.3)
+}
+
+.taskbar .TaskStatus .Picture img {
+    height: 32px;
+    width: 32px;
+    border-radius: 100% 100% 100% 100%;
+    -moz-border-radius: 100% 100% 100% 100%;
+    -webkit-border-radius: 100% 100% 100% 100%
+}
+
+.taskbar .TaskStatus .UserMenu {
+    position: absolute;
+    top: 45px;
+    right: 0;
+    height: 225px;
+    width: 100px;
+    padding: 8px;
+    color: #000;
+    font-size: 11pt;
+    background: #fff;
+    border: 1px solid #ddd;
+    -moz-box-shadow: 5px 5px 30px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 5px 5px 30px rgba(0,0,0,0.5);
+    box-shadow: 5px 5px 30px rgba(0,0,0,0.5);
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=25,Direction=135,Color='#888');
+    z-index: 9999;
+    display: none
+}
+
+.taskbar .TaskStatus .UserMenu hr {
+    width: 100px;
+    border: 0;
+    border-bottom: 1px solid #ccc
+}
+
+.taskbar .TaskStatus .UserMenu li {
+    display: inline-block;
+    width: 100px;
+    height: 24px;
+    padding: 0 0 4px 0;
+    text-align: center;
+    cursor: pointer
+}
+
+.taskbar .TaskStatus .UserMenu li:hover {
+    background: #dff4ff
+}
+
+.taskbar .TaskStatus .UserMenu ul {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    line-height: 28px
+}
+
+.taskbar .TaskStatus .UserMenu .pointer {
+    position: absolute;
+    top: -10px;
+    right: 15px;
+    bottom: -10px;
+    margin-left: -10px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 0;
+    border-bottom: 10px solid #fff
+}
+
+.taskbar .SystemButton {
+    height: 40px;
+    width: 165px;
+    padding: 0 10px;
+    background: url(./../style/images/TaskbarPoints.png) no-repeat right top
+}
+
+.taskbar .SystemButton li:hover {
+    background: rgba(255,255,255,.3)
+}
+
+.taskbar .SystemButton .HomeButton {
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    background: url(./../style/images/start1.png) no-repeat
+}
+
+.taskbar .SystemButton .HomeButton:hover {
+    background: url(./../style/images/start2.png) no-repeat
+}
+
+.taskbar .SystemButton .HomeButton.active {
+    background: url(./../style/images/start2.png) no-repeat
+}
+
+.taskbar .SystemButton .StartMenu {
+    position: absolute;
+    top: 45px;
+    left: 5px;
+    width: 290px;
+    height: 415px;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    -moz-box-shadow: 5px 5px 30px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 5px 5px 30px rgba(0,0,0,0.5);
+    box-shadow: 5px 5px 30px rgba(0,0,0,0.5);
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=25,Direction=135,Color='#888');
+    z-index: 9999;
+    display: none
+}
+
+.taskbar .SystemButton .StartMenu .AppList {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 40px;
+    display: table-cell;
+    padding: 5px 0 0 3px;
+    overflow: auto
+}
+
+.taskbar .SystemButton .StartMenu .AppList .item {
+    width: 85px;
+    height: 80px;
+    padding: 5px 2px 0 2px;
+    line-height: 16px;
+    color: #666;
+    font-size: 14px;
+    text-align: center;
+    display: inline-block;
+    cursor: pointer
+}
+
+.taskbar .SystemButton .StartMenu .AppList .item:hover {
+    background: rgba(0,0,0,.1)
+}
+
+.taskbar .SystemButton .StartMenu .AppList .item:hover span {
+    color: #000
+}
+
+.taskbar .SystemButton .StartMenu .AppList .item img {
+    width: 54px;
+    height: 54px
+}
+
+.taskbar .SystemButton .StartMenu .UserOperate {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    bottom: 0;
+    color: #000;
+    background: #fff;
+    border-top: 1px solid #ddd
+}
+
+.taskbar .SystemButton .StartMenu .UserOperate .DoLock {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 40px;
+    text-align: center;
+    font-size: 12pt;
+    opacity: .6;
+    cursor: pointer
+}
+
+.taskbar .SystemButton .StartMenu .UserOperate .DoLock:hover {
+    opacity: 1
+}
+
+.taskbar .SystemButton .StartMenu .UserOperate .Logout {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 40px;
+    border-left: 1px solid #ddd;
+    text-align: center;
+    font-size: 12pt;
+    opacity: .6;
+    cursor: pointer
+}
+
+.taskbar .SystemButton .StartMenu .UserOperate .Logout:hover {
+    opacity: 1
+}
+
+.taskbar .SystemButton .StartMenu .pointer {
+    position: absolute;
+    top: -10px;
+    left: 30px;
+    bottom: -10px;
+    margin-left: -10px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 0;
+    border-bottom: 10px solid #fafafa
+}
+
+.taskbar .SystemButton .ApplyButton {
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    background: url(./../style/images/appcenter1.png) no-repeat
+}
+
+.taskbar .SystemButton .ApplyButton:hover {
+    background: url(./../style/images/appcenter2.png) no-repeat
+}
+
+.taskbar .SystemButton .ApplyButton.active {
+    background: url(./../style/images/appcenter2.png) no-repeat
+}
+
+.taskbar .SystemButton .AppMenu {
+    position: absolute;
+    top: 45px;
+    left: 30px;
+    width: 380px;
+    height: 450px;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    -moz-box-shadow: 5px 5px 30px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 5px 5px 30px rgba(0,0,0,0.5);
+    box-shadow: 5px 5px 30px rgba(0,0,0,0.5);
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=25,Direction=135,Color='#888');
+    border-radius: 1px;
+    -moz-border-radius: 1px;
+    -webkit-border-radius: 1px;
+    z-index: 9999;
+    display: none
+}
+
+.taskbar .SystemButton .AppMenu .AppList {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    bottom: 40px
+}
+
+.taskbar .SystemButton .AppMenu .AppList .tab1 {
+    position: absolute;
+    top: 2px;
+    left: 80px;
+    width: 80px;
+    height: 4px;
+    border: 8px solid #fafafa;
+    border-bottom: 6px solid #fafafa;
+    background: #ddd;
+    cursor: pointer
+}
+
+.taskbar .SystemButton .AppMenu .AppList .tab1.active {
+    background: #9cf
+}
+
+.taskbar .SystemButton .AppMenu .AppList .tab1content {
+    position: absolute;
+    top: 15px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: table-cell;
+    padding: 10px 0 5px 5px;
+    overflow: auto;
+    overflow-x: hidden
+}
+
+.taskbar .SystemButton .AppMenu .AppList .tab2 {
+    position: absolute;
+    top: 2px;
+    left: 175px;
+    width: 80px;
+    height: 4px;
+    border: 8px solid #fafafa;
+    border-bottom: 6px solid #fafafa;
+    background: #ddd;
+    cursor: pointer
+}
+
+.taskbar .SystemButton .AppMenu .AppList .tab2.active {
+    background: #9cf
+}
+
+.taskbar .SystemButton .AppMenu .AppList .tab2content {
+    position: absolute;
+    top: 15px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: table-cell;
+    padding: 10px 0 5px 5px;
+    overflow: auto;
+    overflow-x: hidden;
+    display: none
+}
+
+.taskbar .SystemButton .AppMenu .AppList .item {
+    position: relative;
+    width: 85px;
+    height: 80px;
+    padding: 5px 2px 0 2px;
+    line-height: 16px;
+    color: #666;
+    font-size: 14px;
+    text-align: center;
+    display: inline-block;
+    cursor: pointer
+}
+
+.taskbar .SystemButton .AppMenu .AppList .item.select {
+    display: none
+}
+
+.taskbar .SystemButton .AppMenu .AppList .user.select {
+    display: inline-block
+}
+
+.taskbar .SystemButton .AppMenu .AppList .item:hover {
+    background: rgba(0,0,0,.1)
+}
+
+.taskbar .SystemButton .AppMenu .AppList .item:hover span {
+    color: #000
+}
+
+.taskbar .SystemButton .AppMenu .AppList .item img {
+    width: 54px;
+    height: 54px
+}
+
+.taskbar .SystemButton .AppMenu .AppList .item .uninstall {
+    position: absolute;
+    top: 4px;
+    right: 8px;
+    height: 24px;
+    width: 24px;
+    background: url(./../style/images/remove.png) no-repeat center center;
+    display: none
+}
+
+.taskbar .SystemButton .AppMenu .AppList .item.select .uninstall {
+    display: block
+}
+
+.taskbar .SystemButton .AppMenu .AppSearch {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    bottom: 0;
+    color: #ccc;
+    background: #fff;
+    border-top: 1px solid #ddd
+}
+
+.taskbar .SystemButton .AppMenu .AppSearch .searchBtn {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    padding: 0 10px;
+    font-size: 14pt
+}
+
+.taskbar .SystemButton .AppMenu .AppSearch .searchBtn:hover {
+    color: #000
+}
+
+.taskbar .SystemButton .AppMenu .AppSearch .searchBtn img {
+    width: 20px;
+    height: 20px
+}
+
+.taskbar .SystemButton .AppMenu .AppSearch .searchKey {
+    position: absolute;
+    top: 8px;
+    left: 40px;
+    width: 250px;
+    height: 24px;
+    border: 0 solid #ddd
+}
+
+.taskbar .SystemButton .AppMenu .AppSearch .edit {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50px;
+    height: 24px;
+    font-size: 16px;
+    color: #09f;
+    cursor: pointer
+}
+
+.taskbar .SystemButton .AppMenu .AppSearch .edit.active {
+    color: #FF5722
+}
+
+.taskbar .SystemButton .AppMenu .pointer {
+    position: absolute;
+    top: -10px;
+    left: 60px;
+    bottom: -10px;
+    margin-left: -10px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 0;
+    border-bottom: 10px solid #fafafa
+}
+
+.taskbar .SystemButton .ThemeButton {
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    background: url(./../style/images/theme1.png) no-repeat
+}
+
+.taskbar .SystemButton .ThemeButton:hover {
+    background: url(./../style/images/theme2.png) no-repeat
+}
+
+.taskbar .SystemButton .ThemeButton.active {
+    background: url(./../style/images/theme2.png) no-repeat
+}
+
+.taskbar .SystemButton .ThemeMenu {
+    position: absolute;
+    top: 45px;
+    left: 70px;
+    width: 420px;
+    height: 560px;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    -moz-box-shadow: 5px 5px 30px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 5px 5px 30px rgba(0,0,0,0.5);
+    box-shadow: 5px 5px 30px rgba(0,0,0,0.5);
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=25,Direction=135,Color='#888');
+    border-radius: 1px;
+    -moz-border-radius: 1px;
+    -webkit-border-radius: 1px;
+    z-index: 9999;
+    display: none
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    bottom: 40px
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .tab1 {
+    position: absolute;
+    top: 2px;
+    left: 110px;
+    width: 80px;
+    height: 4px;
+    border: 8px solid #fafafa;
+    border-bottom: 6px solid #fafafa;
+    background: #ddd;
+    cursor: pointer
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .tab1.active {
+    background: #9cf
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .tab1content {
+    position: absolute;
+    top: 15px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: table-cell;
+    padding: 10px 0 5px 10px;
+    overflow: auto;
+    overflow-x: hidden
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .tab2 {
+    position: absolute;
+    top: 2px;
+    left: 205px;
+    width: 80px;
+    height: 4px;
+    border: 8px solid #fafafa;
+    border-bottom: 6px solid #fafafa;
+    background: #ddd;
+    cursor: pointer
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .tab2.active {
+    background: #9cf
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .tab2content {
+    position: absolute;
+    top: 15px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: table-cell;
+    padding: 10px 0 5px 10px;
+    overflow: auto;
+    overflow-x: hidden;
+    display: none
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .item {
+    position: relative;
+    width: 180px;
+    height: auto;
+    padding: 5px;
+    margin-left: 5px;
+    line-height: 16px;
+    color: #666;
+    font-size: 14px;
+    text-align: center;
+    display: inline-block;
+    cursor: pointer
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .item.select {
+    display: none
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .user.select {
+    display: inline-block
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .item:hover {
+    background: rgba(0,0,0,.1)
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .item:hover span {
+    color: #000
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .item img {
+    width: 180px;
+    height: 120px
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .item .uninstall {
+    position: absolute;
+    top: 42px;
+    left: 70px;
+    height: 48px;
+    width: 48px;
+    background: url(./../style/images/delete.png) no-repeat center center;
+    display: none
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .item .wbtn1 {
+    cursor: pointer;
+    float: left
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .item .wbtn1:hover {
+    color: #FF5722
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .item .wbtn2 {
+    cursor: pointer;
+    float: right
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .item .wbtn2:hover {
+    color: #FF5722
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .item.select .uninstall {
+    display: block
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeSearch {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    bottom: 0;
+    color: #ccc;
+    background: #fff;
+    border-top: 1px solid #ddd
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeSearch .searchBtn {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    padding: 0 10px;
+    font-size: 14pt
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeSearch .searchBtn:hover {
+    color: #000
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeSearch .searchBtn img {
+    width: 20px;
+    height: 20px
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeSearch .searchKey {
+    position: absolute;
+    top: 8px;
+    left: 40px;
+    width: 320px;
+    height: 24px;
+    border: 0 solid #ddd
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeSearch .edit {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50px;
+    height: 24px;
+    font-size: 16px;
+    color: #09f;
+    cursor: pointer
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeSearch .edit.active {
+    color: #FF5722
+}
+
+.taskbar .SystemButton .ThemeMenu .pointer {
+    position: absolute;
+    top: -10px;
+    left: 75px;
+    bottom: -10px;
+    margin-left: -10px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 0;
+    border-bottom: 10px solid #fafafa
+}
+
+.taskbar .SystemButton li {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    padding: 4px 10px
+}
+
+.taskbar .SystemButton ul {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    height: 40px
+}
+
+.taskbar .SystemButton li .icon {
+    line-height: 20px
+}
+
+.taskbar .TaskButton:active .icon {
+    opacity: .9
+}
+
+.taskbar .SystemButton li .label {
+    position: absolute;
+    top: 45px;
+    display: none;
+    margin-left: -18px;
+    text-align: center;
+    color: #FFF;
+    z-index: 9999
+}
+
+.taskbar .SystemButton li:hover .label {
+    display: block
+}
+
+.taskbar .SystemButton li .label em {
+    display: inline-block;
+    padding: 1px 10px;
+    font-style: normal;
+    background: #000;
+    background: rgba(0,0,0,.3);
+    border: rgba(255,255,255,0.3);
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px
+}
+
+.taskbar .SystemButton li .label .pointer {
+    position: absolute;
+    bottom: -5px;
+    top: -5px;
+    left: 30px;
+    margin-left: -1px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 0;
+    border-bottom: 5px solid rgba(0,0,0,.3)
+}
+
+.taskbar .SystemButton li .label2 {
+    position: absolute;
+    top: 45px;
+    display: none;
+    margin-left: -8px;
+    text-align: center;
+    color: #FFF;
+    z-index: 9999
+}
+
+.taskbar .SystemButton li:hover .label2 {
+    display: block
+}
+
+.taskbar .SystemButton li .label2 em {
+    display: inline-block;
+    padding: 1px 10px;
+    font-style: normal;
+    background: #000;
+    background: rgba(0,0,0,.3);
+    border: rgba(255,255,255,0.3);
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px
+}
+
+.taskbar .SystemButton li .label2 .pointer {
+    position: absolute;
+    bottom: -5px;
+    top: -5px;
+    left: 28px;
+    margin-left: -8px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 0;
+    border-bottom: 5px solid rgba(0,0,0,.3)
+}
+
+.taskbar .TaskButton {
+    position: absolute;
+    top: 0;
+    left: 190px;
+    right: 320px;
+    height: 40px;
+    overflow: hidden
+}
+
+.taskbar .TaskButton li {
+    display: inline-block;
+    width: 50px;
+    height: 40px
+}
+
+.taskbar .TaskButton ul {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    height: 40px
+}
+
+.taskbar .TaskButton li .icon {
+    line-height: 20px
+}
+
+.taskbar .TaskButton:active .icon {
+    opacity: .9
+}
+
+.taskbar .TaskButton li img {
+    width: 32px;
+    height: 32px;
+    padding: 3px 9px 4px 9px
+}
+
+.taskbar .TaskButton li .label {
+    position: absolute;
+    top: 45px;
+    display: none;
+    width: 150px;
+    margin-left: -50px;
+    text-align: center;
+    color: #FFF
+}
+
+.taskbar .TaskButton li:hover .label {
+    display: block
+}
+
+.taskbar .TaskButton li .label em {
+    display: inline-block;
+    padding: 1px 10px;
+    font-style: normal;
+    background: #000;
+    background: rgba(0,0,0,.3);
+    border: rgba(255,255,255,0.3);
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px
+}
+
+.taskbar .TaskButton li .label .pointer {
+    position: absolute;
+    bottom: -5px;
+    top: -5px;
+    left: 75px;
+    margin-left: -5px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 0;
+    border-bottom: 5px solid rgba(0,0,0,.3)
+}
+
+.taskbar .TaskButton .ButtonItem {
+    cursor: pointer;
+    width: 50px;
+    height: 38px;
+    border-top: 2px solid rgba(255,255,255,.5)
+}
+
+.taskbar .TaskButton .ButtonItem:hover {
+    background: rgba(255,255,255,.3)
+}
+
+.taskbar .TaskButton .ButtonItemActive {
+    cursor: pointer;
+    width: 50px;
+    height: 38px;
+    border-top: 2px solid rgba(255,255,255,1);
+    background: rgba(255,255,255,.4)
+}
+
+.taskbar .TaskButton .ButtonItemActive:hover {
+    background: rgba(255,255,255,.5)
+}
+
+.homepanel .timeevent li .infopanel::-webkit-scrollbar {
+    -webkit-appearance: none;
+    background-color: transparent
+}
+
+.homepanel .timeevent li .infopanel::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    background-clip: content-box;
+    background-color: #BFBFBF
+}
+
+.homepanel .timeevent li .infopanel::-webkit-scrollbar-corner {
+    background-color: transparent
+}
+
+.homepanel .timeevent li .htmlpanel::-webkit-scrollbar {
+    -webkit-appearance: none;
+    background-color: transparent
+}
+
+.homepanel .timeevent li .htmlpanel::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    background-clip: content-box;
+    background-color: #BFBFBF
+}
+
+.homepanel .timeevent li .htmlpanel::-webkit-scrollbar-corner {
+    background-color: transparent
+}
+
+.homepanel .timeevent {
+    position: absolute;
+    top: 0;
+    right: 120px;
+    left: 0;
+    font-size: 10.5pt;
+    padding: 0 0 0 45px
+}
+
+.homepanel .timeevent h2 {
+    margin-top: 25px!important;
+    font-size: 18pt
+}
+
+.homepanel .timeevent .timelineMore {
+    font-size: 10.5pt;
+    font-weight: normal;
+    color: #DDBD45;
+    cursor: pointer;
+    opacity: .8
+}
+
+.homepanel .timeevent .timelineMore:hover {
+    opacity: 1
+}
+
+.homepanel .timeevent ul {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    width: 100%
+}
+
+.homepanel .timeevent li {
+    display: inline-block;
+    width: auto;
+    height: auto;
+    padding: 15px 25px 25px 0;
+    line-height: 20px;
+    vertical-align: top
+}
+
+.homepanel .timeevent li p {
+    font-size: 10.5pt!important;
+    margin: 0!important
+}
+
+.homepanel .timeevent li .infopanel h3 {
+    font-size: 14pt!important;
+    margin: 0!important;
+    margin-bottom: 10px!important;
+    color: #fff
+}
+
+.homepanel .timeevent li .infopanel {
+    position: relative;
+    width: 362px;
+    height: 200px;
+    padding: 15px;
+    margin: 5px 0;
+    color: #eee;
+    background: rgba(0,0,0,0.5);
+    overflow: auto
+}
+
+.homepanel .timeevent li .htmlpanel {
+    width: 570px;
+    height: auto;
+    min-height: 200px;
+    max-height: 360px;
+    padding: 15px;
+    margin: 5px 0;
+    color: #eee;
+    background: rgba(0,0,0,0.5);
+    overflow: auto
+}
+
+.homepanel .timeevent li .htmlpanel h1 {
+    display: none
+}
+
+.homepanel .timeevent li .htmlpanel h2 {
+    display: none
+}
+
+.homepanel .timeevent li .htmlpanel h3 {
+    font-size: 14pt!important;
+    margin: 0!important;
+    margin-bottom: 10px!important;
+    text-align: center;
+    color: #fff!important
+}
+
+.homepanel .timeevent li .htmlpanel h4 {
+    font-size: 10.5pt!important
+}
+
+.homepanel .timeevent li .htmlpanel table {
+    border: 0!important;
+    border-collapse: collapse!important;
+    border-spacing: 0!important;
+    margin: 0!important;
+    background: transparent!important;
+    width: 100%!important
+}
+
+.homepanel .timeevent li .htmlpanel td {
+    color: #fff!important;
+    background: transparent!important;
+    font-size: 10.5pt!important;
+    border: 1px solid #ccc!important;
+    padding: 3px 10px
+}
+
+.homepanel .timeevent li .htmlpanel th {
+    color: #fff!important;
+    background: transparent!important;
+    font-size: 10.5pt!important;
+    border: 1px solid #ccc!important;
+    padding: 3px 10px
+}
+
+.homepanel .timeevent li .htmlpanel p {
+    color: #fff!important;
+    font-size: 10.5pt!important
+}
+
+.homepanel .timeevent li .htmlpanel span {
+    color: #fff!important;
+    font-size: 10.5pt!important
+}
+
+.homepanel .timeevent li .htmlpanel img {
+    width: 100%!important;
+    max-width: none!important
+}
+
+.homepanel .timeevent li .btn {
+    float: right;
+    color: #ccc;
+    border-radius: 20px;
+    font-size: 9pt;
+    margin-top: 2px;
+    border: 1px solid #aaa;
+    line-height: 20px;
+    padding: 0 5px;
+    cursor: pointer
+}
+
+.homepanel .timeevent li .btn:hover {
+    color: #fff;
+    border: 1px solid #eee;
+    background: rgba(255,255,255,0.2)
+}
+
+.homepanel .timeline {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 160px;
+    font-size: 10.5pt
+}
+
+.homepanel .timeline .linebar1 {
+    position: absolute;
+    top: 30px;
+    height: 0;
+    right: 40px;
+    width: 120px;
+    border-right: 2px solid #ffff
+}
+
+.homepanel .timeline .linebar1 .startdate {
+    position: absolute;
+    top: 0;
+    height: 20px;
+    right: 20px;
+    width: 100px;
+    text-align: right;
+    font-size: 10.5pt
+}
+
+.homepanel .timeline .linebar2 {
+    position: absolute;
+    top: 50px;
+    bottom: 30px;
+    right: 40px;
+    width: 120px;
+    border-right: 2px solid #ffff
+}
+
+.homepanel .timeline .linebar2 .enddate {
+    position: absolute;
+    bottom: 0;
+    height: 20px;
+    right: 20px;
+    width: 100px;
+    text-align: right;
+    font-size: 10.5pt
+}
+
+.homepanel .timeline .currbar {
+    position: absolute;
+    top: 30px;
+    height: 16px;
+    right: 30px;
+    width: 16px;
+    border: 2px solid #fff;
+    border-radius: 100%;
+    -moz-border-radius: 100%;
+    -webkit-border-radius: 100%;
+    cursor: pointer
+}
+
+.homepanel .timeline .currbar .currdate {
+    position: absolute;
+    bottom: -2px;
+    height: 20px;
+    right: 30px;
+    width: 80px;
+    text-align: right;
+    font-size: 10.5pt
+}
+
+.themepanel {
+    position: absolute;
+    top: 39px;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background: transparent url(../style/images/20bg.png) center center;
+    opacity: 0
+}
+
+.themepanel .themes {
+    position: absolute;
+    top: 0;
+    left: 120px;
+    right: 120px;
+    bottom: 0;
+    z-index: 35
+}
+
+.themepanel .menulist {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 40px;
+    width: 100%;
+    background: transparent url(../style/images/apply_line.png)
+}
+
+.themepanel .menuitem1 {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding-top: 14px;
+    height: 26px;
+    width: 100px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    color: #dfdfdf
+}
+
+.themepanel .menuitem1.active {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding-top: 14px;
+    height: 26px;
+    width: 100px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    background: transparent url(../style/images/apply_item.png)
+}
+
+.themepanel .menuitem1:hover {
+    color: #fff;
+    text-shadow: #09f 1px 1px 5px
+}
+
+.themepanel .menuitem2 {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 100px;
+    padding-top: 14px;
+    height: 26px;
+    width: 100px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    color: #dfdfdf
+}
+
+.themepanel .menuitem2.active {
+    position: absolute;
+    top: 0;
+    left: 100px;
+    padding-top: 14px;
+    height: 26px;
+    width: 100px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    background: transparent url(../style/images/apply_item.png)
+}
+
+.themepanel .menuitem2:hover {
+    color: #fff;
+    text-shadow: #09f 1px 1px 5px
+}
+
+.themepanel .menuitem3 {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 200px;
+    padding-top: 14px;
+    height: 26px;
+    width: 100px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    color: #dfdfdf
+}
+
+.themepanel .menuitem3.active {
+    position: absolute;
+    top: 0;
+    left: 200px;
+    padding-top: 14px;
+    height: 26px;
+    width: 100px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    background: transparent url(../style/images/apply_item.png)
+}
+
+.themepanel .menuitem3:hover {
+    color: #fff;
+    text-shadow: #09f 1px 1px 5px
+}
+
+.themepanel .upload {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: -10px;
+    padding-top: 15px;
+    height: 22px;
+    width: 80px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    color: #eee;
+    background: transparent url(../style/images/upload.png) no-repeat left bottom
+}
+
+.themepanel .upload:hover {
+    color: #fff;
+    text-shadow: #09f 1px 1px 5px
+}
+
+.themepanel .content {
+    position: absolute;
+    top: 45px;
+    left: 0;
+    bottom: 25px;
+    width: 100%;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: auto
+}
+
+.themepanel .content.loading {
+    background: transparent url(../style/images/waiting.gif) no-repeat center center
+}
+
+.themepanel .themePage1 {
+    opacity: 1
+}
+
+.themepanel .themePage2 {
+    opacity: 0
+}
+
+.themepanel .foot {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 25px;
+    text-align: center
+}
+
+.themepanel .foot .navbar {
+    float: center;
+    width: 22px;
+    height: 22px;
+    background: url(../style/images/bullets.png) no-repeat;
+    padding: 4px 8px;
+    border: 0
+}
+
+.themepanel .foot .navbar:hover {
+    background-position: 0 -22px
+}
+
+.themepanel .foot .navbar.active {
+    background-position: 0 -22px
+}
+
+.themepanel ul {
+    margin: 0;
+    padding: 0
+}
+
+.themepanel .wapper_li {
+    margin: 0 5px 0 5px;
+    float: center;
+    width: 200px;
+    height: 175px;
+    display: inline-block;
+    border: 1px solid transparent;
+    text-align: center;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px
+}
+
+.themepanel .wapper_li:hover {
+    background: transparent url(../style/images/30bg.png);
+    border: 1px solid #c0c0c0
+}
+
+.themepanel .wapper_li.active {
+    background: transparent url(../style/images/30bg.png);
+    border: 1px solid #fff;
+    -moz-box-shadow: 1px 1px 5px #ffff80;
+    -webkit-box-shadow: 1px 1px 5px #ffff80;
+    box-shadow: 1px 1px 5px #ffff80;
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=3,Direction=135,Color='#ffff80')
+}
+
+.themepanel .nobox {
+    margin: 0 5px 0 5px;
+    float: center;
+    width: 200px;
+    height: 175px;
+    display: inline-block;
+    border: 1px solid transparent;
+    text-align: center;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px
+}
+
+.themepanel .nobox:hover {
+    background: transparent;
+    border: 1px solid transparent
+}
+
+.themepanel div.icon {
+    margin: 5px;
+    width: 200px;
+    height: 170px;
+    display: table-cell;
+    text-align: center;
+    vertical-align: bottom
+}
+
+.themepanel div.noicon {
+    margin: 5px;
+    width: 200px;
+    height: 170px;
+    display: table-cell;
+    text-align: center;
+    vertical-align: bottom
+}
+
+.themepanel div.icon img {
+    border: 2px solid #ffc;
+    -moz-box-shadow: 1px 1px 5px #333;
+    -webkit-box-shadow: 1px 1px 5px #333;
+    box-shadow: 1px 1px 5px #333;
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=3,Direction=135,Color='#333333')
+}
+
+.themepanel div.icon .operate {
+    opacity: .3;
+    margin-left: 8px;
+    margin-right: 8px;
+    padding-left: 18px;
+    text-align: left;
+    background: transparent url(../style/images/desktop1.png) no-repeat left bottom
+}
+
+.themepanel div.icon .operate:hover {
+    opacity: 1
+}
+
+.themepanel div.icon .operate.active {
+    opacity: 1
+}
+
+.themepanel div.icon .operate span:hover {
+    cursor: pointer;
+    color: #ffc;
+    text-shadow: #09f 1px 1px 2px
+}
+
+.themepanel div.icon .btn {
+    width: 60px;
+    height: 20px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 12px;
+    color: #000;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    padding: 2px 10px;
+    border: 1px solid #b1b1b1;
+    text-align: center;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -o-border-radius: 10px;
+    border-radius: 10px;
+    background: #FFF;
+    background: -webkit-gradient(linear,0% 0,0% 100%,from(#FFF),to(#c0c0c0));
+    background: -moz-linear-gradient(0% 90% 90deg,#FFF,#c0c0c0);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF',endColorstr='#c0c0c0');
+    -webkit-transition: all .4s ease-in-out;
+    -moz-transition: all .4s ease-in-out;
+    -o-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out
+}
+
+.themepanel .theme_li {
+    margin: 0 5px 0 5px;
+    float: center;
+    width: 245px;
+    height: 195px;
+    display: inline-block;
+    border: 1px solid transparent;
+    text-align: center;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px
+}
+
+.themepanel .theme_li:hover {
+    background: transparent url(../style/images/30bg.png);
+    border: 1px solid #c0c0c0
+}
+
+.themepanel .theme_li.active {
+    background: transparent url(../style/images/30bg.png);
+    border: 1px solid #fff;
+    -moz-box-shadow: 1px 1px 5px #ffff80;
+    -webkit-box-shadow: 1px 1px 5px #ffff80;
+    box-shadow: 1px 1px 5px #ffff80;
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=3,Direction=135,Color='#ffff80')
+}
+
+.themepanel .notheme {
+    margin: 0 5px 0 5px;
+    float: center;
+    width: 245px;
+    height: 195px;
+    display: inline-block;
+    border: 1px solid transparent;
+    text-align: center;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px
+}
+
+.themepanel .notheme:hover {
+    background: transparent;
+    border: 1px solid transparent
+}
+
+.themepanel div.theme {
+    margin: 5px;
+    width: 245px;
+    height: 190px;
+    display: table-cell;
+    text-align: center;
+    vertical-align: bottom
+}
+
+.themepanel div.notheme {
+    margin: 5px;
+    width: 245px;
+    height: 190px;
+    display: table-cell;
+    text-align: center;
+    vertical-align: bottom
+}
+
+.themepanel div.theme img {
+    cursor: pointer;
+    -moz-box-shadow: 1px 1px 5px #333;
+    -webkit-box-shadow: 1px 1px 5px #333;
+    box-shadow: 1px 1px 5px #333;
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=3,Direction=135,Color='#333333')
+}
+
+.themepanel div.theme .operate {
+    opacity: .3;
+    margin-left: 8px;
+    margin-right: 8px;
+    padding-left: 18px;
+    text-align: left;
+    background: transparent url(../style/images/desktop1.png) no-repeat left top
+}
+
+.themepanel div.theme .operate:hover {
+    opacity: 1
+}
+
+.themepanel div.theme .operate.active {
+    opacity: 1
+}
+
+.themepanel div.theme .operate span:hover {
+    cursor: pointer;
+    color: #ffc;
+    text-shadow: #09f 1px 1px 2px
+}
+
+.themepanel div.theme .btn {
+    width: 60px;
+    height: 20px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 12px;
+    color: #000;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    padding: 2px 10px;
+    border: 1px solid #b1b1b1;
+    text-align: center;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -o-border-radius: 10px;
+    border-radius: 10px;
+    background: #FFF;
+    background: -webkit-gradient(linear,0% 0,0% 100%,from(#FFF),to(#c0c0c0));
+    background: -moz-linear-gradient(0% 90% 90deg,#FFF,#c0c0c0);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF',endColorstr='#c0c0c0');
+    -webkit-transition: all .4s ease-in-out;
+    -moz-transition: all .4s ease-in-out;
+    -o-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out
+}
+
+.themebox {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -35px 0 0 -250px;
+    width: 500px;
+    height: 70px;
+    font-family: Arial,Tahoma,微软雅黑;
+    font-size: 32px;
+    color: #fff;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -o-border-radius: 10px;
+    border-radius: 10px;
+    background: url('./../style/images/30bg.png') top left repeat;
+    cursor: pointer;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 70px
+}
+
+.widget .bar {
+    top: 0;
+    right: -6px;
+    position: absolute;
+    cursor: move;
+    color: #fff;
+    width: 20px;
+    height: 68px;
+    padding: 0 2px;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    background: #000 url(../style/images/btn-drop.png) no-repeat bottom
+}
+
+.widget .content {
+    right: 20px;
+    height: 100%;
+    position: relative
+}
+
+.widget .bar .close {
+    float: right;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    opacity: .8;
+    margin: 2px;
+    background: url(../style/images/btn-close.png) no-repeat;
+    background-position: 0 -21px
+}
+
+.widget .bar .close:hover {
+    opacity: 1
+}
+
+.widget .bar .setup {
+    float: right;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    opacity: .8;
+    margin: 2px 0 2px 4px;
+    background: url(../style/images/btn1.png) no-repeat
+}
+
+.widget .bar .setup:hover {
+    background-position: 0 0;
+    opacity: 1
+}
+
+.widget .bar .move {
+    float: right;
+    width: 20px;
+    height: 20px;
+    margin: 2px
+}
+
+.widget .mask {
+    top: 0;
+    right: 20px;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    display: none
+}
+
+.widget .mask.active {
+    border: 3px dashed #fff;
+    display: block
+}

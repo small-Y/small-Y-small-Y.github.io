@@ -1,0 +1,113 @@
+@charset "utf-8";
+
+.dialog
+{
+	background: #dbdbdb url(./i/toolbar.png) repeat-x left top;
+}
+
+.dialog .bar
+{
+    color:#5f5f5f;
+}
+
+.dialog .main .content
+{
+	background: transparent url(./i/frame.png) repeat center top;
+}
+
+
+.dialog-max
+{
+   background: #dbdbdb url(./i/toolbar.png) repeat-x left top;
+}
+
+.dialog-max .bar
+{
+    color:#5f5f5f;
+}
+
+.dialog-max .main .content
+{
+	background: transparent url(./i/frame.png) repeat center top;
+}
+
+.dialog-fullscreen
+{
+   background: #dbdbdb url(./i/toolbar.png) repeat-x left top;
+}
+
+.dialog-fullscreen .main .content
+{
+	background: transparent url(./i/frame.png) repeat center top;
+}
+
+.desktopWrapper {	
+	background: transparent url(./i/wrapper.jpg) repeat center top;
+}
+
+.dialog .bar .close
+{
+	background: url(./i/dialog-bt2.png) no-repeat; 
+	background-position: 0 -166px;
+}
+
+
+.dialog .bar .close:hover
+{
+	background-position: 0 -142px;
+}
+
+.dialog .bar .min
+{
+	background: url(./i/dialog-bt2.png) no-repeat; 
+	background-position: 0 -20px;
+}
+
+.dialog .bar .min:hover
+{
+	background-position: 0 4px;
+}
+
+.dialog .bar .max
+{
+	background: url(./i/dialog-bt2.png) no-repeat; 
+	background-position: 0 -69px;
+}
+
+.dialog .bar .max:hover
+{
+	background-position: 0 -45px;
+}
+
+.dialog-max .bar .close
+{
+	background: url(./i/dialog-bt2.png) no-repeat; 
+	background-position: 0 -166px;
+}
+
+.dialog-max .bar .close:hover
+{
+	background-position: 0 -142px;
+}
+
+.dialog-max .bar .min
+{
+	background: url(./i/dialog-bt2.png) no-repeat; 
+	background-position: 0 -20px;
+}
+
+.dialog-max .bar .min:hover
+{
+	background-position: 0 4px;
+}
+
+.dialog-max .bar .max
+{
+	background: url(./i/dialog-bt2.png) no-repeat;
+	background-position: 0 -69px; 
+}
+
+.dialog-max .bar .max:hover
+{
+	background-position: 0 -45px;
+}

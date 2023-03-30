@@ -1,0 +1,62 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			data:[]
+		};
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("syslog",true,"select logTime,logAddr,logAppName,logContent,logUser,logLevel from SystemLogData where logTime>='"+(new Date).DateAdd("d",-7).Format("yyyy-MM-dd")+"' and logType='统一认证' order by logTime desc"));
+		if(record.length==0 
+			|| record[0].MessageCode>0)
+		{
+			TSS.Utils.log(record.MessageText);
+			return TSS.JSON.encode(result);
+		}
+		//
+		result.flag=true;
+		var msgList=record[0].Record;
+		for(var i=0;i<msgList.length;i++)
+		{
+			var strContent='<span class="text-muted">'+msgList[i].logContent+'</span>';
+			switch(msgList[i].logLevel)
+			{
+				case 0:
+				{
+					strContent='<span class="text-primary">'+msgList[i].logContent+'</span>';
+				}
+				break;
+				case 1:
+				{
+					strContent='<span class="text-success">'+msgList[i].logContent+'</span>';
+				}
+				break;
+				case 2:
+				{
+					strContent='<span class="text-info">'+msgList[i].logContent+'</span>';
+				}
+				break;
+				case 3:
+				{
+					strContent='<span class="text-warning">'+msgList[i].logContent+'</span>';
+				}
+				break;
+				case 4:
+				{
+					strContent='<span class="text-danger">'+msgList[i].logContent+'</span>';
+				}
+				break;
+			}
+			//
+			result.data[result.data.length]=[result.data.length+1,
+										msgList[i].logAppName,
+										msgList[i].logAddr,
+										TSS.Utils.dateMessage(msgList[i].logTime),
+										strContent];
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

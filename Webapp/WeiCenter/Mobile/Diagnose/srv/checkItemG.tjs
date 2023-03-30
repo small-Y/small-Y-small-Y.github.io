@@ -1,0 +1,193 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+Response.Buffer=false;
+	Response.clear();
+		var result = {
+				flag:false,
+				info:"",
+				key:"G",
+				complete:false,
+				count:0,
+				total:0,
+				completeinfo:"",
+				score:0
+		};
+		Response.Write("|"+TSS.JSON.encode(result));
+		var score = Request.QueryString("score");
+		var buildlist = Request.QueryString("buildlist");
+		var isall = Request.QueryString("isall"); 
+		var kpiObject=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/BCPS/ObjectClass/Building",""));
+		var tc=new Date();
+		var unit=0;
+		if(isall=="true"){
+			unit=score/kpiObject.length/2;
+			result.info="总共需诊断"+kpiObject.length+"栋建筑！";
+			result.total=kpiObject.length;
+		}else{
+			unit=score/buildlist.split(",").length/2;
+			result.info="总共需诊断"+buildlist.split(",").length+"栋建筑！";
+			result.total=buildlist.split(",").length;	
+		}
+		Response.Write("|"+TSS.JSON.encode(result));
+	    
+		var progress=0;
+		for(var i=0;i<kpiObject.length;i++){
+			if(isall=="false"){
+				if(buildlist.indexOf(kpiObject[i].GroupID)==-1){
+					continue;
+				}
+			}
+			progress++;
+			result.score=0;
+			result.info="开始诊断"+kpiObject[i].GroupName+"！";
+			Response.Write("|"+TSS.JSON.encode(result));
+
+			result.score=0;
+			result.info="检查设施设备在线率！";
+			Response.Write("|"+TSS.JSON.encode(result));
+			var path=kpiObject[i].GroupFullTag.split(".").join("/").replace("BCPS/","")+"/D";
+			//var o=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/BCPS/Facility/"+path,""));
+			//if(o.MyGroup==undefined){
+				result.score=0;
+				result.info=kpiObject[i].GroupName+"未发现雨水回用设备，不做检查！";
+				Response.Write("|"+TSS.JSON.encode(result));
+				continue;			
+			//}
+			var listNode=o.MyGroup.listNode;
+			if(listNode.length==0){
+				result.score=0;
+				result.info=kpiObject[i].GroupName+"未发现雨水回用设备，不做检查！";
+				Response.Write("|"+TSS.JSON.encode(result));
+				continue;
+			}
+			var online=0,nodecount=0;
+			for(var j=0;j<listNode.length;j++){
+				nodecount++;
+				if(listNode[j].bOnLineFlag=="在线"){
+					online++;
+				}			
+			}
+			if(nodecount==0){
+				result.score=0;
+				result.info=kpiObject[i].GroupName+"未发现雨水回用设备，不做检查！";
+				Response.Write("|"+TSS.JSON.encode(result));
+				continue;
+			}
+			var percent=TSS.Utils.floatPrecision(online*100/nodecount,0);
+			if(percent<85){
+				result.score=unit;
+				result.count++;
+				result.info=kpiObject[i].GroupName+"雨水回用的关联设备在线率偏低，为："+percent+"%！";		
+			}else{
+				result.score=0;
+				result.info=kpiObject[i].GroupName+"雨水回用的关联设备在线率为："+percent+"%！";			
+			}
+			Response.Write("|"+TSS.JSON.encode(result));
+
+			result.score=0;
+			result.info="雨水回用运行成本检查！";
+			Response.Write("|"+TSS.JSON.encode(result));
+
+			//雨水回用——待机预警及成本预警
+			var t1 = tc.DateAdd("d",-1);
+			var t2 = tc;
+			var TotalW=0;
+			var RainWater=0;
+			var UpWater=0;
+			var RainPumpElect=0;
+			//自来水总量
+			var restUrl="/API/System/BCPS/Mining/Statistics/Day?keyvalue=TotalWater&iscache=true&groupby=NodeObject&NodeFullTag="+kpiObject[i].GroupFullTag+".D.KPI$&startTime="+t1.Format("yyyy-MM-dd hh:mm:ss")+"&endTime="+t2.Format("yyyy-MM-dd hh:mm:ss");
+			var restObject=TSS.JSON.decode(Server.ExecuteAPI("GET",restUrl,""));
+			if(restObject.flag)
+			{
+				if(restObject.data.length>0
+					&& restObject.data[0].value.DayMeasure!=null)
+				{
+					TotalW=restObject.data[0].value.DayMeasure;
+				}
+			}
+			//雨水使用量
+			var restUrl="/API/System/BCPS/Mining/Statistics/Day?keyvalue=RainWater&iscache=true&groupby=NodeObject&NodeFullTag="+kpiObject[i].GroupFullTag+".D.KPI$&startTime="+t1.Format("yyyy-MM-dd hh:mm:ss")+"&endTime="+t2.Format("yyyy-MM-dd hh:mm:ss");
+			var restObject=TSS.JSON.decode(Server.ExecuteAPI("GET",restUrl,""));
+			if(restObject.flag)
+			{
+				if(restObject.data.length>0
+					&& restObject.data[0].value.DayMeasure!=null)
+				{
+					RainWater=restObject.data[0].value.DayMeasure;
+				}
+			}
+			//补水使用量
+			var restUrl="/API/System/BCPS/Mining/Statistics/Day?keyvalue=UpWater&iscache=true&groupby=NodeObject&NodeFullTag="+kpiObject[i].GroupFullTag+".D.KPI$&startTime="+t1.Format("yyyy-MM-dd hh:mm:ss")+"&endTime="+t2.Format("yyyy-MM-dd hh:mm:ss");
+			var restObject=TSS.JSON.decode(Server.ExecuteAPI("GET",restUrl,""));
+			if(restObject.flag)
+			{
+				if(restObject.data.length>0
+					&& restObject.data[0].value.DayMeasure!=null)
+				{
+					UpWater=restObject.data[0].value.DayMeasure;
+				}
+			}
+			//计算节约费
+			var restUrl="/API/System/BCPS/Mining/Statistics/Day?keyvalue=TotalE&iscache=true&groupby=NodeObject&NodeFullTag="+kpiObject[i].GroupFullTag+".D.KPI$&startTime="+t1.Format("yyyy-MM-dd hh:mm:ss")+"&endTime="+t2.Format("yyyy-MM-dd hh:mm:ss");
+			var restObject=TSS.JSON.decode(Server.ExecuteAPI("GET",restUrl,""));
+			if(restObject.flag)
+			{
+				if(restObject.data.length>0
+					&& restObject.data[0].value.DayMeasure!=null)
+				{
+					RainPumpElect=restObject.data[0].value.DayMeasure;
+					if(RainWater<=0.1)
+					{
+						if(RainPumpElect>1)
+						{
+							result.count++;
+							result.score=unit;
+							result.info="雨水回用系统处于空耗运行中，建议关闭雨水回用系统水泵！";
+							//var alarmText="雨水回用系统处于空耗运行中，一天浪费："+TSS.Utils.formatNumber(RainPumpElect,"0.0")+"度电，建议关闭雨水回用系统水泵！！！";
+						}else{
+							result.score=0;
+							result.info="未发现异常情况！";
+						}
+					}
+					else if(RainWater<=UpWater)
+					{
+						//var alarmText="雨水回用系统处于异常运行中，最近自来水补水量("+UpWater+"吨)超过雨水使用量("+RainWater+"吨)，请检查系统操作是否正常！！！";
+						result.count++;
+						result.score=unit;
+						result.info="雨水回用系统处于异常运行中，最近自来水补水量("+UpWater+"吨)超过雨水使用量("+RainWater+"吨)，请检查系统操作是否正常！";
+					}
+					else
+					{
+						var mony=(UpWater*kpiObject[i].ObjectInfo.WaterPrice+RainPumpElect*kpiObject[i].ObjectInfo.ElectPrice)/RainWater;
+						if(mony>kpiObject[i].ObjectInfo.WaterPrice)
+						{
+							//var alarmText="雨水回用系统当前日用水量："+RainWater+"吨，日用电量："+TSS.Utils.formatNumber(RainPumpElect,"0.0")+"度，单位运行成本为："+TSS.Utils.formatNumber(mony,"0.0")+"元/吨，已超过标准水价："+TSS.Utils.formatNumber(kpiObject[i].ObjectInfo.WaterPrice,"0.0")+"元/吨，请紧急检修！！！";
+							result.count++;
+							result.score=unit;
+							result.info="雨水回用系统处于高成本运行中，单位运行成本为："+TSS.Utils.formatNumber(mony,"0.0")+"元/吨，已超过标准水价，请紧急检修！";
+						}else{
+							result.score=0;
+							result.info="未发现异常情况！";
+						}
+					}
+				}
+			}
+			Response.Write("|"+TSS.JSON.encode(result));
+		}
+		if(progress==result.total){
+			result.complete=true;
+			if(result.count==0){
+				result.score=0;
+				result.info="";
+				result.completeinfo="完成诊断，未发现存在异常点！";
+			}else{
+				result.score=0;
+				result.info="";
+				result.completeinfo="完成诊断，共发现"+result.count+"处存在异常点！";
+			}
+			Response.Write("|"+TSS.JSON.encode(result));
+		}	
+	Response.ContentType = "text/plain";
+%>

@@ -1,0 +1,233 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	var userInfo=TSS.JSON.decode(System.OAuth.GetCurrentUser());
+//
+if(!userInfo.loginStatus)
+{
+    Response.Redirect("/API/My/Login/?goto="+escape("/WebMobile/"));
+}
+else
+{
+    var serverInfo=TSS.JSON.decode(System.Basic.GetServerStatus());
+}
+%>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />	
+	<meta name="keywords" content="Things,ThingsGate,ThingsRouter,ThingsBox,ThingsDB,ThingsView,ThingsOS,ThingsCloud,WebTop,物联网操作系统,物联网网关,智慧能源管理,智慧楼宇管理,智能工业服务,智慧家庭服务,智能云服务平台,信息物理系统" />
+	<meta name="description" content="ThingsOS是一款针对普遍智能对象(智能设备、设施或系统)进行融合、提供服务的资源管理操作系统。具体来说，它是一个在智能能源管理、智能楼宇管理、智能工业服务、智能家庭服务等等方面，提供完整的基于云的开发、组态、宿主和管理服务的独立平台。" />
+	<meta name="copyright" content= "版权所有 Copyright (c) 2016 ThingsLabs.保留所有权利。" />
+	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+	<meta name="msapplication-navbutton-color" content="#b4d9f1" />	
+	<meta name="application-name" content="<%Response.Write(serverInfo.AuthName);%>" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="white" />
+	<meta name="format-detection" content="telephone=no">
+	<meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-title" content="<%Response.Write(serverInfo.AuthName);%>">
+	<meta name="msapplication-TileColor" content="#006600"/>
+	<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
+	<script type="text/javascript" src="/AppEngine/jQuery/jquery2.jsz"></script>
+    
+
+ 	<script type="text/javascript" src="/AppEngine/CoreExt/ThingsUI/base.js"></script>
+
+	<script type="text/javascript" src="./js/jquery-weui.js"></script>
+	 <script type="text/javascript" src="./js/toe.min.js"></script>
+ <script type="text/javascript" src="./js/RoomInfo.js"></script>
+<script type="text/javascript">
+    var opcpath="<%Response.write(Request.QueryString('opcpath'));%>";
+
+</script>
+ <title>绑定房间</title>
+
+	<link type="text/css" rel="stylesheet" href="/AppEngine/CoreExt/ThingsUI/base.min.css" />
+	<link type="text/css" rel="stylesheet" href="css/my.cssz">
+<style type="text/css">
+    .main {
+    width: 100%;
+    height: 100%;
+        max-height:100%;
+        padding:0;
+        margin:0; 
+        border:0;
+        background: black;
+        -webkit-tap-highlight-color: transparent;
+        -ms-touch-action: none;
+        overflow: hidden;
+    }
+.message{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    background: #f7f7fa;
+    -webkit-overflow-scrolling: touch;
+}
+
+
+.message .loading img{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -24px 0 0 -48px;
+}
+.weui_media_bd table{
+    width:100%;
+    height:100%;
+    border-collapse:collapse;
+}
+
+.weui_media_bd td{
+    padding:2px 10px;
+    font-size: 10.5pt;
+    color: #666;
+    text-align: center;
+}
+
+.charge_info  ul {
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+}
+
+.charge_info  li {
+    padding: 0px;
+}
+
+.charge_info .li-msg {
+    margin: 0;
+}
+
+.charge_info .item-msg {
+    position: relative;
+    top: 0px;
+    padding-top: 15px;
+    margin-right: 20px;
+}
+
+.charge_info .item-msg .imsg-icon {
+    position: absolute;
+    left: 16px;
+    top: 23px;
+    -webkit-border-radius: 100% 100% 100% 100%;
+    height: 15px;
+    width: 15px;
+    z-index: 9;
+    padding: 0px;
+    text-align: center;
+    box-sizing: content-box;
+}
+.charge_info .item-msg .imsg-icon.one {
+    background: #086FE8;
+}
+.charge_info .item-msg .imsg-icon.two {
+    background: #B8B8B8;
+}
+.charge_info .item-msg .imsg-icon .content {
+    margin-left: 2px;
+    margin-top: 2px;
+    height: 7px;
+    width: 7px;
+    padding: 2px;
+    cursor: pointer;
+    -webkit-border-radius: 50% 50% 50% 50%;
+    box-sizing: content-box;
+}
+.charge_info .item-msg .imsg-icon .content img {
+    height: 28px;
+    width: 28px;
+    border-radius: 100% 100% 100% 100%;
+    -moz-border-radius: 100% 100% 100% 100%;
+    -webkit-border-radius: 100% 100% 100% 100%;
+}
+.charge_info .item-msg .imsg-icon .content.bg-color-blue {
+    background-color: #fff !important;
+}
+.charge_info .item-msg .imsg-line {
+    position: absolute;
+    left: 23px;
+    top: -10px;
+    width: 0;
+    bottom: 0;
+    border: 1px solid #DBDBDB;
+    z-index: 1;
+}
+.charge_info .item-msg .imsg-allow {
+    position: absolute;
+    left: 32px;
+    top: 26px;
+    width: 0;
+    height: 0;
+    border-bottom: 5px solid transparent;
+    border-top: 5px solid transparent;
+    //border-right: 5px solid #23A50D;
+    border-left: 0;
+    z-index: 9999;
+}
+.charge_info .item-msg .imsg-allow.one{
+    border-right: 5px solid #086FE8;
+}
+.charge_info .item-msg .imsg-allow.two{
+    border-right: 5px solid #B8B8B8;
+}
+.charge_info .item-msg .imsg-content{
+    position: relative;
+    margin-left: 37px;
+    padding: 5px 10px;
+    line-height: 20px;
+    font-size: 9pt;
+    -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    border-radius:3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius:3px;
+}
+.charge_info .item-msg .imsg-content.one{
+    background: #086FE8;
+    color: #EBF2FC;
+}
+.charge_info .item-msg .imsg-content.two{
+    background: #B8B8B8;
+    color: #F9F9F9;
+}
+
+ .infinite-preloader {
+    display: inline-block;
+    margin-right: 4px;
+    vertical-align: -4px;
+    width: 20px;
+    height: 20px;
+    -webkit-transform-origin: 50%;
+    transform-origin: 50%;
+    -webkit-animation: preloader-spin 1s steps(12, end) infinite;
+    animation: preloader-spin 1s steps(12, end) infinite;
+}
+.infinite-preloader:after {
+    display: block;
+    width: 100%;
+    height: 100%;
+    content: "";
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20viewBox%3D'0%200%20120%20120'%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20xmlns%3Axlink%3D'http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink'%3E%3Cdefs%3E%3Cline%20id%3D'l'%20x1%3D'60'%20x2%3D'60'%20y1%3D'7'%20y2%3D'27'%20stroke%3D'%236c6c6c'%20stroke-width%3D'11'%20stroke-linecap%3D'round'%2F%3E%3C%2Fdefs%3E%3Cg%3E%3Cuse%20xlink%3Ahref%3D'%23l'%20opacity%3D'.27'%2F%3E%3Cuse%20xlink%3Ahref%3D'%23l'%20opacity%3D'.27'%20transform%3D'rotate(30%2060%2C60)'%2F%3E%3Cuse%20xlink%3Ahref%3D'%23l'%20opacity%3D'.27'%20transform%3D'rotate(60%2060%2C60)'%2F%3E%3Cuse%20xlink%3Ahref%3D'%23l'%20opacity%3D'.27'%20transform%3D'rotate(90%2060%2C60)'%2F%3E%3Cuse%20xlink%3Ahref%3D'%23l'%20opacity%3D'.27'%20transform%3D'rotate(120%2060%2C60)'%2F%3E%3Cuse%20xlink%3Ahref%3D'%23l'%20opacity%3D'.27'%20transform%3D'rotate(150%2060%2C60)'%2F%3E%3Cuse%20xlink%3Ahref%3D'%23l'%20opacity%3D'.37'%20transform%3D'rotate(180%2060%2C60)'%2F%3E%3Cuse%20xlink%3Ahref%3D'%23l'%20opacity%3D'.46'%20transform%3D'rotate(210%2060%2C60)'%2F%3E%3Cuse%20xlink%3Ahref%3D'%23l'%20opacity%3D'.56'%20transform%3D'rotate(240%2060%2C60)'%2F%3E%3Cuse%20xlink%3Ahref%3D'%23l'%20opacity%3D'.66'%20transform%3D'rotate(270%2060%2C60)'%2F%3E%3Cuse%20xlink%3Ahref%3D'%23l'%20opacity%3D'.75'%20transform%3D'rotate(300%2060%2C60)'%2F%3E%3Cuse%20xlink%3Ahref%3D'%23l'%20opacity%3D'.85'%20transform%3D'rotate(330%2060%2C60)'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-size: 100%;
+}
+
+</style>
+</head>
+
+<body ontouchstart>
+
+
+</body>
+</html>

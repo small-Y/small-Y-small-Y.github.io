@@ -1,0 +1,100 @@
+/// <reference path="../TSS/lib/vsdoc/api.js" />
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result = {
+				flag:true,
+				buildlist:[]
+			};	
+		var buildlist = Request.QueryString("buildlist");
+		var isall = Request.QueryString("isall"); 
+		var kpiObject=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/BCPS/ObjectClass/Building",""));
+		var tc=new Date();
+		for(var i=0;i<kpiObject.length;i++){
+			if(isall=="false"){
+				if(buildlist.indexOf(kpiObject[i].GroupID)==-1){
+					continue;
+				}
+			}
+			var item={name:kpiObject[i].GroupName,list:[],count:0};
+			//var listNode=TSS.JSON.decode(Server.GetOPCFlatJSON(kpiObject[i].GroupFullTag+".B"));
+			
+			//if(listNode.length==0){
+				var d={};
+				d["name"]="设施设备在线率";
+				d["info"]=kpiObject[i].GroupName+"未发现环境监测的关联设备，不做检查！";
+				item.list.push(d);
+				result.buildlist.push(item);											
+				continue;	
+			//}
+			var online=0,nodecount=0;
+			for(var j=0;j<listNode.length;j++){
+				nodecount++;
+				if(listNode[j].bOnLineFlag=="在线"){
+					online++;
+				}		
+			}
+			
+			var percent=TSS.Utils.floatPrecision(online*100/nodecount,0);
+			if(percent<85){
+				item.count++;
+				var d={};
+				d["name"]="设施设备在线率";
+				d["info"]=kpiObject[i].GroupName+"环境监测的关联设备在线率偏低，为："+percent+"%！";
+				item.list.push(d);			
+			}else{	
+				var d={};
+				d["name"]="设施设备在线率";
+				d["info"]=kpiObject[i].GroupName+"环境监测的关联设备在线率为："+percent+"%！";
+				item.list.push(d);	
+			}
+
+			var nodeTree=TSS.JSON.decode(Server.GetOPCFlatJSON(kpiObject[i].GroupFullTag+".B.KPI"));
+			if(nodeTree.length==0){
+				var d={};
+				d["name"]="设施设备在线率";
+				d["info"]=kpiObject[i].GroupName+"未发现环境监测的关联设备，不做检查！";
+				item.list.push(d);
+				result.buildlist.push(item);											
+				continue;	
+			}else{
+				var SCO2=nodeTree[0].OPCValueList[nodeTree[0].OPCValueMap.SCO2].DataValue;
+				if(SCO2<450){
+					var d={};
+					d["name"]="当前室内二氧化碳浓度";
+					d["info"]=kpiObject[i].GroupName+"当前室内二氧化碳浓度（"+SCO2+"ppm）属正常范围！";
+					item.list.push(d);
+				}else{
+					item.count++;
+					var d={};
+					d["name"]="当前室内二氧化碳浓度";
+					d["info"]=kpiObject[i].GroupName+"当前室内二氧化碳浓度较高（"+SCO2+"ppm），请开窗通风！";
+					item.list.push(d);
+				}
+				var SCO1=nodeTree[0].OPCValueList[nodeTree[0].OPCValueMap.SCO1].DataValue;
+				if(SCO1<50){
+					var d={};
+					d["name"]="当前车库内一氧化碳浓度";
+					d["info"]=kpiObject[i].GroupName+"当前车库内一氧化碳浓度（"+SCO1+"ppm）属正常范围！";
+					item.list.push(d);
+				}else{
+					item.count++;
+					var d={};
+					d["name"]="当前车库内一氧化碳浓度";
+					d["info"]=kpiObject[i].GroupName+"当前车库内一氧化碳浓度较高（"+SCO1+"ppm），请开启通风设备！";
+					item.list.push(d);
+				}
+				result.buildlist.push(item);							
+			}
+			
+		}
+		result.buildlist.sort(function(x, y){
+				return (x.count < y.count) ? 1 : -1;
+		});
+		return TSS.JSON.encode(result);
+		
+	}());
+	Response.ContentType = "text/plain";
+%>

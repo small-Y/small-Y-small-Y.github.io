@@ -1,0 +1,76 @@
+﻿<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+    if(!System.Storage.IsFileExist(Request.ServerVariables("PATH_INFO")+"manifest.json"))
+	{
+        Response.Write("该应用程序未正确安装！");
+        Response.End();
+    }
+
+    var  appItem = TSS.JSON.decode(System.Storage.ReadTextFile(Request.ServerVariables("PATH_INFO") + "manifest.json"));
+    if(appItem)
+    {
+        Response.Cookies("AppID") = appItem.appid;
+	    Response.Cookies("AppID").path = Request.ServerVariables("PATH_INFO");
+    }
+%>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+	<meta name="copyright" content= "<%=appItem.author%>" />
+	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+	<meta name="description" content="ThingsOS - 备忘录" />
+	<meta name="author" content="ThingsOS" />
+    <title><%=appItem.name%></title>
+	<!-- BEGIN GLOBAL MANDATORY STYLES -->
+	<link rel="stylesheet" href="/AppEngine/Bootstrap/Xenon/js/jquery-ui/css/no-theme/jquery-ui-1.10.3.custom.min.css">
+	<link rel="stylesheet" href="/AppEngine/Bootstrap/Xenon/css/font-icons/entypo/css/entypo.css">
+	<link rel="stylesheet" href="/AppEngine/Bootstrap/Xenon/css/bootstrap.css">
+	<link rel="stylesheet" href="/AppEngine/Bootstrap/Xenon/css/neon-core.css">
+	<link rel="stylesheet" href="/AppEngine/Bootstrap/Xenon/css/neon-theme.css">
+	<link rel="stylesheet" href="/AppEngine/Bootstrap/Xenon/css/neon-forms.css">
+	<link rel="stylesheet" href="/AppEngine/Bootstrap/Xenon/css/custom.css">
+	<!-- END THEME GLOBAL STYLES -->
+	<!-- 自定义样式 -->
+	<link rel="stylesheet" type="text/css" href="/AppEngine/CoreExt/ThingsUI/base.css"/>
+</head>
+
+<body class="page-body">
+    <div class="notes-env">
+        <div class="notes-list" style="margin:0">
+			<div class="head-of-notes">
+				<a class="btn btn-red btn-icon icon-left" id="add-note">
+					<i class="entypo-pencil"></i>新建标签
+				</a>
+				<a class="btn btn-red" style="float:right;" id="save-note">
+					保存
+				</a>
+			</div>
+            <ul class="list-of-notes" style="margin-top:50px">
+                <li class="no-notes">
+                    ╮(╯▽╰)╭   好记性不如烂笔头!
+                </li>
+            </ul>
+            <div class="write-pad">
+                <textarea class="form-control autogrow" style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 780px;"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom scripts (common) -->
+    <script src="/AppEngine/Bootstrap/Xenon/js/jquery-1.11.0.min.js"></script>
+    <script src="/AppEngine/CoreExt/ThingsUI/base.js"></script>
+
+    <script src="/AppEngine/Bootstrap/Xenon/js/gsap/main-gsap.js"></script>
+    <script src="/AppEngine/Bootstrap/Xenon/js/jquery-ui/js/jquery-ui-1.10.3.minimal.min.js"></script>
+    <script src="/AppEngine/Bootstrap/Xenon/js/bootstrap.js"></script>
+    <script src="/AppEngine/Bootstrap/Xenon/js/joinable.js"></script>
+    <script src="/AppEngine/Bootstrap/Xenon/js/resizeable.js"></script>
+    <script src="/AppEngine/Bootstrap/Xenon/js/neon-api.js"></script>
+
+    <!-- Imported scripts on this page -->
+	<script type="text/javascript" src="js/toe.min.js"></script>
+    <script type="text/javascript" src="js/neon-notes.js"></script>
+</body>
+</html>

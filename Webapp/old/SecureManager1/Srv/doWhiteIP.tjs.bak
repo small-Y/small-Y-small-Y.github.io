@@ -1,0 +1,92 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	function getAddrNum(address)
+	{
+		var ipArray=address.split(".");
+		if(ipArray.length<4)
+			return 0;
+		var ipNum=parseInt(ipArray[0])*256*256*256+parseInt(ipArray[1])*256*256+parseInt(ipArray[2])*256+parseInt(ipArray[3]);
+		return ipNum;
+	}
+
+	Response.Write(function () {
+		var result={
+			flag:true,
+			text:""
+		};
+		//
+		var todo=parseInt(Request.Form("todo"));
+		var whiteID=Request.Form("whiteID");
+		var whiteName=Request.Form("whiteName");
+		var ipAddress=Request.Form("ipAddress");
+		var maskAddress=Request.Form("maskAddress");
+		//
+		switch(todo)
+		{
+			case 0:
+				{
+					var now = new Date();
+					var whiteID=now.getTime();
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("sysconfig",true,"insert into WhiteIPTable (T_WhiteID,T_WhiteName,T_IPAddress,T_MaskAddress) values ("+whiteID+",'"+whiteName+"','"+ipAddress+"','"+maskAddress+"')"))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					} 
+				}
+				break;
+			case 1:
+				{
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("sysconfig",true,"update WhiteIPTable set T_WhiteName='"+whiteName+"',T_IPAddress='"+ipAddress+"',T_MaskAddress='"+maskAddress+"' where T_WhiteID="+whiteID))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					} 
+				}
+				break;
+			case 2:
+				{
+					var whiteList=TSS.JSON.decode(Request.Form("whiteList"));
+					for(var i=0;i<whiteList.length;i++)
+					{
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("sysconfig",true,"delete from WhiteIPTable where T_WhiteID="+whiteList[i].id))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+				}
+				break;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("sysconfig",true,"select * from WhiteIPTable"))[0];
+		if(record.MessageCode>0)
+		{
+			TSS.Utils.log(record.MessageText);
+			return TSS.JSON.encode(result);
+		}
+		//
+		var whiteIPTable=[];
+		for(var i=0;i<record.Record.length;i++)
+		{
+			whiteIPTable[i]={
+				name:record.Record[i].T_WhiteName,
+				ipaddr:getAddrNum(record.Record[i].T_IPAddress),
+				maskaddr:getAddrNum(record.Record[i].T_MaskAddress)
+			};
+		}
+		//
+		if (!System.Basic.ApplyWhiteIPTable(TSS.JSON.encode(whiteIPTable))) {
+			result.flag=false;
+			result.msg="IP白名单生效失败！！";
+		}
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

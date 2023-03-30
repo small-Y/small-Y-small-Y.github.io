@@ -1,0 +1,28 @@
+{
+  "update_url":"http://webstore.thingslabs.com/service/update/tax",
+  "appid": "0973DA48-088A-4B8F-9C5C-14D117ADF4BE",
+  "apptype": "Things",
+  "name": "网上报修系统",
+  "short": "网上报修系统",
+  "description": "北京工业大学网上报修服务",
+  "author": "",
+  "version": "1.0.1",
+  "app": {
+    "launch": {
+	  "enable":false,
+	  "local_path": "/API/OAuth2/authorize?appid=tse35a9da38e708c2e&redirect_uri=http%3A%2F%2F172.21.98.162%2Fbgd-wx-auth-web%2Fauthorization_code_callback_or&response_type=code&scope=api_userinfo&state=survey",
+	  "container": "url",
+	  "sort": 20,
+	  "height": 600,
+	  "width": 800
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "/API/OAuth2/authorize?appid=tse35a9da38e708c2e&redirect_uri=http%3A%2F%2F172.21.98.162%2Fbgd-wx-auth-web%2Fauthorization_code_callback_or&response_type=code&scope=api_userinfo&state=survey",
+	  "container": "url"
+    }
+  },
+  "icons": {
+    "logo": "wsdc.png"
+  }
+}

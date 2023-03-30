@@ -1,0 +1,23 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+    Response.Write(function () {
+		var result = {
+				flag:true,
+				data:[]
+			};
+		//
+		var search = Request.QueryString("search");
+		var videoList=TSS.JSON.decode(System.Net.GetVideoList());
+		for(var i=0;i<videoList.length;i++)
+		{
+			if(videoList[i].VideoID.indexOf(search)>=0
+				|| videoList[i].VideoName.indexOf(search)>=0)
+			{
+				result.data[result.data.length]=videoList[i];
+			}
+		}
+        return TSS.JSON.encode(result);
+    } ());
+    Response.ContentType = "text/plain";
+%>

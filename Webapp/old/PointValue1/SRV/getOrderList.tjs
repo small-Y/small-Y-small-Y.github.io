@@ -1,0 +1,108 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			data:[]
+		};
+		//
+		var startTime = Request.QueryString("startTime");
+		var endTime = Request.QueryString("endTime");
+		if(startTime=="" || startTime==undefined)
+		{
+			var tc = new Date();
+			startTime = new Date();
+			startTime.setFullYear(tc.getFullYear(),tc.getMonth(),tc.getDate());
+			startTime.setHours(0,0,0,0);
+			startTime=startTime.DateAdd("d",-2);
+		}
+		else
+		{
+			startTime = TSS.Utils.parseDate(startTime);
+		}
+
+		if(endTime=="" || endTime==undefined)
+		{
+			endTime = new Date();
+		}
+		else
+		{
+			endTime = TSS.Utils.parseDate(endTime);
+			endTime=endTime.DateAdd("d",1);
+		}
+		//
+		var selPayApp = Request.QueryString("selPayApp");
+		var selOrderType = Request.QueryString("selOrderType");
+		var selOrderUser = Request.QueryString("selOrderUser");
+		//
+		var ifwhere="\"T_OrderTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"T_OrderTime\"<'"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"'";
+		if(selPayApp!="" && selPayApp!=undefined)
+		{
+			var arr=selPayApp.split(",");
+			var arrT=[];
+			for(var i=0;i<arr.length;i++){
+				arrT.push("'"+arr[i]+"'");
+			}
+			ifwhere+=" AND \"T_AppID\" in ("+arrT.join(",")+")";
+		}
+		//
+		if(selOrderType!="" && selOrderType!=undefined)
+		{
+			ifwhere+=" AND \"T_Type\" in ("+selOrderType+")";
+		}
+		//
+		if(selOrderUser!="" && selOrderUser!=undefined)
+		{
+			var arr=selOrderUser.split(",");
+			var arrT=[];
+			for(var i=0;i<arr.length;i++){
+				arrT.push("'"+arr[i]+"'");
+			}
+			ifwhere+=" AND UserScoreOrderTable.\"T_UserName\" in ("+arrT.join(",")+")";
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select UserScoreOrderTable.*,UserDataTable.\"T_FullName\" from UserScoreOrderTable,UserDataTable where UserScoreOrderTable.\"T_UserName\"=UserDataTable.\"T_UserName\" and UserDataTable.\"T_UserType\"<2 and "+ ifwhere+" ORDER BY \"T_OrderTime\" DESC"));
+		if(record.length==0)
+		{
+			return System.RDC.GetLastError();
+		}
+		if(record[0].MessageCode>0)
+		{
+			return record[0].MessageText;
+		}
+		//
+		result.flag=true;
+		var orderList=record[0].Record;
+		var orderType=['关注','赞同','交谈','参与','原创','赠予','扣除','违规'];
+		for(var i=0;i<orderList.length;i++)
+		{
+			if(orderList[i].T_Type>0)
+			{
+				if(orderList[i].T_Type<6)
+				{
+					result.data[result.data.length]=[orderList[i].T_OrderNo,
+												orderList[i].T_OrderTime,
+												orderType[orderList[i].T_Type-1],
+												orderList[i].T_FullName,
+												"【"+orderList[i].T_Subject+"】"+unescape(unescape(orderList[i].T_Body)),
+												(orderList[i].T_Paid-orderList[i].T_Refund)>0?('<span class="text-danger">+'+(orderList[i].T_Paid-orderList[i].T_Refund)+'</span>'):('<span class="text-success">'+(orderList[i].T_Paid-orderList[i].T_Refund)+'</span>'),
+												'<a href="javascript:App.doMis(\''+orderList[i].T_OrderID+'\');" class="btn btn-sm btn-outline blue-sharp sbold"><i class="fa fa-legal"></i> 鉴&nbsp;定</a>'];
+				}
+				else
+				{
+					result.data[result.data.length]=[orderList[i].T_OrderNo,
+												orderList[i].T_OrderTime,
+												orderType[orderList[i].T_Type-1],
+												orderList[i].T_FullName,
+												"【"+orderList[i].T_Subject+"】"+unescape(unescape(orderList[i].T_Body)),
+												(orderList[i].T_Paid-orderList[i].T_Refund)>0?('<span class="text-danger">+'+(orderList[i].T_Paid-orderList[i].T_Refund)+'</span>'):('<span class="text-success">'+(orderList[i].T_Paid-orderList[i].T_Refund)+'</span>'),
+												'<a href="javascript:App.doDetail(\''+orderList[i].T_OrderID+'\');" class="btn btn-sm btn-outline green-haze sbold"><i class="fa fa-newspaper-o"></i> 详&nbsp;情</a>'];
+				}
+			}
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

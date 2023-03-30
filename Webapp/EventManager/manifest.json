@@ -1,0 +1,28 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/fax",
+  "appid": "F597F2F4-0996-49C7-898A-0FB1560F9C48",
+  "apptype": "Things",
+  "name": "日志审计管理系统",
+  "short": "日志审计",
+  "description": "管理各项应用的访问日志、认证日志、操作日志记录及分析",
+  "author": "ThingsLabs",
+  "version": "1.0",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/EventManager/index.ejs",
+	  "container": "system",
+	  "sort": 7,
+	  "height": 678,
+	  "width": 960
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "/WebApp/EventManager/Mobile/index.tjs",
+	  "container": "system"
+    }
+  },
+  "icons": {
+    "logo": "icon_64.png"
+  }
+}

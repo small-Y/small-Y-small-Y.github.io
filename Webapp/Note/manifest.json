@@ -1,0 +1,29 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/tax",
+  "appid": "2EFFCB40-DD32-4D7C-8B76-9AE4BC3BE776",
+  "apptype": "Things",
+  "name": "备忘录",
+  "short": "备忘录",
+  "description": "随时随地记下您的备忘信息",
+  "author": "ThingsLabs",
+  "version": "1.0.1",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/Note/",
+	  "container": "personal",
+	  "sort": 11,
+	  "height": 678,
+	  "width": 960
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "",
+	  "container": "webapp",
+	  "webapp":[]
+    }
+  },
+  "icons": {
+    "logo": "icon.png"
+  }
+}

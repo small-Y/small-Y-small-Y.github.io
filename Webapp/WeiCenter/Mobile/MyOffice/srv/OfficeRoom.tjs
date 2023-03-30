@@ -1,0 +1,21 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/extern.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:true,
+			info:""
+		};
+		//return IOT.Utils.ExcuteAPI("Get","/API/System/SmartApp/ObjectClass/OfficeRoom?v=2")
+		var ret=IOT.JSON.decode(IOT.Utils.ExcuteAPI("Get","/API/System/SmartApp/ObjectClass/OfficeRoom?v=2"));
+		//return IOT.JSON.encode(ret);
+		for(var i=0;i<ret.length;i++){
+		    var idx=IOT.System.OrganizeObject.MapByID(ret[i].OrganizeID);
+		    ret[i].OrganizeName=IOT.System.OrganizeObject[idx].OrganizeName;
+		}
+		//
+		return IOT.JSON.encode(ret);
+	}());
+	Response.ContentType = "application/json";
+%>

@@ -1,0 +1,66 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result = {
+				flag:false,
+				info:"",
+				data:[]
+			};
+		//
+		var pagestart=Request.QueryString("pagestart");
+		var pagenumber=Request.QueryString("pagenumber");
+		//
+		var my = TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		var orgMap=new Array();
+		var basic = TSS.JSON.decode(System.Basic.GetServerStatus());
+		orgMap[2]=basic.AuthName;
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_ParentID\",\"T_OrgID\",\"T_OrgName\",\"T_FullName\" from OrganizationDataTable order by \"T_FullName\""));
+		if(record.length==0)
+		{
+			return System.RDC.GetLastError();
+		}
+		if(record[0].MessageCode>0)
+		{
+			return record[0].MessageText;
+		}
+		//
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			orgMap[record[0].Record[i].T_OrgID]=record[0].Record[i].T_FullName;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserDataTable where \"T_UserID\"="+my.userID));
+		if(record.length==0)
+		{
+			return System.RDC.GetLastError();
+		}
+		if(record[0].MessageCode>0)
+		{
+			return record[0].MessageText;
+		}
+		//
+		var oragnizeName=""
+		if(record[0].Record.length>0)
+		{
+			oragnizeName=orgMap[record[0].Record[0].T_OrgID];
+		}
+		//
+		var szSql="select * from BulletinTable  where \"T_DeptName\"='"+oragnizeName+"' order by \"T_Time\" desc limit "+pagenumber+" offset "+pagestart;
+		var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+		if (resSet.MessageCode>0){
+			result.info=resSet.MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<resSet.Record.length;i++)
+		{
+			result.data[i]=resSet.Record[i];
+		}
+		result.flag=true;
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

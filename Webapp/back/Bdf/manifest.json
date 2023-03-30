@@ -1,0 +1,28 @@
+{
+  "update_url":"http://webstore.thingslabs.com/service/update/tax",
+  "appid": "99BF0ACB-BE4E-4A26-8357-C438F9ABA2C1",
+  "apptype": "Things",
+  "name": "卫生查询服务系统",
+  "short": "卫生查询",
+  "description": "北京工业大学卫生查询服务",
+  "author": "新思云众",
+  "version": "1.0.1",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/Bdf/",
+	  "container": "proxy",
+	  "sort": 20,
+	  "height": 600,
+	  "width": 800
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "/API/OAuth2/authorize?appid=tse35a9da38e708c2e&redirect_uri=http%3A%2F%2Fdorm.jiangnan.edu.cn%2Fjndx-wx-auth-web%2Fauthorization_code_callback_df_cx&response_type=code&scope=api_userinfo&state=si",
+	  "container": "url"
+    }
+  },
+  "icons": {
+    "logo": "appsi.png"
+  }
+}

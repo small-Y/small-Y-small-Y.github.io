@@ -1,0 +1,450 @@
+@charset "utf-8";
+
+
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 12px;
+    background-color: #1D324F;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 12px;
+    border: 4px solid rgba(255, 255, 255, 0);
+    background-clip: content-box;
+    background-color: #405775;
+}
+
+::-webkit-scrollbar-corner {
+    background-color: #405775;
+}
+
+
+::-webkit-input-placeholder { color:#405775; }
+::-moz-placeholder { color:#405775; } /* firefox 19+ */
+:-ms-input-placeholder { color:#405775; } /* ie */
+input:-moz-placeholder { color:#405775; }
+
+input{
+	color:#94B2D0;
+}
+
+.dialog
+{
+	background: #1d324f no-repeat center center;
+    -moz-box-shadow: 5px 5px 30px rgba(16, 153, 236,0.5);
+    -webkit-box-shadow: 5px 5px 30px rgba(16, 153, 236,0.5);
+    box-shadow: 5px 5px 30px rgba(16, 153, 236,0.5);
+	border: 1px solid rgba(70, 81, 95, 0.2);    
+}
+
+.dialog .bar
+{
+    color:#fff;
+}
+
+
+.dialog-max
+{
+   background: #1d324f no-repeat center center;
+}
+
+.dialog-max .bar
+{
+    color:#fff;
+}
+
+.dialog-fullscreen
+{
+   	background: #1d324f no-repeat center center;
+}
+
+.desktop .about {
+    color: #94B2D0;
+    text-align: center;
+    background: transparent url(./i/frame.png) repeat;
+}
+
+.desktop .about .copy {
+    color: #405775;
+}
+
+.desktop .about .lable {
+    color: #405775;
+}
+
+.desktop .about .resource hr {
+    border-top: 1px solid #405775;
+}
+
+.dialog .main{
+	border-top: 1px solid rgba(70, 81, 95, 0.2);
+}
+
+.dialog-max .main{
+	border-top: 1px solid rgba(70, 81, 95, 0.2);
+}
+
+.dialog .main .content {
+    background:url(./i/frame.jpg) repeat center center;
+	background-size: cover;
+}
+
+.dialog-max .main .content {
+    background:url(./i/frame.jpg) repeat center center;
+	background-size: cover;
+}
+
+.dialog .main .content .msgBox {
+    background: #182b43;
+}
+
+.dialog .main .content .msgBox .msgText {
+    color: #94B2D0;
+}
+
+.dialog .main .content .msgBox .operate {
+    background: #182B43;
+    border-top: 1px solid #405775;
+}
+
+
+#okBtn {
+    background: #1099EC;
+    border: 1px solid #1099EC;
+    color: #fff;
+}
+
+
+#cancelBtn {
+    background: #46515F;
+    border: 1px solid #46515F;
+    color: #fff;
+}
+
+
+.taskbar {
+    background: rgba(0,0,0,0.25);
+}
+
+
+.taskbar .TaskStatus .UserMenu {
+    color: #94B2D0;
+    background: #1D324F;
+    border: 1px solid #1D324F;
+    -moz-box-shadow: 5px 5px 30px rgba(24,43,67,0.5);
+    -webkit-box-shadow: 5px 5px 30px rgba(24,43,67,0.5);
+    box-shadow: 5px 5px 30px rgba(24,43,67,0.5);
+	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=25,Direction=135,Color='#182B43');
+}
+
+.taskbar .TaskStatus .UserMenu li:hover {
+	color:#1099EC;
+	background: #182B43;
+}
+
+.taskbar .TaskStatus .UserMenu .pointer {
+    border-bottom: 10px solid #1D324F;
+}
+
+.taskbar .TaskStatus .UserMenu hr {
+    border-bottom: 1px solid #405775;
+}
+
+.dialog .main .content .msgBox .msgInput {
+    color: #405775;
+}
+
+.dialog .main .content .msgBox .msgInput input {
+    border: 1px solid #405775;
+    background: transparent;
+}
+
+.dialog .main .content .msgBox .msgInput input:focus{
+	border-color: #1099EC;
+}
+
+.dialog .main .content .msgBox .msgPass{
+    color: #405775;
+}
+
+.dialog .main .content .msgBox .msgPass input {
+    border: 1px solid #405775;
+    background: transparent;
+}
+
+.dialog .main .content .msgBox .msgPass input:focus{
+	border-color: #1099EC;
+}
+
+.taskbar .SystemButton .StartMenu {
+    background: #1D324F;
+    border: 1px solid #1D324F;
+    -moz-box-shadow: 5px 5px 30px rgba(24,43,67,0.5);
+    -webkit-box-shadow: 5px 5px 30px rgba(24,43,67,0.5);
+    box-shadow: 5px 5px 30px rgba(24,43,67,0.5);
+	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=25,Direction=135,Color='#182B43');
+}
+
+.taskbar .SystemButton .StartMenu .AppList .item {
+    color: #acdcfa;
+}
+
+.taskbar .SystemButton .StartMenu .AppList .item:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.taskbar .SystemButton .StartMenu .AppList .item:hover span {
+    color: #fff;
+}
+
+.taskbar .SystemButton .StartMenu .UserOperate {
+    color: #acdcfa;
+    background: #182B43;
+    border-top: 1px solid #405775;
+}
+
+
+.taskbar .SystemButton .StartMenu .UserOperate .DoLock {
+    opacity: 1;
+}
+
+.taskbar .SystemButton .StartMenu .UserOperate .DoLock:hover {
+    color: #fff;
+}
+
+.taskbar .SystemButton .StartMenu .UserOperate .Logout {
+    border-left: 1px solid #405775;
+    opacity: 1;
+}
+
+.taskbar .SystemButton .StartMenu .UserOperate .Logout:hover {
+    color: #fff;
+}
+
+.taskbar .SystemButton .StartMenu .pointer{
+    border-bottom: 10px solid #1D324F;
+}
+
+.taskbar .TaskButton .ButtonItem {
+    border-top: 2px solid #405775;
+}
+
+.taskbar .TaskButton .ButtonItemActive {
+    border-top: 2px solid #1099EC;
+}
+
+
+.taskbar .SystemButton .AppMenu {
+    background: #1D324F;
+    border: 1px solid #1D324F;
+    -moz-box-shadow: 5px 5px 30px rgba(24,43,67,0.5);
+    -webkit-box-shadow: 5px 5px 30px rgba(24,43,67,0.5);
+    box-shadow: 5px 5px 30px rgba(24,43,67,0.5);
+	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=25,Direction=135,Color='#182B43');
+}
+
+.taskbar .SystemButton .AppMenu .AppList .tab1 {
+    border: 8px solid #1D324F;
+    border-bottom: 6px solid #1D324F;
+    background: #405775;
+}
+
+.taskbar .SystemButton .AppMenu .AppList .tab1.active {
+    background: #1099EC;
+}
+
+.taskbar .SystemButton .AppMenu .AppList .tab2 {
+    border: 8px solid #1D324F;
+    border-bottom: 6px solid #1D324F;
+    background: #405775;
+}
+
+.taskbar .SystemButton .AppMenu .AppList .tab2.active {
+    background: #1099EC;
+}
+
+.taskbar .SystemButton .AppMenu .AppList .item {
+    color: #acdcfa;
+    line-height: 20px;
+}
+
+.taskbar .SystemButton .AppMenu .AppList .item:hover{
+    background: rgba(255,255,255,0.1);
+}
+
+.taskbar .SystemButton .AppMenu .AppList .item:hover span {
+    color: #fff;
+}
+
+
+.taskbar .SystemButton .AppMenu .pointer{
+    border-bottom: 10px solid #1D324F;
+}
+
+
+.taskbar .SystemButton .AppMenu .AppSearch {
+    color: #94B2D0;
+    background: #182B43;
+    border-top: 1px solid #405775;
+}
+
+.taskbar .SystemButton .AppMenu .AppSearch .searchKey {
+    background: transparent;
+	font-size: 12pt;
+}
+
+.taskbar .SystemButton .AppMenu .AppSearch .searchBtn:hover{
+	color:#1099EC;
+}
+
+.taskbar .SystemButton .AppMenu .AppSearch .edit {
+    color: #94B2D0;
+}
+
+.taskbar .SystemButton .AppMenu .AppSearch .edit:hover{
+    color: #1099EC;
+}
+
+.taskbar .SystemButton .AppMenu .AppSearch .edit.active {
+    color: #1099EC;
+}
+
+
+
+.taskbar .SystemButton .ThemeMenu {
+    background: #1D324F;
+    border: 1px solid #1D324F;
+    -moz-box-shadow: 5px 5px 30px rgba(24,43,67,0.5);
+    -webkit-box-shadow: 5px 5px 30px rgba(24,43,67,0.5);
+    box-shadow: 5px 5px 30px rgba(24,43,67,0.5);
+	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=25,Direction=135,Color='#182B43');
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .tab1 {
+    border: 8px solid #1D324F;
+    border-bottom: 6px solid #1D324F;
+    background: #405775;
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .tab1.active {
+    background: #1099EC;
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .tab2 {
+    border: 8px solid #1D324F;
+    border-bottom: 6px solid #1D324F;
+    background: #405775;
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .tab2.active {
+    background: #1099EC;
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .item {
+    color: #acdcfa;
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .item:hover{
+    background: rgba(255,255,255,0.1);
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeList .item:hover span {
+    color: #fff;
+}
+
+
+.taskbar .SystemButton .ThemeMenu .pointer{
+    border-bottom: 10px solid #1D324F;
+}
+
+
+.taskbar .SystemButton .ThemeMenu .ThemeSearch {
+    color: #94B2D0;
+    background: #182B43;
+    border-top: 1px solid #405775;
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeSearch .searchKey {
+    background: transparent;
+	font-size: 12pt;
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeSearch .searchBtn:hover{
+	color:#1099EC;
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeSearch .edit {
+    color: #94B2D0;
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeSearch .edit:hover{
+    color: #1099EC;
+}
+
+.taskbar .SystemButton .ThemeMenu .ThemeSearch .edit.active {
+    color: #1099EC;
+}
+
+.homepanel .message {
+    background: rgba(0,0,0,0.25);
+}
+
+.taskbar .TaskStatus .WeatherList {
+	color: #94B2D0;
+    background: #1D324F;
+    border: 1px solid #1D324F;
+    -moz-box-shadow: 5px 5px 30px rgba(24,43,67,0.5);
+    -webkit-box-shadow: 5px 5px 30px rgba(24,43,67,0.5);
+    box-shadow: 5px 5px 30px rgba(24,43,67,0.5);
+	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=25,Direction=135,Color='#182B43');
+}
+
+.taskbar .TaskStatus .WeatherList .weather-icon {
+    color: #1099EC;
+}
+
+.taskbar .TaskStatus .WeatherList .feels-like {
+    color: #1099EC;
+}
+
+.taskbar .TaskStatus .WeatherList .weather-text {
+    color: #1099EC;
+}
+
+.taskbar .TaskStatus .WeatherList .today {
+    border-bottom: 1px solid #405775;
+}
+
+.taskbar .TaskStatus .WeatherList .city-name {
+    color: #405775;
+}
+
+.taskbar .TaskStatus .WeatherList .visibility {
+    color: #405775;
+}
+
+.taskbar .TaskStatus .WeatherList .future {
+    color: #94B2D0;
+}
+
+.taskbar .TaskStatus .WeatherList .pointer {
+    border-bottom: 10px solid #1D324F;
+}
+
+.taskbar .TaskStatus .ClockList {
+    color: #94B2D0;
+    background: #1D324F;
+    border: 1px solid #1D324F;
+    -moz-box-shadow: 5px 5px 30px rgba(24,43,67,0.5);
+    -webkit-box-shadow: 5px 5px 30px rgba(24,43,67,0.5);
+    box-shadow: 5px 5px 30px rgba(24,43,67,0.5);
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=25,Direction=135,Color='#182B43');
+}
+
+.taskbar .TaskStatus .ClockList .pointer{
+    border-bottom: 10px solid #1D324F;
+}
+
+.taskbar .TaskStatus .ClockList .day {
+    color: #D84C49;
+}

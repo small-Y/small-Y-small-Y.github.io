@@ -1,0 +1,115 @@
+/// <reference path="../TSS/lib/vsdoc/api.js" />
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result = {
+				flag:true,
+				buildlist:[]
+			};	
+		var buildlist = Request.QueryString("buildlist");
+		var isall = Request.QueryString("isall"); 
+		var kpiObject=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/BCPS/ObjectClass/Building",""));
+		var tc=new Date();
+		var t2 = tc;
+		t2.setMinutes(0,0,0);
+		var t1 = t2.DateAdd("d",-3);
+		var listMeter=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/BCPS/Mining/Statistics/Hour?NodeObjectTag=WaterMeter&groupby=NodeObject&keyvalue=InstFlux&iscache=true&startTime="+t1.Format("yyyy-MM-dd hh:mm:ss")+"&endTime="+t2.Format("yyyy-MM-dd hh:mm:ss"),""));
+		var buildname={};
+		for(var i=0;i<listMeter.data.length;i++){
+		    var name=TSS.Utils.getRightPathName(listMeter.data[i].fullname,2).split(".")[0];
+		    if(buildname[name]==undefined){
+		        buildname[name]=[];
+		        buildname[name].push(listMeter.data[i]);
+		    }else{
+		        buildname[name].push(listMeter.data[i]);
+		    }
+		}
+
+		for(var i=0;i<kpiObject.length;i++){
+			if(isall=="false"){
+				if(buildlist.indexOf(kpiObject[i].GroupID)==-1){
+					continue;
+				}
+			}
+			var t2 = tc;
+			t2.setMinutes(0,0,0);
+			var t1 = t2.DateAdd("d",-1);
+			var item={path:kpiObject[i].GroupFullTag,name:kpiObject[i].GroupName,list:[],count:0};
+			var path=kpiObject[i].GroupFullTag.split(".").join("/").replace("BCPS/","");
+			var listNode=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/BCPS/Facility/"+path,"")).OPCNodeList;
+			if(listNode.length==0){
+				var d={};
+				d["name"]="设施设备在线率";
+				d["info"]=kpiObject[i].GroupName+"未发现给水管网的关联设备，不做检查！";
+				item.list.push(d);
+				var d={};
+				d["name"]="漏水点检查";
+				d["info"]=kpiObject[i].GroupName+"漏水点不做检查！";
+				item.list.push(d);
+				result.buildlist.push(item);	
+				continue;	
+			}
+			var online=0,nodecount=0;
+			for(var j=0;j<listNode.length;j++){
+			    if(listNode[j].ObjectInfo.ObjectTag=="WaterMeter"){
+			        nodecount++;
+			        if(listNode[j].OnLineFlag==true){
+			            online++;
+			        }			
+			    }
+			}
+			if(nodecount==0){
+				var d={};
+				d["name"]="设施设备在线率";
+				d["info"]=kpiObject[i].GroupName+"未发现给水管网的关联设备，不做检查！";
+				item.list.push(d);
+				var d={};
+				d["name"]="漏水点检查";
+				d["info"]=kpiObject[i].GroupName+"漏水点不做检查！";
+				item.list.push(d);
+				result.buildlist.push(item);	
+				continue;
+			}
+			
+			var percent=TSS.Utils.floatPrecision(online*100/nodecount,0);
+			if(percent<85){
+				item.count++;
+				var d={};
+				d["name"]="设施设备在线率";
+				d["info"]=kpiObject[i].GroupName+"给水管网的关联设备在线率偏低，为："+percent+"%！";
+				item.list.push(d);			
+			}else{	
+				var d={};
+				d["name"]="设施设备在线率";
+				d["info"]=kpiObject[i].GroupName+"给水管网的关联设备在线率为："+percent+"%！";
+				item.list.push(d);	
+			}
+
+			var restObject=buildname[kpiObject[i].GroupName];
+			if(restObject.length==0){
+				var d={};
+				d["name"]="漏水点检查";
+				d["info"]=kpiObject[i].GroupName+"未发现漏水点！";
+				item.list.push(d);			
+			}
+			for(var j=0;j<restObject.length;j++){
+			    if(restObject[j].value.HourMinMeasure>0){
+			        item.count++;
+			        var d={};
+			        d["name"]="漏水点检查";
+			        d["info"]=restObject[j].fullname+"可能漏水"+TSS.Utils.floatPrecision(restObject[j].value.HourMinMeasure*72,2)+"吨。";
+			        item.list.push(d);
+			    }
+			}
+			result.buildlist.push(item);
+		}
+		result.buildlist.sort(function(x, y){
+				return (x.count < y.count) ? 1 : -1;
+		});
+		return TSS.JSON.encode(result);
+		
+	}());
+	Response.ContentType = "text/plain";
+%>

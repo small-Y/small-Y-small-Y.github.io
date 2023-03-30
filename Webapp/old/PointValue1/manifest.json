@@ -1,0 +1,66 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/tax",
+  "appid": "4EE14DC5-B67F-4AB6-AFA5-4C9D662A8184",
+  "apptype": "Things",
+  "name": "积分聚合管理服务系统",
+  "short": "积分聚合",
+  "description": "基于互联网的统一积分聚合管理中心。",
+  "author": "ThingsLabs",
+  "version": "1.0",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/PointValue/index.tjs",
+	  "container": "sysapp",
+	  "sort": 7,
+	  "height": 600,
+	  "width": 800,
+	  "webapp":[{
+		   "id":"paykpi",
+		   "text":"积分视窗",
+		   "info":"",
+		   "children":[]
+		},{
+		   "id":"payorder",
+		   "text":"积分交易",
+		   "info":"",
+		   "children":[]
+		},{
+		   "id":"payactivity",
+		   "text":"积分活动",
+		   "info":"",
+		   "children":[]
+		},{
+		   "id":"payaccount",
+		   "text":"积分对账",
+		   "info":"",
+		   "children":[]
+		},{
+		   "id":"paylog",
+		   "text":"审计日志",
+		   "info":"",
+		   "children":[]
+		},{
+		   "id":"payapp",
+		   "text":"积分应用",
+		   "info":"",
+		   "children":[]
+		}]
+    },
+    "mobile": {
+	  "enable":true,
+	  "local_path": "",
+	  "container": "sysapp",
+	  "webapp":[{
+		"id":"PeopleNetwork",
+		"text": "新思人脉",
+		"icons":"Mobile/PeopleNetwork/connection.png",
+		 "info":"",
+		"local_path": "/WebApp/PointValue/Mobile/PeopleNetwork/"
+	  }]
+    }
+  },
+  "icons": {
+    "logo": "icon_256.png"
+  }
+}

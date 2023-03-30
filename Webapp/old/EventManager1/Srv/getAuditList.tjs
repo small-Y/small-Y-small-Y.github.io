@@ -1,0 +1,97 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			text:"",
+			data:[]
+		};
+		//
+		var startTime = Request.QueryString("startTime");
+		var endTime = Request.QueryString("endTime");
+		//
+		if(startTime=="" || startTime==undefined)
+		{
+			var tc = new Date();
+			startTime = new Date();
+			startTime.setFullYear(tc.getFullYear(),tc.getMonth(),tc.getDate());
+			startTime.setHours(0,0,0,0);
+			startTime=startTime.DateAdd("d",-7);
+		}
+		else
+		{
+			startTime = TSS.Utils.parseDate(startTime);
+		}
+
+		if(endTime=="" || endTime==undefined)
+		{
+			endTime = new Date();
+		}
+		else
+		{
+			endTime = TSS.Utils.parseDate(endTime);
+			endTime=endTime.DateAdd("d",1);
+		}
+		//
+		var sql="select * from SystemLogData where \"logTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"logTime\"<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' and \"logUser\"!='system' limit 2500";
+		var selLogLevel = Request.QueryString("selLogLevel");
+		if(selLogLevel!="" && selLogLevel!=undefined)
+		{
+			sql+=" AND \"logLevel\" in ("+selLogLevel+")";
+		}
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,sql))[0];
+		if(record.MessageCode>0)
+		{
+			result.text=record.MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		var logLevel=["运行级","提示级","告警级","错误级","严重级"];
+		result.flag=true;
+		for(var i=0;i<record.Record.length;i++)
+		{
+			var strContent='<span class="text-muted">'+record.Record[i].logContent+'</span>';
+			switch(record.Record[i].logLevel)
+			{
+				case 0:
+				{
+					strContent='<span class="text-primary">'+record.Record[i].logContent+'</span>';
+				}
+				break;
+				case 1:
+				{
+					strContent='<span class="text-success">'+record.Record[i].logContent+'</span>';
+				}
+				break;
+				case 2:
+				{
+					strContent='<span class="text-warning">'+record.Record[i].logContent+'</span>';
+				}
+				break;
+				case 3:
+				{
+					strContent='<span class="text-danger">'+record.Record[i].logContent+'</span>';
+				}
+				break;
+				case 4:
+				{
+					strContent='<span class="text-danger">'+record.Record[i].logContent+'</span>';
+				}
+				break;
+			}
+			//
+			result.data[result.data.length]=['<input type="checkbox" id="'+record.Record[i].logID+'" name="selMessageID" class="checkboxes">',
+												record.Record[i].logTime,
+												record.Record[i].logAddr,
+												record.Record[i].logUser,
+												strContent,
+												record.Record[i].logType,
+												logLevel[record.Record[i].logLevel],
+												record.Record[i].logAppName];
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

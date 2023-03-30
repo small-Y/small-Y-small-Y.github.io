@@ -1,0 +1,75 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	function getAddrNum(address)
+	{
+		var ipArray=address.split(".");
+		if(ipArray.length<4)
+			return 0;
+		var ipNum=parseInt(ipArray[3])*256*256*256+parseInt(ipArray[2])*256*256+parseInt(ipArray[1])*256+parseInt(ipArray[0]);
+		return ipNum;
+	}
+
+	Response.Write(function () {
+		var result={
+			flag:true,
+			text:""
+		};
+		//
+		var todo=parseInt(Request.Form("todo"));
+		var blackID=Request.Form("blackID");
+		var blackName=Request.Form("blackName");
+		var ipAddress=Request.Form("ipAddress");
+		var maskAddress=Request.Form("maskAddress");
+		//
+		switch(todo)
+		{
+			case 0:
+				{
+					var now = new Date();
+					var blackID=now.getTime();
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("sysconfig",true,"insert into BlackIPTable (T_BlackID,T_BlackName,T_IPAddress,T_MaskAddress) values ("+blackID+",'"+blackName+"','"+ipAddress+"','"+maskAddress+"')"))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					} 
+				}
+				break;
+			case 1:
+				{
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("sysconfig",true,"update BlackIPTable set T_BlackName='"+blackName+"',T_IPAddress='"+ipAddress+"',T_MaskAddress='"+maskAddress+"' where T_BlackID="+blackID))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					} 
+				}
+				break;
+			case 2:
+				{
+					var blackList=TSS.JSON.decode(Request.Form("blackList"));
+					for(var i=0;i<blackList.length;i++)
+					{
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("sysconfig",true,"delete from BlackIPTable where T_BlackID="+blackList[i].id))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+				}
+				break;
+		}
+		//
+		if (!System.Basic.ApplyBlackIPTable()) {
+			result.flag=false;
+			result.msg="IP黑名单生效失败！！";
+		}
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

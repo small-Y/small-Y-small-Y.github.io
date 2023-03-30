@@ -1,0 +1,62 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:true,
+			text:""
+		};
+		//
+		var todo=parseInt(Request.Form("todo"));
+		var oldID=Request.Form("oldID");
+		var appID=Request.Form("appID");
+		var appName=Request.Form("appName");
+		var appSecret=Request.Form("appSecret");
+		//
+		switch(todo)
+		{
+			case 0:
+				{
+					var now = new Date();
+					var proxyId=now.getTime();
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into PointValueAppTable (\"T_AppID\",\"T_AppName\",\"T_AppSecret\") values ('"+appID+"','"+appName+"','"+appSecret+"')"))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					} 
+				}
+				break;
+			case 1:
+				{
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"update PointValueAppTable set \"T_AppID\"='"+appID+"',\"T_AppName\"='"+appName+"',\"T_AppSecret\"='"+appSecret+"' where \"T_AppID\"='"+oldID+"'"))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					} 
+				}
+				break;
+			case 2:
+				{
+					var appList=TSS.JSON.decode(Request.Form("appList"));
+					for(var i=0;i<appList.length;i++)
+					{
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from PointValueAppTable where \"T_AppID\"='"+appList[i].id+"'"))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+				}
+				break;
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

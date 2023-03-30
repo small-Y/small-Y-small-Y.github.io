@@ -1,0 +1,14 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.write(function () {
+		var result = {flag:1,errorText:""};
+		if(!System.Message.PushSms(Request.Form("phoneNum"),Request.Form("smsTxt")))
+		{
+			result.flag = 0;
+			result.errorText = System.Message.GetLastError();
+		}
+		return FWP.JSON.encode(result);
+	}());
+	Response.ContentType = "text/plain";
+%>

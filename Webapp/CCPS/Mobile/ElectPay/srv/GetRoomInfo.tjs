@@ -1,0 +1,45 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<!--#INCLUDE FILE="base_extend.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	function signResource(method,url,user,pass){
+		var now = new Date();
+		return "TOS username=\""+user+"\", uri=\""+encodeURI(url)+"\", response=\""+(System.Security.ComputerMD5(now.Format("yyyy-MM-dd")+":"+method+":"+encodeURI(url)+":"+pass,false)).toLowerCase()+"\"";
+	}
+
+	Response.clear();
+	Response.write(function(){
+	    var ret={"success":true,"bOnLineFlag":"","szOPCFullName":"",DataTime:"",remaining:"","msg":""};
+		var parent = Request.form("opcpath");
+
+	    var nRes=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/CCPS/Facility?type=node&opcpath="+parent,""));
+
+//		var xmlHttp = Server.CreateObject("MSXML2.ServerXMLHTTP.6.0");
+//		var url= TSS.Project.ElectPayUrl+"/API/System/CCPS/Facility?type=node&opcpath="+parent;
+//		xmlHttp.open('GET',url,false);
+//		xmlHttp.setOption(2, 13056);  //https
+//		xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+//		xmlHttp.setRequestHeader("Authorization",signResource("GET",url,TSS.Project.ApiUser,TSS.Project.ApiPass));
+//		xmlHttp.send();
+//		Server.DebugPrint("####3"+xmlHttp.responseText);
+//		var nRes=TSS.JSON.decode(xmlHttp.responseText);
+
+
+			for(var i=0;i<nRes.length;i++){
+				if(nRes[i].NodeTag=="Account"){
+					//
+					var Balance=(nRes[i].OPCValueList[nRes[i].OPCValueMap.AccountBalance].DataValue+nRes[i].OPCValueList[nRes[i].OPCValueMap.MeterBalance].DataValue);
+					ret.bOnLineFlag=nRes[i].OnLineFlag;
+					ret.szOPCFullPath=nRes[i].NodeFullTag;
+                    ret.NodeID=nRes[i].NodeID
+					ret.szOPCFullName=nRes[i].NodeFullName.split(".").slice(0,nRes[i].NodeFullName.split(".").length-1).join(".");
+					ret.remaining=parseFloat(Balance.toFixed(2));
+					ret.DataTime=nRes[i].OPCValueList[nRes[i].OPCValueMap.AccountBalance].DataTime;
+				}
+			}
+		 return TSS.JSON.encode(ret);
+		
+		
+	}());
+	Response.ContentType = "text/plain";
+%>

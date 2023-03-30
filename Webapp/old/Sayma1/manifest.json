@@ -1,0 +1,28 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/fax",
+  "appid": "610CA703-EFB3-4726-A949-5990BFFA8B78",
+  "apptype": "Things",
+  "name": "联 络",
+  "short": "联 络",
+  "description": "联络我们这个圈子的人",
+  "author": "ThingsLabs",
+  "version": "1.0.1",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/Sayma/index.tjs",
+	  "container": "personal",
+	  "sort": 13,
+	  "height": 600,
+	  "width": 800
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "/WebApp/Sayma/Mobile/index.tjs",
+	  "container": "personal"
+    }
+  },
+  "icons": {
+    "logo": "icon.png"
+  }
+}

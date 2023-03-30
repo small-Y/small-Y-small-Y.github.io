@@ -1,0 +1,28 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/tax",
+  "appid": "5D8F8B68-E9E6-48D5-8DD4-3728F67408BE",
+  "apptype": "Things",
+  "name": "统一账户管理中心",
+  "short": "账户管理",
+  "description": "基于组织机构模型的统一账户管理中心。",
+  "author": "ThingsLabs",
+  "version": "1.0",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/UserManager/index.tjs",
+	  "container": "system",
+	  "sort": 4,
+	  "height": 600,
+	  "width": 800
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "/WebApp/UserManager/Mobile/index.tjs",
+	  "container": "system"
+    }
+  },
+  "icons": {
+    "logo": "icon.png"
+  }
+}

@@ -1,0 +1,43 @@
+@charset "utf-8";
+
+.dialog
+{
+	background: #cc6600 url(./i/frame.png) repeat-x left top;
+}
+
+.dialog .bar
+{
+    color:#ffffff;
+}
+
+.dialog .main .content
+{
+	background:#fff url(./i/ntp_background.png) no-repeat left bottom;
+}
+
+
+.dialog-max
+{
+   background: #cc6600 url(./i/frame.png) repeat-x left top;
+}
+
+.dialog-max .bar
+{
+    color:#ffffff;
+}
+
+.dialog-max .main .content
+{
+	background:#fff url(./i/ntp_background.png) no-repeat left bottom;
+}
+
+.dialog-fullscreen
+{
+   background: #cc6600 url(./i/frame.png) repeat-x left top;
+}
+
+
+.dialog-fullscreen .main .content
+{
+	background:#fff url(./i/ntp_background.png) no-repeat left bottom;
+}

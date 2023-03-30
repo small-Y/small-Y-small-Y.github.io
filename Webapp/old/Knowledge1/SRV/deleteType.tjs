@@ -1,0 +1,45 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result = {
+				flag:true,
+				info:"删除成功！"
+			};
+		//
+		//
+		var typeID = Request.Form("TypeID");
+		var szSql="";
+		var userInfo=TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		if(userInfo.userTypeNum<1)
+		{
+			szSql="select * from CommunityDataTable  where \"TypeID\"='"+typeID+"'";
+			var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+			if (resSet.MessageCode>0){
+				result.flag=false;
+				result.info=resSet.MessageText;
+				result.sql=szSql;
+				return TSS.JSON.encode(result);
+			}
+			if(resSet.Record.length>0){
+				result.flag=false;
+				result.info="删除失败，该分类已被使用！";
+				return TSS.JSON.encode(result);
+			}
+			szSql="delete from CommunityTypeTable  where \"TypeID\"='"+typeID+"'";
+			var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+			if (resSet.MessageCode>0){
+				result.flag=false;
+				result.info=resSet.MessageText;
+				result.sql=szSql;
+				return TSS.JSON.encode(result);
+			}
+			result.sql=szSql;
+
+		}
+
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

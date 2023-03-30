@@ -1,0 +1,28 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/fax",
+  "appid": "167D4A20-E6AD-4EFA-8313-E76358D1F532",
+  "apptype": "Things",
+  "name": "命令控制台",
+  "short": "命令控制台",
+  "description": "ThingsOS 命令控制台",
+  "author": "ThingsLabs",
+  "version": "1.0",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/Console/index.ejs",
+	  "container": "system",
+	  "sort": 2,
+	  "height": 678,
+	  "width": 960
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "/WebApp/Console/Mobile/index.tjs",
+	  "container": "system"
+    }
+  },
+  "icons": {
+    "logo": "logo.png"
+  }
+}

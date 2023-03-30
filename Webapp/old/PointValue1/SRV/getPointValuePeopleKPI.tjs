@@ -1,0 +1,62 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+
+	    var result={
+	        list:[],
+            flag:true
+	    };
+		//
+		var startTime = Request.QueryString("startTime");
+		var endTime = Request.QueryString("endTime");
+		var type = Request.QueryString("type");
+		if(startTime=="" || startTime==undefined)
+		{
+			var tc = new Date();
+			startTime = new Date();
+			startTime.setFullYear(tc.getFullYear(),tc.getMonth(),tc.getDate());
+			startTime.setHours(0,0,0,0);
+			startTime=startTime.DateAdd("d",-2);
+		}
+		else
+		{
+			startTime = TSS.Utils.parseDate(startTime);
+		}
+
+		if(endTime=="" || endTime==undefined)
+		{
+			endTime = new Date();
+		}
+		else
+		{
+			endTime = TSS.Utils.parseDate(endTime);
+			endTime=endTime.DateAdd("d",1);
+		}
+		//
+		//
+		var ifwhere="\"T_OrderTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"T_OrderTime\"<'"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"'";
+	    //
+		var sql="";
+		if(type==0){
+		    sql="select b.\"T_FullName\" as username,sum(\"T_Paid\") as score from  UserScoreOrderTable as a left join UserDataTable  as b on a.\"T_UserID\"=b.\"T_UserID\" where "+ ifwhere+" and \"T_Refund\"=0 group by b.\"T_FullName\" order by score desc limit 10";
+		}else{
+		    sql="select b.\"T_FullName\" as username,sum(\"T_Refund\") as score from  UserScoreOrderTable as a left join UserDataTable  as b on a.\"T_UserID\"=b.\"T_UserID\" where "+ ifwhere+" and \"T_Paid\"=0 group by b.\"T_FullName\" order by score desc limit 10";
+		}
+		var record1=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,sql));
+		if(record1.length==0)
+		{
+			result.msg=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record1[0].MessageCode>0)
+		{
+			result.msg=record1[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		result.list=record1[0].Record;
+	    //
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

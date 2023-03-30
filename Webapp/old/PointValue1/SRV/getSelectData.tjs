@@ -1,0 +1,50 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result=[];
+		//
+		var term = Request.QueryString("term");
+		var selectType = Request.QueryString("selectType");
+		var sql="";
+
+		switch(selectType){
+			case "OrderNo":{
+				sql="select distinct  \"T_OrderNo\" as text  from UserScoreOrderTable where \"T_OrderNo\" LIKE '%"+term+"%'"
+			}
+			break;
+			case "OrderCreated":{
+				sql="select distinct \"T_OrderCreated\" as text from UserScoreOrderTable where \"T_OrderCreated\" LIKE '%"+term+"%'"
+			}
+			break;
+			case "OrderUser":{
+				sql="select distinct \"T_UserName\" as text from UserScoreOrderTable where \"T_UserName\" LIKE '%"+term+"%'"
+			}
+			break;
+			default:{
+			    return TSS.JSON.encode(result);
+			}
+			break;
+		}
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,sql));
+
+		if(record.length==0)
+		{
+			return System.RDC.GetLastError();
+		}
+		if(record[0].MessageCode>0)
+		{
+			return record.MessageText;
+		}
+		for(var i=0,len=record[0].Record.length;i<len;i++){
+			var o={};
+			o.id=record[0].Record[i].text;
+			o.text=record[0].Record[i].text;
+			result.push(o);
+		
+		}
+
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

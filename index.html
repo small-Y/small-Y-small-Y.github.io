@@ -1,101 +1,144 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=Edge" />	
-		<meta name="keywords" content="轮播图" />
-		<meta name="description" content="我的主页" />
-		<meta name="copyright" content= "版权所有 Copyright (c) 2023 small-Y.保留所有权利。" />
-		<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-		<meta name="msapplication-navbutton-color" content="#b4d9f1" />	
-		<meta name="application-name" content="我的主页" />
-		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta name="apple-touch-fullscreen" content="yes">
-		<meta name="apple-mobile-web-app-title" content="我的主页">
-		<meta name="MobileOptimized" content="320">
-		<title>我的主页</title>
-		<link rel="icon" href="favicon.ico" type="image/x-icon" />
-		<link rel="shortcut icon" href="favicon.ico" sizes="16x16" type="image/x-icon" />
-		<link rel="bookmark" href="favicon.ico" type="image/x-icon" />
-		<!-- 开始全局强制样式 -->          
-		<link href="" rel="stylesheet" type="text/css"/>
-		<!-- 结束全局强制样式 -->
-		<!-- 开始页面级插件样式 --> 
-		<link href="css/base.css" rel="stylesheet" type="text/css"/>
-		<!-- 结束页面级插件样式 -->
-		<!-- 开始主题样式 --> 
-		<link href="css/mian.css" rel="stylesheet" type="text/css"/>
-		<!-- 结束主题样式 -->
-		<!-- 开启主题声音 --> 
-		<!-- Resources/nag.mp3 -->
-		<audio id="nag_sound" preload="auto">
-			<source src="" type="audio/mpeg" />
-		</audio>
-	</head>
-	<body>
-		<div class="banner">
-			<div class="img">
-				<a class="banner_img_a" href="javascript:void(0);"  style="display: inline;">
-					<img src="img/4269.webp" alt="">
-				</a>
-				<a class="banner_img_a show" href="javascript:void(0);"  style="display: inline;">
-					<img src="img/3128.webp" alt="">
-				</a>
-				<a class="banner_img_a" href="javascript:void(0);"  style="display: inline;">
-					<img src="img/368.webp" alt="">
-				</a>
-				<a class="banner_img_a" href="javascript:void(0);"  style="display: inline;">
-					<img src="img/5545.webp" alt="">
-				</a>
-				<a class="banner_img_a" href="javascript:void(0);"  style="display: inline;">
-				    <img src="img/8535.webp" alt="">
-				</a>
-				<a class="banner_img_a" href="javascript:void(0);"  style="display: inline;">
-					<img src="img/4269.webp" alt="">
-				</a>
-				<a class="banner_img_a" href="javascript:void(0);"  style="display: inline;">
-					<img src="img/3128.webp" alt="">
-				</a>
-			</div>
-			<div class="indicator">
-				<span class="cur">1</span>
-				<span class="">2</span>
-				<span class="">3</span>
-				<span class="">4</span>
-				<span class="">5</span>
-			</div>
-			<div class="page">
-				<span class="prev">&lt;</span>
-				<span class="next">&gt;</span>
-			</div>
-		</div>
-		<!-- 加载信息 -->
-		<div id="startingCover">
-			<div id="startingLogo"></div>
-			<div id="startingText">正加载核心组件...</div>
-			<div id="startingVer">&copy;2023&nbsp;small-Y.</div>
-		</div>
-		<!--平台库-->
-		<script type="text/javascript" src="js/base.js"></script>
-		<script type="text/javascript">
-			sleep(1000);
-			document.getElementById('startingText').innerHTML = '正加载通用组件...';
-		</script>
-		<!--应用库-->
-		<script type="text/javascript">
-			sleep(1000);
-			document.getElementById('startingText').innerHTML = '正加载应用组件...';
-		</script>
-		<script type="text/javascript" src="jquery/jquery-3.2.1.js"></script>
-		<script type="text/javascript" src="js/main.js"></script>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />	
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<meta name="copyright" content= "版权所有 Copyright (c) 2023 small-Y.保留所有权利。" />
+	<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+	<meta name="msapplication-navbutton-color" content="#b4d9f1" />	
+	<meta name="application-name" content="学习汇聚平台" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="format-detection" content="telephone=no">
+	<meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-title" content="学习汇聚平台">
+	
+	<meta name="msapplication-TileImage" content="logo-144.png"/>
+	<meta name="msapplication-TileColor" content="#006600"/>
 
-		<script type="text/javascript">
-			sleep(1000);
-			document.getElementById('startingText').innerHTML = '正启动应用视窗...';
-		</script>
-		<script type="text/javascript">
-			sleep(1000);
-			$("#startingCover").remove();
-		</script>
-	</body>
+	<title>学习汇聚平台 | KH</title>
+	<link rel="icon" href="favicon.ico" type="image/x-icon" />
+	<link rel="shortcut icon" href="favicon.ico" sizes="16x16" type="image/x-icon" />
+	<link rel="shortcut icon" href="logo.png" sizes="32x32" type="image/png" />
+	<link rel="shortcut icon" href="logo.png" sizes="64x64" type="image/png" />
+	<link rel="bookmark" href="favicon.ico" type="image/x-icon" />
+
+	<link rel="apple-touch-icon-precomposed" sizes="57x57" href="logo-57.png">
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="logo-72.png">
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="logo-114.png">
+	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="logo-144.png">
+
+	<!-- <link type="text/css" rel="stylesheet" href="./System/style/my.cssz?tos=3.0.4" /> -->
+	<link type="text/css" rel="stylesheet" href="System/css/system.css" />
+	<!-- 自定义主题 -->
+	<link type="text/css" rel="stylesheet" href="resource/css/base.min.css" />
+	<link type="text/css" rel="stylesheet" href="resource//css/toastr.min.css" />
+	<link id="mytheme"  type="text/css" rel="stylesheet"/>
+</head>
+<body>
+    <div class="hidden_div">
+        <h1></h1>
+        <p></p>
+    </div>
+	<noscript>
+		<div class="noscript">
+			你好，需要浏览器开启JavaScript功能来帮助你正常使用&nbsp;KH。<br/>
+			请设置浏览器开启 JavaScript功能，然后重试。
+		</div>
+	</noscript>
+	<div id="startingCover">
+		<div id="startingLogo"><img src="logo.png" width="120" height="120" border="0" alt=""></div>
+		<div id="startingText">Starting ...</div>
+		<div id="startingBar"></div>
+	</div>
+	<div id="warningCover">
+		<div id="warningLogo"></div>
+		<div id="warningText">您的浏览器版本太低，无法正常使用&nbsp;KH！<br/>请安装<a href="http://www.google.cn/intl/zh-CN/chrome/"><font size="3" color="#ffff99">下载</font></a>最新的Chrome浏览器，然后重试。</div>
+	</div>
+
+    <div id="deskContainer">
+		<div id="loginFrame" class="desktop"></div>
+		<div id="startingVer" class="startingVer">&copy;2023&nbsp;small-Y-KH</div>
+        <div id="desktopFrame1" class="desktop"></div>
+		<div id="pannelFrame"></div>
+	</div>
+
+	<div class="growlTip"></div>
+
+	<audio id="start_sound" preload="auto">
+		<source src="system/sound/start.mp3" type="audio/mpeg" />
+	</audio>
+
+	<audio id="desktop_sound" preload="auto">
+		<source src="system/sound/desktop.mp3" type="audio/mpeg" />
+	</audio>
+
+	<audio id="info_sound" preload="auto" onended="reloadSound(this);">
+		<source src="system/sound/info.mp3" type="audio/mpeg" />
+	</audio>
+
+	<audio id="warn_sound" preload="auto" onended="reloadSound(this);">
+		<source src="system/sound/warn.mp3" type="audio/mpeg" />
+	</audio>
+
+	<audio id="error_sound" preload="auto" onended="reloadSound(this);">
+		<source src="system/sound/error.mp3" type="audio/mpeg" />
+	</audio>
+
+	<audio id="open_sound" preload="auto" onended="reloadSound(this);">
+		<source src="system/sound/open.mp3" type="audio/mpeg" />
+	</audio>
+
+	<audio id="close_sound" preload="auto" onended="reloadSound(this);">
+		<source src="system/sound/close.mp3" type="audio/mpeg" />
+	</audio>
+
+	<audio id="max_sound" preload="auto" onended="reloadSound(this);">
+		<source src="system/sound/max.mp3" type="audio/mpeg" />
+	</audio>
+
+	<audio id="min_sound" preload="auto" onended="reloadSound(this);">
+		<source src="system/sound/min.mp3" type="audio/mpeg" />
+	</audio>
+
+	<audio id="rest_sound" preload="auto" onended="reloadSound(this);">
+		<source src="system/sound/rest.mp3" type="audio/mpeg" />
+	</audio>
+
+	<audio id="magic_sound" preload="auto" onended="reloadSound(this);">
+		<source src="system/sound/magic.mp3" type="audio/mpeg" />
+	</audio>
+
+	<script type="text/javascript">
+		var ua = navigator.userAgent;
+		if (/Android/.test(ua)){
+			var devicePixelRatio = window.devicePixelRatio;
+			if(devicePixelRatio>1.5)
+				devicePixelRatio=1.5;
+			var deviceScale = 1/devicePixelRatio;
+			document.write('<meta name="viewport" content="width=device-width,initial-scale='+deviceScale+',minimum-scale='+deviceScale+',maximum-scale='+deviceScale+',user-scalable=no">');
+		}
+		else
+		{
+			document.write('<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">');
+		}
+	</script>
+
+	<script type="text/javascript" src="resource/js/jquery.min.js"></script>
+	<script type="text/javascript" src="resource/js/toe.min.js"></script>
+	<!-- <script type="text/javascript" src="/AppEngine/jQuery/my.jsz"></script> -->
+	<script type="text/javascript" src="System/js/dateformat.min.js"></script>
+	<script type="text/javascript" src="System/js/smartDeskTop.js"></script>
+	<script type="text/javascript" src="System/js/smartLogin.js"></script>
+	<script type="text/javascript" src="System/js/slider.js"></script>
+	<script type="text/javascript" src="System/js/initDeskTop.js"></script>
+	<script type="text/javascript" src="System/js/smartManage.js"></script>
+	<script type="text/javascript" src="System/js/smartTask.js"></script>
+	<script type="text/javascript" src="System/js/smartDock.js"></script>
+	<script type="text/javascript" src="System/js/smartShortCut.js"></script>
+	<script type="text/javascript" src="System/js/main.js"></script>
+	<!-- <script type="text/javascript" src="System/js/desk.min.js"></script> -->
+	<!-- <script type="text/javascript" src="/System/js/my.jsz?tos=3.2.5"></script> -->
+</body>
 </html>

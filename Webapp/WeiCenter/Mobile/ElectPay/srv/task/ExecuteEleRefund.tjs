@@ -1,0 +1,377 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<!--#INCLUDE FILE="base_extend.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+Response.clear();
+function signResource(method,url,user,pass){
+
+		var now = new Date();
+		return "TOS username=\""+user+"\", uri=\""+encodeURI(url)+"\", response=\""+(System.Security.ComputerMD5(now.Format("yyyy-MM-dd")+":"+method+":"+encodeURI(url)+":"+pass,false)).toLowerCase()+"\"";
+
+}
+Response.write(function(){
+    var ret={
+        success:false,
+        data:[],
+        msg:""
+    };
+    //BusinessStatus   未执行,执行(1)次,执行(N)次,执行成功,执行失败,执行超时
+    //OperateStatus   支付成功,支付失败,支付取消,支付验证失败,支付验证成功,退款申请,退款失败,退款成功
+    var lastMsg="";
+   // var res=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/Pay/Charge?order_status=1",""));
+
+	var channel=TSS.Project.channel;
+    var payid=TSS.Project.payid;
+    var AppKEY=TSS.Project.AppKEY;
+    var order_status=1;
+    var stringA=new Date().Format("yyyy-MM-dd")+channel+order_status+payid+AppKEY;
+      
+    var authorSign=System.Security.ComputerMD5(stringA,false).toLowerCase();
+    
+    //var res=TSS.JSON.decode(Server.ExecuteAPI("GET",TSS.Project.PaymentUrl+"Charge?channel="+channel+"&order_status="+order_status+"&payid="+payid+"&authorSign="+authorSign,""));
+	//
+
+
+	var xmlHttp = Server.CreateObject("MSXML2.ServerXMLHTTP.6.0");
+	var url=TSS.Project.PaymentUrl+"Charge";
+	var postData="channel="+channel+"&order_status="+order_status+"&payid="+payid+"&authorSign="+authorSign;
+	xmlHttp.open('GET',url+"?"+postData,false);
+	xmlHttp.setOption(2, 13056);  //https
+	xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+	xmlHttp.setRequestHeader("Authorization",signResource("GET",url,TSS.Project.ApiUser,TSS.Project.ApiPass));
+	xmlHttp.send();
+	var res=TSS.JSON.decode(xmlHttp.responseText);
+
+
+	//
+	//Server.DebugPrint("####dataGET"+TSS.JSON.encode(res));
+    for(var i=0,len=res.data.length;i<len;i++){
+        var UpdateTime=new Date().Format("yyyy-MM-dd hh:mm:ss");
+
+		
+
+        var sql="SELECT \"PayID\",\"InsideNO\",\"OperateStatus\",\"BusinessStatus\",\"AmountPay\",\"PayUserID\",\"PayUserName\",\"ReceiveUserID\",\"ReceiveUserName\",\"CreateTime\",\"UpdateTime\",\"Note\" FROM \"SSM_TRANSACTION\" "
+        +" WHERE   (\"BusinessStatus\"='执行失败' OR \"BusinessStatus\"='执行超时')   AND \"OperateStatus\" !='支付完结' AND  \"OperateStatus\" !='退款成功' AND  \"OperateStatus\" !='退款完结' and \"PayID\"='"+res.data[i].id+"'";
+       
+        //Response.write(sql+"\n");
+        //Response.end();
+        var reslist=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,sql))[0];
+
+        if(reslist.length==0)
+        {
+            return System.RDC.GetLastError();
+        }
+
+
+        if(reslist.MessageCode>0){
+            return reslist.MessageText;
+        }
+
+        if(reslist.Record.length==1){
+            var Note=TSS.JSON.decode(TSS.String.decodeHtml(reslist.Record[0].Note));
+
+            //1、order_id——订单交易号（可选） 
+            //2、refund_no——退款单号，如T201607131234（可选） 
+            //3、refund_status——订单状态（可选） 
+            //4、channel——支付使用的第三方支付渠道 
+            //5、payid——支付使用的app对象的id 
+            //6、authorSign——交易认证签名 
+            var order_id=reslist.Record[0].PayID;
+
+            var stringA=new Date().Format("yyyy-MM-dd")+channel+order_id+payid+AppKEY;
+      
+            var authorSignRefund=System.Security.ComputerMD5(stringA,false).toLowerCase();
+           // return  Server.ExecuteAPI("GET","/API/Pay/Refund?order_id="+order_id+"&channel="+channel+"&payid="+payid+"&authorSign="+authorSignRefund,"");
+            //var Refund=TSS.JSON.decode(Server.ExecuteAPI("GET",TSS.Project.PaymentUrl+"Refund?order_id="+order_id+"&channel="+channel+"&payid="+payid+"&authorSign="+authorSignRefund,""));
+            //Response.write(reslist.Record[0].AmountPay+"\n");
+
+			//
+			var xmlHttp = Server.CreateObject("MSXML2.ServerXMLHTTP.6.0");
+			var url=TSS.Project.PaymentUrl+"Refund";
+			var postData="order_id="+order_id+"&channel="+channel+"&payid="+payid+"&authorSign="+authorSignRefund;
+			xmlHttp.open('GET',url+"?"+postData,false);
+			xmlHttp.setOption(2, 13056);  //https
+			xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+			xmlHttp.setRequestHeader("Authorization",signResource("GET",url,TSS.Project.ApiUser,TSS.Project.ApiPass));
+			xmlHttp.send();
+			var Refund=TSS.JSON.decode(xmlHttp.responseText);
+
+			//
+
+
+
+          //Server.DebugPrint("####RefundGET"+TSS.JSON.encode(Refund));
+
+
+            if(Refund.data.length==0){
+                // 判断有没有申请退款 
+                var order_id=reslist.Record[0].PayID;
+                var refund_no="T"+reslist.Record[0].InsideNO;
+                var amount_refund=parseInt(parseFloat( reslist.Record[0].AmountPay)*100);
+                var description=reslist.Record[0].BusinessStatus;
+
+                var stringA=new Date().Format("yyyy-MM-dd")+amount_refund+channel+description+order_id+payid+refund_no+AppKEY;
+      
+                var authorSignRefund=System.Security.ComputerMD5(stringA,false).toLowerCase();
+
+				/*
+                var refund= TSS.JSON.decode(Server.ExecuteAPI("PUT",TSS.Project.PaymentUrl+"Refund","order_id="+order_id
+                    +"&refund_no="+refund_no
+                    +"&amount_refund="+amount_refund
+                    +"&channel="+channel
+                    +"&payid="+payid
+                    +"&description="+reslist.Record[0].BusinessStatus
+                     +"&authorSign="+authorSignRefund
+                    ));
+				*/
+
+				//
+			var xmlHttp = Server.CreateObject("MSXML2.ServerXMLHTTP.6.0");
+			var url=TSS.Project.PaymentUrl+"Refund";
+			var postData="order_id="+order_id
+							+"&refund_no="+refund_no
+							+"&amount_refund="+amount_refund
+							+"&channel="+channel
+							+"&payid="+payid
+							+"&description="+reslist.Record[0].BusinessStatus
+							+"&authorSign="+authorSignRefund;
+			xmlHttp.open('PUT',url,false);
+			xmlHttp.setOption(2, 13056);  //https
+			xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+			xmlHttp.setRequestHeader("Authorization",signResource("PUT",url,TSS.Project.ApiUser,TSS.Project.ApiPass));
+			xmlHttp.send(postData);
+			var refund=TSS.JSON.decode(xmlHttp.responseText);
+
+				//
+
+
+               //Server.DebugPrint("####RefundPUT"+TSS.JSON.encode(refund));
+
+                var sql="UPDATE \"SSM_TRANSACTION\" SET \"OperateStatus\"='退款申请',\"UpdateTime\"='"+UpdateTime+"' WHERE \"PayID\"='"+reslist.Record[0].PayID+"'";
+                var ress=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,sql))[0];
+
+                if(ress.MessageCode>0){
+                    ret.msg=ress.MessageText;
+                    return "执行失败 ERROR:"+ress.MessageText;
+                }
+
+                //Response.AppendToLog("电费充值","微信应用",Note.created+Note.description+"&退款申请",0);
+
+
+                lastMsg=Note.description+"退款申请";
+
+				//Server.DebugPrint("####lastMsg"+lastMsg);
+                //var o={"PayID":reslist.Record[0].PayID,"ReceiveUserID":reslist.Record[0].ReceiveUserID,"ReceiveUserName":reslist.Record[0].ReceiveUserName,"msg":"退款申请"};
+                //ret.data.push(o);
+
+            }else if(Refund.data.length==1){
+                //refund_status=0表示退款发起，1表示退款完成，2表示退款失败，3表示需要原退款单号重新发起，4表示退款需要商户人工干预
+                
+                switch(Refund.data.refund_status.toString()){
+                    case "0":{
+
+                        break;
+                    }
+                    case "1":{
+                        var sql="UPDATE \"SSM_TRANSACTION\" SET \"OperateStatus\"='退款成功',\"UpdateTime\"='"+UpdateTime+"' WHERE \"PayID\"='"+reslist.Record[0].PayID+"'";
+                        var res1=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,sql))[0];
+
+                        if(res1.length==0)
+                        {
+                            return System.RDC.GetLastError();
+                        }
+
+                        if(res1.MessageCode>0){
+                            return  res1.MessageText;
+                        }
+                        //Response.AppendToLog("电费充值","微信应用",Note.created+Note.description+"&退款成功",0);
+
+                        lastMsg=Note.description+"退款成功";
+
+                        //var o={"PayID":reslist.Record[0].PayID,"ReceiveUserID":reslist.Record[0].ReceiveUserID,"ReceiveUserName":reslist.Record[0].ReceiveUserName,"msg":"退款完成"};
+                        //ret.data.push(o);
+
+                        break;
+                    }
+                    case "2":{
+                        var sql="UPDATE \"SSM_TRANSACTION\" SET \"OperateStatus\"='退款失败',\"UpdateTime\"='"+UpdateTime+"' WHERE \"PayID\"='"+reslist.Record[0].PayID+"'";
+                        var res2=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,sql))[0];
+
+                        if(res2.length==0)
+                        {
+                            return System.RDC.GetLastError();
+                        }
+
+                        if(res2.MessageCode>0){
+                            return res2.MessageText;
+                        }
+
+                        //Response.AppendToLog("电费充值","微信应用",Note.created+Note.description+"&退款失败",0);
+
+
+                        lastMsg=Note.description+"退款失败"
+
+                        //var o={"PayID":reslist.Record[0].PayID,"ReceiveUserID":reslist.Record[0].ReceiveUserID,"ReceiveUserName":reslist.Record[0].ReceiveUserName,"msg":"退款失败"};
+                        //ret.data.push(o);
+                        break;
+                    }
+                    case "3":{
+
+                        //1、order_id——订单交易号 
+                        //2、refund_no——退款单号，如T201607131234 
+                        //3、amount_refund——退款金额（单位：分） 
+                        //4、description——订单附加说明（可选） 
+                        //5、channel——支付使用的第三方支付渠道 
+                        //6、payid——支付使用的app对象的id 
+                        var order_id=reslist.Record[0].PayID;
+                        var refund_no="T"+reslist.Record[0].InsideNO;
+                        var amount_refund="";parseInt(parseFloat( reslist.Record[0].AmountPay)*100)
+                        var description=reslist.Record[0].BusinessStatus;
+
+                        var stringA3=new Date().Format("yyyy-MM-dd")+amount_refund+channel+description+order_id+payid+refund_no+AppKEY;
+      
+                        var authorSignRefund3=System.Security.ComputerMD5(stringA3,false).toLowerCase();
+
+						/*
+                        var refund= TSS.JSON.decode(Server.ExecuteAPI("PUT",TSS.Project.PaymentUrl+"Refund","order_id="+order_id
+                            +"&refund_no="+refund_no
+                            +"&amount_refund="+amount_refund
+                            +"&channel="+channel
+                            +"&payid="+payid
+                            +"&description="+reslist.Record[0].BusinessStatus
+                             +"&authorSign="+authorSignRefund3
+                            ));
+						*/
+
+						//
+						var xmlHttp = Server.CreateObject("MSXML2.ServerXMLHTTP.6.0");
+						var url=TSS.Project.PaymentUrl+"Refund";
+						var postData="order_id="+order_id
+									+"&refund_no="+refund_no
+									+"&amount_refund="+amount_refund
+									+"&channel="+channel
+									+"&payid="+payid
+									+"&description="+reslist.Record[0].BusinessStatus
+									+"&authorSign="+authorSignRefund3;
+						xmlHttp.open('PUT',url,false);
+						xmlHttp.setOption(2, 13056);  //https
+						xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+						xmlHttp.setRequestHeader("Authorization",signResource("PUT",url,TSS.Project.ApiUser,TSS.Project.ApiPass));
+						xmlHttp.send(postData);
+						var Refund=TSS.JSON.decode(xmlHttp.responseText);
+						//
+                        //Response.AppendToLog("电费充值","微信应用",Note.created+Note.description+"&表示需要原退款单号重新发起",0);
+
+
+                        lastMsg=Note.description+"表示需要原退款单号重新发起";
+
+                        //var o={"PayID":reslist.Record[0].PayID,"ReceiveUserID":reslist.Record[0].ReceiveUserID,"ReceiveUserName":reslist.Record[0].ReceiveUserName,"msg":"需要原退款单号重新发起"};
+                        //ret.data.push(o);
+                        break;
+                    }
+                    case "4":{
+                        var sql="UPDATE \"SSM_TRANSACTION\" SET \"OperateStatus\"='退款失败',\"UpdateTime\"='"+UpdateTime+"' WHERE \"PayID\"='"+reslist.Record[0].PayID+"'";
+                        var res3=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,sql))[0];
+                        if(res3.length==0)
+                        {
+                            return System.RDC.GetLastError();
+                        }
+
+                        if(res3.MessageCode>0){
+                            return res3.MessageText;
+                        }
+
+                        //Response.AppendToLog("电费充值","微信应用",Note.created+Note.description+"&退款需要商户人工干预",0);
+
+                        lastMsg=Note.description+"退款需要商户人工干预";
+
+                        //var o={"PayID":reslist.Record[0].PayID,"ReceiveUserID":reslist.Record[0].ReceiveUserID,"ReceiveUserName":reslist.Record[0].ReceiveUserName,"msg":"退款需要商户人工干预"};
+                        //ret.data.push(o);
+                        break;
+                    }
+                    default:{
+                        break;
+                    }
+                }
+            
+            }
+
+        }
+    
+    }
+	 
+
+    //检查退款申请是否成功的
+    var sql="SELECT PayID,InsideNO,OperateStatus,BusinessStatus,AmountPay,PayUserID,PayUserName,ReceiveUserID,ReceiveUserName,CreateTime,UpdateTime,Note FROM SSM_TRANSACTION  WHERE  OperateStatus ='退款申请' ";
+  
+    var reslist=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",true,sql))[0];
+
+    if(reslist.MessageCode>0){
+		lastMsg=reslist.MessageText;
+        return lastMsg;
+    }
+
+
+    for(var i=0,len=reslist.Record.length;i<len;i++){
+        var UpdateTime=new Date().Format("yyyy-MM-dd hh:mm:ss");
+
+        var Note=TSS.JSON.decode(TSS.String.decodeHtml(reslist.Record[i].Note));
+
+       // return Server.ExecuteAPI("GET","/API/Pay/Refund?order_id="+reslist.Record[i].PayID+"&refund_status=1","");
+        //1、order_id——订单交易号（可选） 
+        //2、refund_no——退款单号，如T201607131234（可选） 
+        //3、refund_status——订单状态（可选） 
+        //4、channel——支付使用的第三方支付渠道 
+        //5、payid——支付使用的app对象的id 
+        //6、authorSign——交易认证签名 
+        var order_id=reslist.Record[i].PayID;
+        var refund_status=1;
+        var stringB=new Date().Format("yyyy-MM-dd")+channel+order_id+payid+refund_status+AppKEY;
+      
+        var authorSignRefundT=System.Security.ComputerMD5(stringB,false).toLowerCase();
+
+        
+        //var Refund=TSS.JSON.decode(Server.ExecuteAPI("GET",TSS.Project.PaymentUrl+"Refund?channel="+channel+"&order_id="+order_id+"&payid="+payid+"&refund_status=1&authorSign="+authorSignRefundT,""));
+		//
+			var xmlHttp = Server.CreateObject("MSXML2.ServerXMLHTTP.6.0");
+			var url=TSS.Project.PaymentUrl+"Refund";
+			var postData="channel="+channel+"&order_id="+order_id+"&payid="+payid+"&refund_status=1&authorSign="+authorSignRefundT;
+			xmlHttp.open('GET',url+"?"+postData,false);
+			xmlHttp.setOption(2, 13056);  //https
+			xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+			xmlHttp.setRequestHeader("Authorization",signResource("GET",url,TSS.Project.ApiUser,TSS.Project.ApiPass));
+			xmlHttp.send();
+
+
+			var Refund=TSS.JSON.decode(xmlHttp.responseText);
+
+
+		//
+
+        //Server.DebugPrint("RefundGet退款完结:"+url+"?"+postData);
+
+
+        if(Refund.data.length>0){
+          
+            var sql="UPDATE SSM_TRANSACTION SET OperateStatus='退款完结',UpdateTime='"+UpdateTime+"' WHERE PayID='"+reslist.Record[i].PayID+"'";
+            var resR=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",true,sql))[0];
+
+            if(resR.MessageCode>0){
+                return resR.MessageText;
+               // return TSS.JSON.encode(ret);
+            }
+            //Response.AppendToLog("电费充值","微信应用",Note.created+Note.description+"&退款完结",0);
+
+            lastMsg=Note.description+"退款完结";
+
+
+            //var o={"PayID":reslist.Record[i].PayID,"ReceiveUserID":reslist.Record[i].ReceiveUserID,"ReceiveUserName":reslist.Record[i].ReceiveUserName,"msg":"退款完结"};
+            //ret.data.push(o);
+
+        }
+    }
+
+    return  lastMsg;
+}());
+Response.ContentType = "text/plain";
+%>

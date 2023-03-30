@@ -1,0 +1,28 @@
+{
+  "update_url":"http://webstore.thingslabs.com/service/update/tax",
+  "appid": "0973DA48-088A-4B8F-9C5C-14D117ADF4B1",
+  "apptype": "Things",
+  "name": "网上调查服务系统",
+  "short": "网上调查",
+  "description": "江南网上调查服务",
+  "author": "双旗网络",
+  "version": "1.0.1",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/API/OAuth2/authorize?appid=tseb0b9cf958ee1b46&redirect_uri=http%3A%2F%2Fservice.jiangnan.edu.cn%2Fappor%2Findex&response_type=code&scope=api_userinfo&state=survey",
+	  "container": "url",
+	  "sort": 20,
+	  "height": 600,
+	  "width": 800
+    },
+    "mobile": {
+	  "enable":true,
+	  "local_path": "/API/OAuth2/authorize?appid=tseb0b9cf958ee1b46&redirect_uri=http%3A%2F%2Fihome.jiangnan.edu.cn%2Fappmr%2Frest%2Fapi%2FThingsAuthorize%2Fredirect_survey&response_type=code&scope=api_userinfo&state=survey",
+	  "container": "url"
+    }
+  },
+  "icons": {
+    "logo": "wsdc.png"
+  }
+}

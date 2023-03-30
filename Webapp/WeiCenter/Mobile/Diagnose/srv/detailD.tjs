@@ -1,0 +1,181 @@
+/// <reference path="../TSS/lib/vsdoc/api.js" />
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result = {
+				flag:true,
+				buildlist:[]
+			};	
+		var buildlist = Request.QueryString("buildlist");
+		var isall = Request.QueryString("isall"); 
+		var kpiObject=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/BCPS/ObjectClass/Building",""));
+		var tc=new Date();
+		for(var i=0;i<kpiObject.length;i++){
+			if(isall=="false"){
+				if(buildlist.indexOf(kpiObject[i].GroupID)==-1){
+					continue;
+				}
+			}
+			var t2 = tc;
+			t2.setMinutes(0,0,0);
+			var t1 = t2.DateAdd("d",-1);
+			var item={name:kpiObject[i].GroupName,list:[],count:0};
+			//var listNode=TSS.JSON.decode(Server.GetOPCFlatJSON(kpiObject[i].szOPCFullPath+".E"));
+			
+			//if(listNode.length==0){
+				var d={};
+				d["name"]="设施设备在线率";
+				d["info"]=kpiObject[i].GroupName+"未发现配变电所的关联设备，不做检查！";
+				item.list.push(d);
+				var d={};
+				d["name"]="配变电所变压器温度";
+				d["info"]=kpiObject[i].GroupName+"配变电所变压器温度不做检查！";
+				item.list.push(d);
+				var d={};
+				d["name"]="配变电所总最大需量";
+				d["info"]=kpiObject[i].GroupName+"配变电所总最大需量不做检查！";
+				item.list.push(d);	
+				var d={};
+				d["name"]="配变电所启用出线柜跳闸";
+				d["info"]=kpiObject[i].GroupName+"配变电所启用出线柜跳闸不做检查！";
+				item.list.push(d);
+				var d={};
+				d["name"]="配变电所平均功率因素";
+				d["info"]=kpiObject[i].GroupName+"配变电所平均功率因素不做检查！";
+				item.list.push(d);
+				result.buildlist.push(item);												
+				continue;	
+			//}
+			var online=0,nodecount=0;
+			for(var j=0;j<listNode.length;j++){
+				nodecount++;
+				if(listNode[j].bOnLineFlag=="在线"){
+					online++;
+				}		
+			}
+			if(nodecount==0){
+				var d={};
+				d["name"]="设施设备在线率";
+				d["info"]=kpiObject[i].GroupName+"未发现配变电所的关联设备，不做检查！";
+				item.list.push(d);
+				var d={};
+				d["name"]="配变电所变压器温度";
+				d["info"]=kpiObject[i].GroupName+"配变电所变压器温度不做检查！";
+				item.list.push(d);
+				var d={};
+				d["name"]="配变电所总最大需量";
+				d["info"]=kpiObject[i].GroupName+"配变电所总最大需量不做检查！";
+				item.list.push(d);	
+				var d={};
+				d["name"]="配变电所启用出线柜跳闸";
+				d["info"]=kpiObject[i].GroupName+"配变电所启用出线柜跳闸不做检查！";
+				item.list.push(d);
+				var d={};
+				d["name"]="配变电所平均功率因素";
+				d["info"]=kpiObject[i].GroupName+"配变电所平均功率因素不做检查！";
+				item.list.push(d);
+				result.buildlist.push(item);
+				continue;
+			}
+			
+			var percent=TSS.Utils.floatPrecision(online*100/nodecount,0);
+			if(percent<85){
+				item.count++;
+				var d={};
+				d["name"]="设施设备在线率";
+				d["info"]=kpiObject[i].GroupName+"配变电所的关联设备在线率偏低，为："+percent+"%！";
+				item.list.push(d);			
+			}else{	
+				var d={};
+				d["name"]="设施设备在线率";
+				d["info"]=kpiObject[i].GroupName+"配变电所的关联设备在线率为："+percent+"%！";
+				item.list.push(d);	
+			}
+
+			var nodeTree=TSS.JSON.decode(Server.GetOPCFlatJSON(kpiObject[i].szOPCFullPath+".E.KPI"));
+			if(nodeTree.length==0){
+				var d={};
+				d["name"]="配变电所变压器温度";
+				d["info"]=kpiObject[i].GroupName+"配变电所变压器温度不做检查！";
+				item.list.push(d);
+				var d={};
+				d["name"]="配变电所总最大需量";
+				d["info"]=kpiObject[i].GroupName+"配变电所总最大需量不做检查！";
+				item.list.push(d);	
+				var d={};
+				d["name"]="配变电所启用出线柜跳闸";
+				d["info"]=kpiObject[i].GroupName+"配变电所启用出线柜跳闸不做检查！";
+				item.list.push(d);
+				var d={};
+				d["name"]="配变电所平均功率因素";
+				d["info"]=kpiObject[i].GroupName+"配变电所平均功率因素不做检查！";
+				item.list.push(d);		
+			}else{
+				var TransTemp=nodeTree[0].OPCValueList[nodeTree[0].OPCValueMap.TransTemp].DataValue;
+				if(TransTemp<60){
+					var d={};
+					d["name"]="配变电所变压器温度";
+					d["info"]="变压器温度："+TransTemp+"℃，小于60℃，属正常范围！";
+					item.list.push(d);
+				}else{
+					item.count++;
+					var d={};
+					d["name"]="配变电所变压器温度";
+					d["info"]="变压器温度："+TransTemp+"℃，小于60℃，属正常范围！";
+					item.list.push(d);
+				}
+				var TotalEs=TSS.JSON.decode(Server.GetOPCTreeJSON(kpiObject[i].szOPCFullPath+".E"))[0].MyGroup.ObjectInfo.TotalEs;
+				var DmdEs=nodeTree[0].OPCValueList[nodeTree[0].OPCValueMap.DmdEs].DataValue;
+				if(DmdEs<TotalEs*0.8){
+					var d={};
+					d["name"]="配变电所总最大需量";
+					d["info"]="总最大需量："+DmdEs+"KVA，在设计容量范围内！";
+					item.list.push(d);
+				}else{
+					item.count++;
+					var d={};
+					d["name"]="配变电所总最大需量";
+					d["info"]="总最大需量："+DmdEs+"KVA，超过设计容量80%("+TotalEs+"KVA)，请立即处理！";
+					item.list.push(d);
+				}
+				
+				var TripLines=nodeTree[0].OPCValueList[nodeTree[0].OPCValueMap.TripLines].DataValue;
+				if(TripLines==0){
+					var d={};
+					d["name"]="配变电所启用出线柜跳闸量";
+					d["info"]="未发现启用出线柜跳闸！";
+					item.list.push(d);
+				}else{
+					item.count++;
+					var d={};
+					d["name"]="配变电所启用出线柜跳闸量";
+					d["info"]="发现"+TripLines+"个启用出线柜跳闸，请立即处理！";
+					item.list.push(d);
+				}
+
+				var TotalPf=nodeTree[0].OPCValueList[nodeTree[0].OPCValueMap.TotalPf].DataValue;
+				if(TotalPf>=0.9){
+					var d={};
+					d["name"]="配变电所平均功率因素";
+					d["info"]="平均功率因素："+TotalPf+"，属正常范围！";
+					item.list.push(d);
+				}else{
+					item.count++;
+					var d={};
+					d["name"]="配变电所平均功率因素";
+					d["info"]="平均功率因素："+TotalPf+"，小于0.9，请立即处理！";
+					item.list.push(d);
+				}							
+			}
+			result.buildlist.push(item);
+		}
+		result.buildlist.sort(function(x, y){
+				return (x.count < y.count) ? 1 : -1;
+		});
+		return TSS.JSON.encode(result);
+		
+	}());
+	Response.ContentType = "text/plain";
+%>

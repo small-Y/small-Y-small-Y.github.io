@@ -1,0 +1,54 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result = {
+				flag:true,
+				info:""
+			};
+		//
+		var T_CommunityID=Request.Form("T_CommunityID");
+		var TypeID=Request.Form("TypeID");
+		var T_Title=Request.Form("T_Title");
+		var T_Body=Request.Form("T_Body");
+		var tags=Request.Form("tags");
+		//
+		var szSql="";
+		var userInfo=TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		if(userInfo.userTypeNum<1)
+		{
+			var szSql="delete from CommunityTagTable where \"T_CommunityID\"="+T_CommunityID;
+
+			var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+			if (resSet.MessageCode>0){
+				result.flag=false;
+				result.info=resSet.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			if(tags!=""){
+				for(var i=0;i<tags.split(",").length;i++){
+					var szSql="insert into CommunityTagTable(\"Tag\",\"T_CommunityID\")values('"+tags.split(",")[i]+"',"+T_CommunityID+")";
+
+					var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+					if (resSet.MessageCode>0){
+						result.flag=false;
+						result.info=resSet.MessageText;
+						return TSS.JSON.encode(result);
+					}
+				}
+			}
+			var szSql="update CommunityDataTable set \"TypeID\"='"+TypeID+"',\"T_Title\"='"+T_Title+"',\"T_Body\"='"+T_Body+"' where \"T_CommunityID\"="+T_CommunityID;
+
+			var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+			if (resSet.MessageCode>0){
+				result.flag=false;
+				result.info=resSet.MessageText;
+				return TSS.JSON.encode(result);
+			}
+		}
+
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

@@ -1,0 +1,139 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+    if(!System.Storage.IsFileExist(Request.ServerVariables("PATH_INFO")+"manifest.json"))
+	{
+        Response.Write("该应用程序未正确安装！");
+        Response.End();
+    }
+
+    var  appItem = TSS.JSON.decode(System.Storage.ReadTextFile(Request.ServerVariables("PATH_INFO") + "manifest.json"));
+    if(appItem)
+    {
+        Response.Cookies("AppID") = appItem.appid;
+        Response.Cookies("AppID").path = Request.ServerVariables("PATH_INFO");
+    }
+%>
+<!DOCTYPE html>
+<html>
+<head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta name="copyright" content= "<%=appItem.author%>" />
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+        <title><%=appItem.name%></title>
+        <!-- BEGIN GLOBAL MANDATORY STYLES -->
+        <link href="/AppEngine/Bootstrap/Metronic/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <link href="/AppEngine/Bootstrap/Metronic/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="/AppEngine/Bootstrap/Metronic/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="/AppEngine/Bootstrap/Metronic/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
+        <link href="/AppEngine/Bootstrap/Metronic/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
+        <!-- END GLOBAL MANDATORY STYLES -->
+        <!-- BEGIN PAGE LEVEL PLUGINS -->
+        <link href="/AppEngine/Bootstrap/Metronic/global/plugins/jstree/dist/themes/default/style.min.css" rel="stylesheet" type="text/css" />
+        <link href="/AppEngine/Bootstrap/Metronic/global/plugins/bootstrap-toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+        <link href="/AppEngine/Bootstrap/Metronic/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
+        <link href="/AppEngine/Bootstrap/Metronic/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css" rel="stylesheet" type="text/css" />
+        <!-- END PAGE LEVEL PLUGINS -->
+        <!-- BEGIN THEME GLOBAL STYLES -->
+        <link href="/AppEngine/Bootstrap/Metronic/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
+        <link href="/AppEngine/Bootstrap/Metronic/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
+        <!-- END THEME GLOBAL STYLES -->
+        <!-- 自定义样式 -->
+		<link rel="stylesheet" type="text/css" href="/AppEngine/CoreExt/ThingsUI/base.css"/>
+        <link rel="stylesheet" type="text/css" href="Resources/CSS/base.css"/>
+    </head>
+    <body>
+        <!-- 主框架Div -->
+        <div id="mainFrame">
+			<div class="row">
+				<div class="col-xs-5 col-sm-5 col-md-5 col-lg-4" style="padding-right: 12px;">
+					<div class="portlet light bordered" style="padding-bottom: 10px;">
+						<div class="portlet-title" style="margin-bottom: 0px;">
+							<div class="caption">
+								<i class="fa fa-users font-purple-plum"></i>
+								<span class="caption-subject bold font-purple-plum uppercase"> 公告栏 </span>
+							</div>
+							<div class="inputs">
+								<div class="portlet-input input-inline input-small">
+									<div class="input-icon right">
+										<i class="icon-magnifier"></i>
+										<input type="text" class="form-control input-circle" placeholder="查找..."> </div>
+								</div>
+							</div>
+						</div>
+						<div class="portlet-body">
+							<ul id="bulletinList" class="scroller" style="position: relative;height:400px;margin-bottom: 10px;border-bottom: 1px solid #eef1f5;overflow:auto;"></ul>
+							<div id="bulletinTool">
+								<span>
+									<a href="javascript:App.doBulletin(0);" class="btn btn-circle btn-default btn-xs">
+										<i class="fa fa-plus"></i> 添加 </a>
+								</span>
+								<span style="float:right">
+									<a href="javascript:App.doBulletin(2);" class="btn btn-circle btn-default btn-xs">
+										<i class="fa fa-trash-o"></i> 删除 </a>
+								</span>
+							</div>
+						</div>
+					</div>
+					<!-- END Portlet PORTLET-->
+				</div>
+				<div class="col-xs-7 col-sm-7 col-md-7 col-lg-8" style="padding-left: 0;">
+					<div class="portlet light bordered">
+						<div class="portlet-body">
+							<div id="bulletinInfo" class="scroller" style="position: relative;height:400px;font-size: 11pt;overflow:hidden;">
+								<div class="title"><input type="text" class="form-control" style="text-align: center;font-size: 18pt;color:#F44336;border: 0;height: 50px;padding: 5px 0 0 0;" placeholder="请输入公告标题..."><hr></div>
+								<div class="content"><textarea name="" rows="" cols="" class="form-control" style="height: 100%;font-size: 12pt;line-height: 28px;border: 0;" placeholder="请输入公告内容..."></textarea></div>
+								<div class="deptname" style="font-size: 14pt;"><b>&nbsp;公告部门：</b><input type="text" style="width: 250px;font-size: 14pt;border: 0;" placeholder="请输入公告联系部门..."></div>
+								<div class="contact" style="font-size: 14pt;"><hr><b>&nbsp;联&nbsp;&nbsp;系&nbsp;&nbsp;人：</b><input type="text" style="width: 250px;font-size: 14pt;border: 0;" placeholder="请输入联系人姓名..."></div>
+								<div class="mobile" style="font-size: 14pt;"><hr><b>&nbsp;联系电话：</b><input type="text" style="width: 250px;font-size: 14pt;border: 0;" placeholder="请输入联系人电话..."></div>
+								<div class="date" style="font-size: 14pt;"><hr><span>——年—月—日</span>&nbsp;</div>
+								<div class="actions">
+									<a href="javascript:App.doBulletin(1);" class="btn btn-circle btn-default btn-sm btn-remove">
+										<i class="fa fa-floppy-o"></i> 保存 </a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- END Portlet PORTLET-->
+				</div>
+			</div>
+        </div>
+        <!-- 加载信息 -->
+        <div id="startingCover">
+		    <div id="startingLogo"></div>
+		    <div id="startingText">正加载核心组件...</div>
+		    <div id="startingVer">&copy;2015&nbsp;<%=appItem.author%>.</div>
+	    </div>
+		<!-- BEGIN CORE PLUGINS -->
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/jquery.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+        <!-- END CORE PLUGINS -->
+        <!-- 系统库文件 -->
+        <script type="text/javascript" src="/AppEngine/CoreExt/ThingsUI/base.js"></script>
+        <!-- 应用库文件 -->
+        <script type="text/javascript">
+            document.getElementById('startingText').innerHTML = '正加载通用组件...';
+        </script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/jstree/dist/jstree.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/bootbox/bootbox.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/bootstrap-toastr/toastr.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/scripts/datatable.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/datatables/datatables.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js" type="text/javascript"></script>
+        <!-- 应用程序文件 -->
+        <script type="text/javascript">
+            document.getElementById('startingText').innerHTML = '正加载应用组件...';
+         </script>
+        <script type="text/javascript" src="Scripts/main.js"></script>
+        <script type="text/javascript" src="Scripts/webapp.js"></script>
+        <script type="text/javascript">
+            document.getElementById('startingText').innerHTML = '正启动应用程序...';
+        </script>
+    </body>
+</html>

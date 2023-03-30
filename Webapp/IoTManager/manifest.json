@@ -1,0 +1,28 @@
+{
+"update_url":"https://webstore.thingslabs.com/service/update/fax",
+  "appid": "3D25CFD7-BFD2-4E1E-905E-6D80FB1C9B93",
+  "apptype": "Things",
+  "name": "物联网联接管理平台",
+  "short": "物联网联接",
+  "description": "统一管理的物联网连接汇聚与点表路由交换",
+  "author": "ThingsLabs",
+  "version": "1.0.1",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/IoTManager/main.html",
+	  "container": "sysapp",
+	  "sort": 1,
+	  "height": 720,
+	  "width": 960
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "/WebApp/IoTManager/Mobile/index.tjs",
+	  "container": "sysapp"
+    }
+  },
+  "icons": {
+    "logo": "icon_256.png"
+  }
+}

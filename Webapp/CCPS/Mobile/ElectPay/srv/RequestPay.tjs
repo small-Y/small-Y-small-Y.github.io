@@ -1,0 +1,163 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<!--#INCLUDE FILE="base_extend.tjs"-->
+<!--#INCLUDE FILE="CryptoJS.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+function signResource(method,url,user,pass){
+
+		var now = new Date();
+		return "TOS username=\""+user+"\", uri=\""+encodeURI(url)+"\", response=\""+(System.Security.ComputerMD5(now.Format("yyyy-MM-dd")+":"+method+":"+encodeURI(url)+":"+pass,false)).toLowerCase()+"\"";
+
+}
+	Response.clear();
+	Response.write(function(){
+		var ret={
+			    success:false,
+			    data:{},
+			    msg:""
+		};
+
+		try{
+
+			var userID= Request.form("userID");
+			var roomID= Request.form("roomID");
+			var roomName= Request.form("roomName");
+			var payMoney= Request.form("payMoney");
+
+
+			var subject="电费充值";
+			var order_no="E"+new Date().Format("yyyyMMddhhmmssS");
+			var userInfo = TSS.JSON.decode(System.OAuth.GetCurrentUser());
+			var openid=userInfo.openid;
+			var username=userInfo.fullName
+			var body=roomName.split(".").slice(1).join(".")+"进行电费充值";
+			var description=roomName.split(".").slice(2).join(".")+"电费充值:"+payMoney+"元"
+
+			//var body="pay";
+			//var description="pay bengin";
+			var payurl="http://pay.bjut.edu.cn/payment/pay/payment_appPay.action";
+			var sysid="50";
+			var subsysid="BGD01";
+			var			cert="6BACA451224E2BB7E050000A150004466BACA451224F2BB7E050000A150004466BACA45122502BB7E050000A150004466BACA45122512BB7E050000A150004466BACA45122522BB7E050000A150004466BACA45122532BB7E050000A150004466BACA45122542BB7E050000A150004466BACA45122552BB7E050000A150004466BACA45122562BB7E050000A150004466BACA45122572BB7E050000A150004466BACA45122582BB7E050000A150004466BACA45122592BB7E050000A150004466BACA451225A2BB7E050000A150004466BACA451225B2BB7E050000A150004466BACA451225C2BB7E050000A150004466BACA451225D2BB7E050000A150004466BACA451225E2BB7E050000A150004466BACA451225F2BB7E050000A150004466BACA45122602BB7E050000A150004466BACA45122612BB7E050000A150004466BACA45122622BB7E050000A150004466BACA45122632BB7E050000A150004466BACA45122642BB7E050000A150004466BACA45122652BB7E050000A150004466BACA45122662BB7E050000A150004466BACA45122672BB7E050000A150004466BACA45122682BB7E050000A150004466BACA45122692BB7E050000A150004466BACA451226A2BB7E050000A150004466BACA451226B2BB7E050000A150004466BACA451226C2BB7E050000A150004466BACA451226D2BB7E050000A15000446"
+
+			var version="1.0.0.2";
+			var billno=order_no;
+			var orderinfono=userInfo.userName;
+			var orderinfoname=userInfo.fullName;
+			var feeitemid="BGD01-01";
+			var returnURL="https://hqiot.bjut.edu.cn/Webapp/CCPS/Mobile/ElectPay/index.tjs";
+			var billremark=body;
+			var feeord="1";
+			var amt=payMoney;
+			var dtlremark=description;
+			var data='<?xml version=\"1.0\" encoding=\"GBK\"?>'
+					+'<billinfo>'
+					+'<version>'+version+'</version>'
+					+'<billno>'+billno+'</billno>'
+					+'<orderinfono>'+orderinfono+'</orderinfono>'
+					+'<orderinfoname>'+orderinfoname+'</orderinfoname>'
+					+'<returnURL>'+returnURL+'</returnURL>'
+					+'<billremark>'+billremark+'</billremark>'
+					+'<billdtl>'
+					+'<feeitemid>'+feeitemid+'</feeitemid>'
+					+'<feeord>'+feeord+'</feeord>'
+					+'<amt>'+amt+'</amt>'
+					+'<dtlremark>'+dtlremark+'</dtlremark>'
+					+'</billdtl>'
+					+'</billinfo>';
+			var sign=CryptoJS.MD5(sysid+subsysid+cert+data).toString().toLowerCase();
+			ret.md5=(sysid+subsysid+cert+data);
+			ret.sign=sign;
+			ret.sysid=sysid;
+			ret.subsysid=subsysid;
+			ret.data=data;
+
+
+	//		var xmlHttp = Server.CreateObject("MSXML2.ServerXMLHTTP.6.0");
+			var postData="sign="+sign+"&sysid="+sysid+"&subsysid="+subsysid+"&data="+(data);
+	//		xmlHttp.open('POST', payurl, false);
+	//		xmlHttp.setOption(2, 13056);  //https
+	//		xmlHttp.send(postData);
+	//		Server.DebugPrint("####ChargeGet:"+postData);
+	//		Server.DebugPrint("####ChargeGet:"+xmlHttp.responseText);
+
+
+			var ROWID=TSS.UUID.v4();
+			var PayID=order_no;
+			var InsideNO=order_no;
+			var OutsideNO="";
+			var BusinessType="电费充值";
+			var PayUserID=userID;
+			var PayUserName=userID;
+			var ReceiveUserID=roomID;
+			var ReceiveUserName=roomName;
+			var AmountPay=payMoney;
+			var PayType="网上支付";
+			var PreBalance="";
+			var Balance="";
+			var BusinessStatus="未执行";
+			var OperateStatus="请求订单"
+			var Note=TSS.String.encodeHtml(TSS.JSON.encode(postData));
+			var Operator=userInfo.fullName;
+			var CreateTime=new Date().Format("yyyy-MM-dd hh:mm:ss");
+			var UpdateTime=CreateTime;
+
+			var HTTP_HOST=Request.ServerVariables("HTTP_HOST");
+
+			var sql="INSERT INTO \"SSM_TRANSACTION\"( \"ROWID\""		
+			+",\"PayID\""
+			+",\"InsideNO\""		
+			+",\"OutsideNO\""
+			+",\"BusinessType\""	
+			+",\"PayUserID\""	
+			+",\"PayUserName\""	
+			+",\"ReceiveUserID\""	
+			+",\"ReceiveUserName\""	
+			+",\"AmountPay\""
+			+",\"PayType\""
+			+",\"PreBalance\""
+			+",\"Balance\""
+			+",\"OperateStatus\"" 
+			+",\"BusinessStatus\"" 
+			+",\"HTTP_HOST\"" 
+			+",\"Note\""
+			+",\"Operator\""
+			+",\"CreateTime\""
+			+",\"UpdateTime\")"
+			+" VALUES ('"+ROWID
+			+"','"+PayID
+			+"','"+InsideNO
+			+"','"+OutsideNO
+			+"','"+BusinessType
+			+"','"+PayUserID
+			+"','"+PayUserName
+			+"','"+ReceiveUserID
+			+"','"+ReceiveUserName
+			+"','"+AmountPay
+			+"','"+PayType
+			+"','"+PreBalance
+			+"','"+Balance
+			+"','"+OperateStatus
+			+"','"+BusinessStatus
+			+"','"+HTTP_HOST
+			+"','"+Note
+			+"','"+Operator
+			+"','"+CreateTime
+			+"','"+UpdateTime+"')";
+
+			var res=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,sql))[0];
+
+			if(res.MessageCode>0){
+				ret.msg=res.MessageText;
+				return  TSS.JSON.encode(ret);
+			}
+
+			ret.success=true;
+			return TSS.JSON.encode(ret);
+		}catch(e){
+		
+			return TSS.JSON.encode(ret);
+		}
+	}());
+	Response.ContentType = "text/plain";
+%>

@@ -1,0 +1,35 @@
+/// <reference path="../vsdoc/api.js" />
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+        var VideoID=Request.QueryString("VideoID");
+        var TagName=Request.QueryString("TagName");
+		//
+        var html='<link type="text/css" rel="stylesheet" href="./css/main.css"><h3 style="margin: 0 0 10px 0;text-align: center;">'+TagName+'</h3><img style="width:100%;" src="/API/Video/'+VideoID+'.vid?timestamp='+(new Date()).getTime()+'" alt=""/>';
+	    //
+        var captureList=IOT.Utils.ExcuteCloudAPI("GET","/API/Video/"+VideoID+"?type=list");
+        if(captureList==null){ 
+            captureList=[];
+        }
+        else{
+            var result=IOT.JSON.decode(captureList);
+            if(result.flag)
+            {
+                captureList=result.data;
+            }
+        }
+	    //
+        var oauthInfo=IOT.JSON.decode(Server.GetOAuthSetupInfo());
+        for(var i=0;i<captureList.length;i++)
+        {
+            if(i%2==0)
+                html+=('<img style="width:50%;padding:12px 6px 0 0" src="'+oauthInfo.OAuthServer+'/API/Video/Data/'+captureList[i].T_File+'" alt="'+captureList[i].T_Time+'"/>');
+            else
+                html+=('<img style="width:50%;padding:12px 0 0 6px" src="'+oauthInfo.OAuthServer+'/API/Video/Data/'+captureList[i].T_File+'" alt="'+captureList[i].T_Time+'"/>');
+        }
+        return html;
+	}());
+	Response.ContentType = "text/html";
+%>

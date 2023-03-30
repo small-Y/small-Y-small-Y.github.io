@@ -1,0 +1,28 @@
+{
+  "update_url":"http://webstore.thingslabs.com/service/update/fax",
+  "appid": "F076B996-6879-4500-BFEB-629A2B3C8DA0",
+  "apptype": "Things",
+  "name": "系统性能",
+  "short": "系统性能",
+  "description": "查看管理系统CPU负荷、在线用户、存储空间使用等",
+  "author": "ThingsLabs",
+  "version": "1.0",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/Performance/index.ejs",
+	  "container": "system",
+	  "sort": 5,
+	  "height": 678,
+	  "width": 960
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "/WebApp/Performance/Mobile/index.ejs",
+	  "container": "system"
+    }
+  },
+  "icons": {
+    "logo": "icon.png"
+  }
+}

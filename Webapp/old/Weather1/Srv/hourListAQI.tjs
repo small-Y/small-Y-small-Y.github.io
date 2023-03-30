@@ -1,0 +1,64 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			data:[]
+		};
+		//
+		var startTime = Request.QueryString("startTime");
+		var endTime = Request.QueryString("endTime");
+		//
+		if(startTime=="" || startTime==undefined)
+		{
+			var tc = new Date();
+			startTime = new Date();
+			startTime.setFullYear(tc.getFullYear(),tc.getMonth(),tc.getDate());
+			startTime.setHours(0,0,0,0);
+			startTime=startTime.DateAdd("d",-2);
+		}
+		else
+		{
+			startTime = TSS.Utils.parseDate(startTime);
+			startTime.setHours(0,0,0,0);
+		}
+
+		if(endTime=="" || endTime==undefined)
+		{
+			endTime = new Date();
+		}
+		else
+		{
+			endTime = TSS.Utils.parseDate(endTime);
+		}
+		//
+		var record = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"SELECT wh_time,quality,wind_direction,wind_speed,wind_scale,aqi,pm25 FROM WeatherHourTable where wh_time>='"+startTime.Format("yyyy-MM-dd")+"' and wh_time<'"+endTime.Format("yyyy-MM-dd hh:mm:ss")+"' ORDER BY wh_time"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		result.flag=true;
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			result.data[result.data.length]=[i+1,
+											record[0].Record[i].wh_time,
+											record[0].Record[i].quality,
+											record[0].Record[i].aqi,
+											record[0].Record[i].pm25+' ¦Ìg/m3',
+											record[0].Record[i].wind_direction+record[0].Record[i].wind_scale+'¼¶'];
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

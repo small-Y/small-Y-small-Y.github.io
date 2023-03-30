@@ -1,0 +1,28 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/fax",
+  "appid": "1CB4D644-896A-4ADA-9D5F-58448BD04499",
+  "apptype": "Things",
+  "name": "挑战2048!",
+  "short": "挑战2048!",
+  "description": "使用键盘方向键控制",
+  "author": "ThingsLabs",
+  "version": "1.0.1",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/Drawing/index.html",
+	  "container": "personal",
+	  "sort": 20,
+	  "height": 760,
+	  "width": 1024
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "",
+	  "container": "personal"
+    }
+  },
+  "icons": {
+    "logo": "icon_64.png"
+  }
+}

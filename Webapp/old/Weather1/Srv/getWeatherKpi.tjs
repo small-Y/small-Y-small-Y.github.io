@@ -1,0 +1,112 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:true,
+			info:"",
+			dayWeather:[],
+			hourWeather:[{type: 'spline',name:"温度",data:[],color:"#00ccff"},{type: 'spline',name:"湿度",yAxis:1,data:[],color:"#009999"}],
+			hourAQI:[{type: 'spline',name:"PM2.5",data:[],color:"#00cc99"},{type: 'spline',name:"风力",yAxis:1,data:[],color:"#cc3300"}]
+		};
+		//
+		var startTime = Request.QueryString("startTime");
+		var endTime = Request.QueryString("endTime");
+		//
+		if(startTime=="" || startTime==undefined)
+		{
+			var tc = new Date();
+			startTime = new Date();
+			startTime.setFullYear(tc.getFullYear(),tc.getMonth(),tc.getDate());
+			startTime.setHours(0,0,0,0);
+			startTime=startTime.DateAdd("d",-2);
+		}
+		else
+		{
+			startTime = TSS.Utils.parseDate(startTime);
+			startTime.setHours(0,0,0,0);
+		}
+
+		if(endTime=="" || endTime==undefined)
+		{
+			endTime = new Date();
+		}
+		else
+		{
+			endTime = TSS.Utils.parseDate(endTime);
+		}
+		//
+		var record = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"SELECT wh_date,wh_day,wh_text,wh_code1,wh_code2,high,low FROM WeatherDayTable where wh_date>='"+startTime.Format("yyyy-MM-dd")+"' and wh_date<'"+endTime.Format("yyyy-MM-dd")+"' ORDER BY wh_date"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			result.dayWeather[i]={
+				date:record[0].Record[i].wh_date,
+				day:record[0].Record[i].wh_day,
+				text:record[0].Record[i].wh_text,
+				code1:record[0].Record[i].wh_code1,
+				code2:record[0].Record[i].wh_code2,
+				high:record[0].Record[i].high,
+				low:record[0].Record[i].low
+			};
+		}
+		//
+		var now=new Date();
+		var tc=new Date(now.getFullYear(),now.getMonth(),now.getDate(),0,0,0,0);
+		if(endTime>tc)
+		{
+			weather = TSS.JSON.decode(Server.ExecuteAPI("GET","/API/Weather",""));
+			if(weather.flag)
+			{
+				if(result.dayWeather.length>=2)
+					result.dayWeather[2]=weather.data.future[0];
+			}
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"SELECT wh_time,temperature,wind_scale,humidity,pm25 FROM WeatherHourTable where wh_time>='"+startTime.Format("yyyy-MM-dd")+"' and wh_time<'"+endTime.Format("yyyy-MM-dd")+"' ORDER BY wh_time"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		result.hourWeather[0].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+		result.hourWeather[1].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+		result.hourAQI[0].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+		result.hourAQI[1].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			var dataTime=TSS.Utils.parseDate(record[0].Record[i].wh_time);
+			result.hourWeather[0].data[i+1]=[Date.UTC(dataTime.getFullYear(),dataTime.getMonth(),dataTime.getDate(),dataTime.getHours(),0,0), record[0].Record[i].temperature];
+			result.hourWeather[1].data[i+1]=[Date.UTC(dataTime.getFullYear(),dataTime.getMonth(),dataTime.getDate(),dataTime.getHours(),0,0), record[0].Record[i].humidity];
+			result.hourAQI[0].data[i+1]=[Date.UTC(dataTime.getFullYear(),dataTime.getMonth(),dataTime.getDate(),dataTime.getHours(),0,0), record[0].Record[i].pm25];
+			result.hourAQI[1].data[i+1]=[Date.UTC(dataTime.getFullYear(),dataTime.getMonth(),dataTime.getDate(),dataTime.getHours(),0,0), TSS.Utils.floatPrecision(record[0].Record[i].wind_scale*1.6,1)];
+		}
+		result.hourWeather[0].data[result.hourWeather[0].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+		result.hourWeather[1].data[result.hourWeather[1].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+		result.hourAQI[0].data[result.hourAQI[0].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+		result.hourAQI[1].data[result.hourAQI[1].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

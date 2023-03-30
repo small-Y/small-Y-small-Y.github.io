@@ -1,0 +1,28 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/tax",
+  "appid": "2CD1F74F-31A5-4343-855F-8B5117FE3993",
+  "apptype": "Things",
+  "name": "短信中心",
+  "short": "短信中心",
+  "description": "查看及发送个人手机短信",
+  "author": "ThingsLabs",
+  "version": "1.0",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/SMSCenter/index.ejs",
+	  "container": "system",
+	  "sort": 16,
+	  "height": 678,
+	  "width": 960
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "/WebApp/SMSCenter/Mobile/index.ejs",
+	  "container": "system"
+    }
+  },
+  "icons": {
+    "logo": "icon_64.png"
+  }
+}

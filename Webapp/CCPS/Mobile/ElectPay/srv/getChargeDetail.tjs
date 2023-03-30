@@ -1,0 +1,54 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<!--#INCLUDE FILE="base_extend.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+Response.write(function(){
+    var ret={"success":false,"gData":[],"msg":""};
+
+    var NodeID = Request.form("opcpath");
+    var startDate = Request.form("startDate");
+    var endDate = Request.form("endDate");
+    var TOP = Request.form("TOP");
+    var nRes=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/CCPS/Facility?opcpath="+NodeID,""));
+    var account_id = nRes[0].NodeID;
+    var iWhere="";
+    iWhere+=" where \"operate_time\" >'"+startDate+"' and \"operate_time\" <'"+endDate+"' "
+    iWhere+=" and \"account_id\" ='"+account_id+"' and \"operate_type\" ="+TOP;
+    //var xmlHttp = Server.CreateObject("MSXML2.ServerXMLHTTP.6.0");
+    //var url =  TSS.Project.ElectPayUrl+"getChargeDetail.fwp?NodeID="+NodeID+"&startDate="+startDate+"&endDate="+endDate+"&TOP="+TOP;
+    //var ret1 = TSS.Project.ElectPayUrl
+    // xmlHttp.open('GET', url, false, "wxpay", "frontviewjf3907");
+    //xmlHttp.setOption(2, 13056);  //https
+    //xmlHttp.send();
+    //var res=TSS.JSON.decode(xmlHttp.responseText);
+
+    var sql="SELECT \"account_id\",\"account_satus\",\"account_balance\",\"meter_balance\",\"total_current\",\"operate_time\",\"operate_value\",\"operate_type\",\"operate_info\",\"operate_status\",\"operate_name\",\"operate_uid\" FROM accountrecord " +iWhere + " order by \"operate_time\" desc ";
+    var reslist=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,sql))[0];
+
+    if(reslist.length==0)
+	    {
+	        return System.RDC.GetLastError();
+	    }
+        if(reslist.MessageCode>0){
+
+	        return reslist.MessageText;
+	    }
+        if(reslist.Record.length>0){
+            for(var i=0;i<reslist.Record.length;i++){
+                 var o={
+                    //operate_tag:reslist.Record[i].operate_tag,
+                    operate_time:reslist.Record[i].operate_time,
+                    operate_name:reslist.Record[i].operate_name,
+                    operate_info:reslist.Record[i].operate_info
+                }
+                ret.gData.push(o);
+            }
+            ret.success=true;
+        }
+	return TSS.JSON.encode(ret);
+
+		
+}());
+Response.ContentType = "text/plain";
+%>

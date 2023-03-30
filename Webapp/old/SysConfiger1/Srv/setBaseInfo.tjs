@@ -1,0 +1,46 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+Response.Write(function () {
+	var result={
+		flag:true,
+		msg:""
+	};
+	//
+	var HAEnable=TSS.Utils.parseBoolean(Request.Form("HAEnable"));
+	var HARemote=Request.Form("HARemote");
+	var HAPort=Request.Form("HAPort");
+	var ZonePath=Request.Form("ZonePath");
+	var ZoneMaxSize=Request.Form("ZoneMaxSize");
+	var LogDays=Request.Form("LogDays");
+	//
+	if (!System.Basic.SetZonePath(ZonePath)) {
+		result.flag=false;
+		result.msg="没有权限修改文件服务目录！";
+	}
+    //
+	if (!System.Basic.SetLogDays(LogDays)) {
+		result.flag=false;
+		result.msg="没有权限修改日志保留天数！";
+	}
+    //
+	if (!System.Basic.SetZoneMaxSize(ZoneMaxSize)) {
+		result.flag=false;
+		result.msg="没有权限修改个人最大空间！";
+	}
+    //
+	if (!System.Basic.SetHAConfig(HAEnable,HARemote,HAPort)) {
+		result.flag=false;
+		result.msg="没有权限修改双机热备参数！";
+	}
+	//
+	if (!System.Basic.RestService())
+	{
+		result.flag=false;
+		result.msg=System.Basic.GetLastError();
+	}
+    //
+    return TSS.JSON.encode(result);
+} ());
+Response.ContentType = "text/plain";
+%>

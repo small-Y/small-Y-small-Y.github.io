@@ -1,0 +1,258 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<!--#INCLUDE FILE="base_extend.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+
+Response.clear();
+function ChargeE(PayID,ReceiveUserID,AmountPay){
+    var ret={
+        success:"",
+        data:{},
+        msg:""
+    };
+    try{
+        var xmlHttp = Server.CreateObject("MSXML2.ServerXMLHTTP.6.0");
+        var url = TSS.Project.ElectPayUrl+"doBuy.fwp?NodeID="+ReceiveUserID+"&Money="+AmountPay;
+        xmlHttp.open('GET', url, false, "wxpay", "frontviewjf3907");
+        xmlHttp.setOption(2, 13056);  //https
+        xmlHttp.send();
+        var charge=TSS.JSON.decode(xmlHttp.responseText);
+
+        var UpdateTime=new Date().Format("yyyy-MM-dd hh:mm:ss");
+        ret.data=charge;
+
+        if(charge.msg=="离线"){
+            ret.success= "tryagain";
+            ret.msg="离线";
+            return ret;
+        }
+        if(charge.Data.success){
+
+            var PreBalance=charge.PreBalance;
+
+            var Balance=charge.Data.remaining;
+
+            var sql="UPDATE \"SSM_TRANSACTION\" SET \"BusinessStatus\"='执行成功',\"UpdateTime\"='"+UpdateTime+"',\"OutsideNO\"='"+charge.Data.numberID+"',\"PreBalance\"='"+PreBalance+"',\"Balance\"='"+Balance+"' WHERE \"PayID\"='"+PayID+"'";
+
+            var res=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,sql))[0];
+
+            if(res.MessageCode>0){
+                ret.success= "error";
+                ret.msg=res.MessageText;
+                return ret;
+            }
+
+            ret.success= "true";
+            ret.msg="执行成功";
+            return ret;
+
+        }else{
+            ret.success= "tryagain";
+            ret.msg="执行失败";
+            return ret;
+        }
+    }catch(e){
+        ret.success= "tryagain";
+        ret.msg="执行失败";
+        return ret;
+    }
+}
+function signResource(method,url,user,pass){
+
+		var now = new Date();
+		return "TOS username=\""+user+"\", uri=\""+encodeURI(url)+"\", response=\""+(System.Security.ComputerMD5(now.Format("yyyy-MM-dd")+":"+method+":"+encodeURI(url)+":"+pass,false)).toLowerCase()+"\"";
+
+}
+
+Response.write(function(){
+    var ret={
+        success:false,
+        data:[],
+        msg:""
+    };
+    var wxinfo = TSS.JSON.decode(System.Basic.GetWeiXinInfo());
+    var lastMsg="";
+    //BusinessStatus   未执行,执行(1)次,执行(N)次,执行成功,执行失败,执行超时
+    //OperateStatus   支付成功,支付失败,支付取消,支付验证失败,支付验证成功,退款失败,退款成功
+
+
+
+
+    var channel=TSS.Project.channel;
+    var payid=TSS.Project.payid;
+    var AppKEY=TSS.Project.AppKEY;
+    var order_status=1;
+    var stringA=new Date().Format("yyyy-MM-dd")+channel+order_status+payid+AppKEY;
+      
+    var authorSign=System.Security.ComputerMD5(stringA,false).toLowerCase();
+    
+    //var res=TSS.JSON.decode(Server.ExecuteAPI("GET",TSS.Project.PaymentUrl+"Charge?channel="+channel+"&order_status="+order_status+"&payid="+payid+"&authorSign="+authorSign,""));
+
+	//
+
+
+
+	var xmlHttp = Server.CreateObject("MSXML2.ServerXMLHTTP.6.0");
+	var url=TSS.Project.PaymentUrl+"Charge";
+	var postData="channel="+channel+"&order_status="+order_status+"&payid="+payid+"&authorSign="+authorSign;
+	xmlHttp.open('GET',url+"?"+postData,false);
+	xmlHttp.setOption(2, 13056);  //https
+	xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+	xmlHttp.setRequestHeader("Authorization",signResource("GET",url,TSS.Project.ApiUser,TSS.Project.ApiPass));
+	xmlHttp.send();
+	var res=TSS.JSON.decode(xmlHttp.responseText);
+
+    Server.DebugPrint("ChargeGet:"+xmlHttp.responseText);
+
+	//
+
+
+    //Server.DebugPrint("ChargeGet:"+TSS.JSON.encode(res));
+
+
+    for(var i=0,len=res.data.length;i<len;i++){
+
+        var UpdateTime=new Date().Format("yyyy-MM-dd hh:mm:ss");
+
+        var sql="SELECT \"PayID\",\"InsideNO\",\"OperateStatus\",\"BusinessStatus\",\"AmountPay\",\"PayUserID\",\"PayUserName\",\"ReceiveUserID\",\"ReceiveUserName\",\"CreateTime\",\"UpdateTime\",\"HTTP_HOST\",\"Note\" FROM \"SSM_TRANSACTION\" "
+        +" WHERE \"BusinessStatus\"!='执行成功' AND \"BusinessStatus\"!='执行失败' AND  \"BusinessStatus\" !='执行超时'  AND \"OperateStatus\" !='支付完结' AND \"OperateStatus\" !='退款完结' AND \"PayID\"='"+res.data[i].id+"'";
+
+        var reslist=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,sql))[0];
+
+        if(reslist.length==0)
+        {
+            return System.RDC.GetLastError();
+        }
+
+        if(reslist.MessageCode>0){
+
+            return reslist.MessageText;
+        }
+
+        if(reslist.Record.length==1){
+            var times= TSS.Utils.dateDiff("n",new Date(reslist.Record[0].CreateTime.replace(/-/g,"/")),new Date(reslist.Record[0].UpdateTime.replace(/-/g,"/")));
+
+            if(times>=30){
+                
+                var sql="UPDATE \"SSM_TRANSACTION\" SET \"BusinessStatus\"='执行超时',\"UpdateTime\"='"+UpdateTime+"' WHERE \"PayID\"='"+res.data[i].id+"'";
+                var res1=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,sql))[0];
+
+                if(res1.length==0)
+                {
+                    return System.RDC.GetLastError();
+                }
+
+
+                if(res1.MessageCode>0){
+                    return res1.MessageText;
+                }
+
+                lastMsg=reslist.Record[0].ReceiveUserName+"执行超时";
+                //var o={"PayID":reslist.Record[0].PayID,"ReceiveUserID":reslist.Record[0].ReceiveUserID,"ReceiveUserName":reslist.Record[0].ReceiveUserName,"msg":"执行超时"}
+                //ret.data.push(o);
+            }else
+            {
+                var Note=TSS.JSON.decode(TSS.String.decodeHtml(reslist.Record[0].Note));
+
+                var charge=ChargeE(reslist.Record[0].PayID,reslist.Record[0].ReceiveUserID,reslist.Record[0].AmountPay);
+
+                if(charge.success=="tryagain"){
+                    var strBusinessStatus="执行(1)次";
+                    if(reslist.Record[0].BusinessStatus.indexOf("(")>=0){
+                        var times=parseInt(reslist.Record[0].BusinessStatus.substring(reslist.Record[0].BusinessStatus.indexOf("(")+1,reslist.Record[0].BusinessStatus.indexOf(")")))+1;
+                        strBusinessStatus="执行("+times+")次";
+                    } 
+                    var UpdateTime=new Date().Format("yyyy-MM-dd hh:mm:ss");
+
+                    var sql="UPDATE \"SSM_TRANSACTION\" SET \"BusinessStatus\"='"+strBusinessStatus+"',\"UpdateTime\"='"+UpdateTime+"' WHERE \"PayID\"='"+reslist.Record[0].PayID+"'";
+
+                    var res2=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,sql))[0];
+
+
+                    if(res2.length==0)
+                    {
+                        return System.RDC.GetLastError();
+                    }
+
+                    if(res2.MessageCode>0){
+                        return res2.MessageText;
+                    }
+                    lastMsg=Note.description+strBusinessStatus;
+
+                    //Response.AppendToLog("电费充值","支付聚合",Note.created+Note.description+"&尝试充值&msg:"+TSS.JSON.encode(charge.data),0);
+                }
+                if(charge.success=="true"){
+                    if(charge.data.success){
+
+                        var msgData={
+                            "first": {
+                                "value":"您好，您已成功进行电费充值！",
+                                "color":"#808080"
+                            },
+                            "accountType":{
+                                "value":"房间号"
+                            },
+                            "account":{
+                                "value":reslist.Record[0].ReceiveUserName.split(".").slice(1).join("."),
+                                "color":"#006699"
+                            },
+                            "amount":{
+                                "value":reslist.Record[0].AmountPay,
+                                "color":"#006699"
+                            },
+                            "result":{
+                                "value":"充值成功",
+                                "color":"#006699"
+                            },
+                            "remark":{
+                                "value":"如有疑问请与售电班联系，谢谢！",
+                                "color":"#666"
+                            }
+                        };
+			var res2=Server.ExecuteAPI("PUT","/API/Contact/Message","touser="+reslist.Record[0].PayUserID+"&title=充值成功&content="+Note.description);
+                         Server.DebugPrint("Message:"+TSS.JSON.encode(res2));
+                        /*
+                        //
+                        //  var ret=TSS.Utils.pushWeiXin("ChargeNotice","#0066ff",reslist.Record[0].HTTP_HOST+"/Webapp/Payment/Mobile/ElectPay/PayInfo.tjs?PayID="+reslist.Record[0].PayID,msgData,reslist.Record[0].PayUserID);
+                        var ret=TSS.Utils.pushWeiXin("ChargeNotice",
+                            "#0066ff",
+                            "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+wxinfo.AppID+"&redirect_uri="+encodeURIComponent("http://"+reslist.Record[0].HTTP_HOST+"/Webapp/ChargeEle/Mobile/ElectPay/PayInfo.tjs?PayID="+reslist.Record[0].PayID)+"&response_type=code&scope=snsapi_userinfo&state=apps#wechat_redirect",
+                            msgData,reslist.Record[0].PayUserID
+                            );
+
+                        
+                        if(ret!="OK")
+                        {
+                            lastMsg=ret;
+                            //Response.AppendToLog("电费充值","支付聚合",Note.created+Note.description+"&充值执行成功&消息推送失败&"+reslist.Record[0].HTTP_HOST,0);
+                        }else
+                        {
+                            //Response.AppendToLog("电费充值","支付聚合",Note.created+Note.description+"&充值执行成功&消息推送成功&"+reslist.Record[0].HTTP_HOST,0);
+                        }
+			*/
+                       
+                        //Response.AppendToLog("电费充值","支付聚合",Note.created+Note.description+"&充值执行成功",0);
+                    }
+                }
+                if(charge.success=="error"){
+                    //Response.AppendToLog("电费充值","支付聚合",Note.created+Note.description+"&充值执行成功&msg:"+charge.msg,0);
+                    return charge.success;
+                }
+                if(charge.success=="false"){
+                    //Response.AppendToLog("电费充值","支付聚合",Note.created+Note.description+"&充值执行成功&msg:"+charge.msg,0);
+                }
+
+                lastMsg=reslist.Record[0].ReceiveUserName+charge.msg;
+                //var o={"PayID":reslist.Record[0].PayID,"ReceiveUserID":reslist.Record[0].ReceiveUserID,"ReceiveUserName":reslist.Record[0].ReceiveUserName,"msg":charge.msg}
+                //ret.data.push(o);
+            }
+
+            
+        }
+       
+        
+    }
+    return lastMsg;
+}());
+Response.ContentType = "text/plain";
+%>

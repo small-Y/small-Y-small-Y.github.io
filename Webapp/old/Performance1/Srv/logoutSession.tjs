@@ -1,0 +1,20 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			text:"强制注销失败"
+		};
+		//
+		var sessionid=Request.Form("sessionid");
+		if(System.OAuth.LogoutSession(sessionid))
+		{
+			result.flag=true;
+			result.text="强制注销成功";
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

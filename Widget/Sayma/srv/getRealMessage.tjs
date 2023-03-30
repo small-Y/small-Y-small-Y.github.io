@@ -1,0 +1,45 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result={
+					flag:true,
+					data:[],
+					info:""
+					};
+		//
+		var nCount=0;
+		var tc=new Date();
+		while(nCount<60*4)
+		{
+			var record=TSS.JSON.decode(System.Message.Listen(tc.Format("yyyy-MM-dd hh:mm:ss")));
+			if(record.length==0)
+			{
+				result.flag=false;
+				result.info=System.Message.GetLastError();
+				return (jsoncallback!= undefined)?(jsoncallback+"("+TSS.JSON.encode(result)+")"):TSS.JSON.encode(result);
+			}
+			if(record[0].MessageCode>0)
+			{
+				result.flag=false;
+				result.info=record[0].MessageText;
+				return (jsoncallback!= undefined)?(jsoncallback+"("+TSS.JSON.encode(result)+")"):TSS.JSON.encode(result);
+			}
+			//
+			result.data=record[0].Record;
+			//
+			if(result.data.length==0)
+			{
+				System.Basic.MSleep(300);
+				nCount++;
+			}
+			else
+			{
+				break;
+			}
+		}
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "text/plain";
+%>

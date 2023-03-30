@@ -1,0 +1,202 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.Write(function(){
+		var now=new Date();
+		//
+		var record=TSS.JSON.decode(System.KVDB.GetDataBaseInfo());
+		for(var i=0;i<record.length;i++)
+		{
+			if(record[i].status==0)
+			{
+				var data = System.KVDB.Get("sysconfig", "thingshistory.kvdb."+record[i].name);
+				if (data != undefined) {
+					var data=TSS.JSON.decode(data);
+					switch(data.backuptype)
+					{
+						case "week":
+						{
+							var result = System.KVDB.BackupDataBase(record[i].name, "W"+now.getDay());
+							if (!result) {
+								return System.KVDB.GetLastError();
+							}
+							Response.AppendToLog("新思数据库","系统服务","热备份【"+record[i].name+"】成功！",0);
+						}
+						break;
+						case "month":
+						{
+							var result = System.KVDB.BackupDataBase(record[i].name, "M"+now.Format("MM"));
+							if (!result) {
+								return System.KVDB.GetLastError();
+							}
+							Response.AppendToLog("新思数据库","系统服务","热备份【"+record[i].name+"】成功！",0);
+						}
+						break;
+						case "year":
+						{
+							var result = System.KVDB.BackupDataBase(record[i].name, "Y"+now.Format("yyyy"));
+							if (!result) {
+								return System.KVDB.GetLastError();
+							}
+							Response.AppendToLog("新思数据库","系统服务","热备份【"+record[i].name+"】成功！",0);
+						}
+						break;
+					}
+					//
+					switch(data.filingtype)
+					{
+						case "week":
+						{
+							if(now.getDay()==0)
+							{
+								var result = System.KVDB.BackupDataBase(record[i].name, now.Format("yyyyMMdd"));
+								if (!result) {
+									return System.KVDB.GetLastError();
+								}
+								//
+								if(record[i].name!="sysconfig"
+									&& record[i].name!="sysrun")
+								{
+										if(!System.KVDB.Truncate(record[i].name))
+											return System.RDC.GetLastError();
+								}
+								//
+								Response.AppendToLog("新思数据库","系统服务","归档【"+record[i].name+"】成功！",0);
+							}
+						}
+						break;
+						case "month":
+						{
+							if(now.getDate()==1)
+							{
+								var result = System.KVDB.BackupDataBase(record[i].name, now.Format("yyyyMMdd"));
+								if (!result) {
+									return System.KVDB.GetLastError();
+								}
+								//
+								if(record[i].name!="sysconfig"
+									&& record[i].name!="sysrun")
+								{
+										if(!System.KVDB.Truncate(record[i].name))
+											return System.RDC.GetLastError();
+								}
+								//
+								Response.AppendToLog("新思数据库","系统服务","归档【"+record[i].name+"】成功！",0);
+							}
+						}
+						break;
+						case "year":
+						{
+							if(now.getMonth()==0 && now.getDate()==1)
+							{
+								var result = System.KVDB.BackupDataBase(record[i].name, now.Format("yyyyMMdd"));
+								if (!result) {
+									return System.KVDB.GetLastError();
+								}
+								//
+								if(record[i].name!="sysconfig"
+									&& record[i].name!="sysrun")
+								{
+										if(!System.KVDB.Truncate(record[i].name))
+											return System.RDC.GetLastError();
+								}
+								//
+								Response.AppendToLog("新思数据库","系统服务","归档【"+record[i].name+"】成功！",0);
+							}
+						}
+						break;
+					}
+				}
+			}
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.GetDataBaseInfo(true));
+		for(var i=0;i<record.length;i++)
+		{
+			if(record[i].status==0)
+			{
+				var data = System.KVDB.Get("sysconfig", "thingshistory.rdc."+record[i].name);
+				if (data != undefined) {
+					var data=TSS.JSON.decode(data);
+					switch(data.backuptype)
+					{
+						case "week":
+						{
+							var result = System.RDC.BackupDataBase(record[i].name,true, "W"+now.getDay());
+							if (!result) {
+								return System.RDC.GetLastError();
+							}
+							Response.AppendToLog("新思数据库","系统服务","热备份【"+record[i].name+"】成功！",0);
+						}
+						break;
+						case "month":
+						{
+							var result = System.RDC.BackupDataBase(record[i].name,true, "M"+now.Format("MM"));
+							if (!result) {
+								return System.RDC.GetLastError();
+							}
+							Response.AppendToLog("新思数据库","系统服务","热备份【"+record[i].name+"】成功！",0);
+						}
+						break;
+						case "year":
+						{
+							var result = System.RDC.BackupDataBase(record[i].name,true, "Y"+now.Format("yyyy"));
+							if (!result) {
+								return System.RDC.GetLastError();
+							}
+							Response.AppendToLog("新思数据库","系统服务","热备份【"+record[i].name+"】成功！",0);
+						}
+						break;
+					}
+					//
+					switch(data.filingtype)
+					{
+						case "week":
+						{
+							if(now.getDay()==0)
+							{
+								var result = System.RDC.BackupDataBase(record[i].name,true, now.Format("yyyyMMdd"));
+								if (!result) {
+									return System.RDC.GetLastError();
+								}
+								//
+								Response.AppendToLog("新思数据库","系统服务","归档【"+record[i].name+"】成功！",0);
+							}
+						}
+						break;
+						case "month":
+						{
+							if(now.getDate()==1)
+							{
+								var result = System.RDC.BackupDataBase(record[i].name,true, now.Format("yyyyMMdd"));
+								if (!result) {
+									return System.RDC.GetLastError();
+								}
+								//
+								Response.AppendToLog("新思数据库","系统服务","归档【"+record[i].name+"】成功！",0);
+							}
+						}
+						break;
+						case "year":
+						{
+							if(now.getMonth()==0 && now.getDate()==1)
+							{
+								var result = System.RDC.BackupDataBase(record[i].name,true, now.Format("yyyyMMdd"));
+								if (!result) {
+									return System.RDC.GetLastError();
+								}
+								//
+								Response.AppendToLog("新思数据库","系统服务","归档【"+record[i].name+"】成功！",0);
+							}
+						}
+						break;
+					}
+				}
+			}
+		}
+		//
+		return "核心数据库检查与备份成功！";
+	}());
+	Response.ContentType = "text/plain";
+%>

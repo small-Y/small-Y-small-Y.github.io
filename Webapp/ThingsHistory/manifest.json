@@ -1,0 +1,28 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/tax",
+  "appid": "F64BAF7F-91B8-425E-ACED-7E6FAF8095CE",
+  "apptype": "Things",
+  "name": "物联网实时数据库",
+  "short": "数据库管理",
+  "description": "基于物联网实时数据的分布式管理",
+  "author": "ThingsLabs",
+  "version": "1.0.1",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/ThingsHistory/index.ejs",
+	  "container": "system",
+	  "sort": 5,
+	  "height": 678,
+	  "width": 960
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "/WebApp/ThingsHistory/Mobile/index.ejs",
+	  "container": "system"
+    }
+  },
+  "icons": {
+    "logo": "icon-64.png"
+  }
+}

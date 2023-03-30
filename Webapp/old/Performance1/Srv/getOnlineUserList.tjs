@@ -1,0 +1,28 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			text:"",
+			data:[]
+		};
+		//
+		result.flag=true;
+		var userList = TSS.JSON.decode(System.OAuth.GetOnlineUser());
+		for(var i=0;i<userList.length;i++)
+		{
+			result.data[result.data.length]=[i+1,
+												userList[i].userName,
+												userList[i].fullName,
+												userList[i].loginIPAddr,
+												TSS.Utils.dateMessage(userList[i].lastLoginTime),
+												TSS.Utils.dateMessage(userList[i].lastAccessTime),
+												userList[i].userMsg,
+												'<a href="javascript:App.logout(\''+userList[i].sessionid+'\');" class="btn btn-sm btn-outline red-haze sbold"><i class="fa fa-newspaper-o"></i> ×¢&nbsp;Ïú</a>'];
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

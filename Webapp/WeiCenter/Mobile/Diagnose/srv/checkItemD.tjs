@@ -1,0 +1,162 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Buffer=false;
+Response.clear();
+		var result = {
+				flag:false,
+				info:"",
+				key:"D",
+				complete:false,
+				count:0,
+				total:0,
+				completeinfo:"",
+				score:0
+		};
+		Response.Write("|"+TSS.JSON.encode(result));
+		var score = Request.QueryString("score");
+		var buildlist = Request.QueryString("buildlist");
+		var isall = Request.QueryString("isall"); 
+		var kpiObject=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/BCPS/ObjectClass/Building",""));
+		var tc=new Date();
+		var unit=0;
+		if(isall=="true"){
+			unit=score/kpiObject.length/4;
+			result.info="总共需诊断"+kpiObject.length+"栋建筑！";
+			result.total=kpiObject.length;
+		}else{
+			unit=score/buildlist.split(",").length/4;
+			result.info="总共需诊断"+buildlist.split(",").length+"栋建筑！";
+			result.total=buildlist.split(",").length;	
+		}
+		Response.Write("|"+TSS.JSON.encode(result));
+	    
+		var progress=0;
+		for(var i=0;i<kpiObject.length;i++){
+			if(isall=="false"){
+				if(buildlist.indexOf(kpiObject[i].GroupID)==-1){
+					continue;
+				}
+			}
+			progress++;
+			result.score=0;
+			result.info="开始诊断"+kpiObject[i].GroupName+"！";
+			Response.Write("|"+TSS.JSON.encode(result));
+
+			result.score=0;
+			result.info="检查设施设备在线率！";
+			Response.Write("|"+TSS.JSON.encode(result));
+			var path=kpiObject[i].GroupFullTag.split(".").join("/").replace("BCPS/","")+"/E";
+			//var o=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/BCPS/Facility/"+path,""));
+			//if(o.MyGroup==undefined){
+				result.score=0;
+				result.info=kpiObject[i].GroupName+"未发现配变电系统，不做检查！";
+				Response.Write("|"+TSS.JSON.encode(result));
+				continue;			
+			//}
+			var listNode=o.MyGroup.listNode;
+			if(listNode.length==0){
+				result.score=0;
+				result.info=kpiObject[i].GroupName+"未发现配变电的关联设备，不做检查！";
+				Response.Write("|"+TSS.JSON.encode(result));
+				continue;
+			}
+			var online=0,nodecount=0;
+			for(var j=0;j<listNode.length;j++){
+				nodecount++;
+				if(listNode[j].bOnLineFlag=="在线"){
+					online++;
+				}			
+			}
+			if(nodecount==0){
+				result.score=0;
+				result.info=kpiObject[i].GroupName+"未发现配变电的关联设备，不做检查！";
+				Response.Write("|"+TSS.JSON.encode(result));
+				continue;
+			}
+			var percent=TSS.Utils.floatPrecision(online*100/nodecount,0);
+			if(percent<85){
+				result.score=unit;
+				result.count++;
+				result.info=kpiObject[i].GroupName+"配变电的关联设备在线率偏低，为："+percent+"%！";		
+			}else{
+				result.score=0;
+				result.info=kpiObject[i].GroupName+"配变电的关联设备在线率为："+percent+"%！";			
+			}
+			Response.Write("|"+TSS.JSON.encode(result));
+
+			
+			var nodeTree=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/BCPS/Facility/"+path+"/KPI",""));
+			result.info="开始监测变压器温度！";
+			result.score=0;
+			Response.Write("|"+TSS.JSON.encode(result));
+
+			var TransTemp=nodeTree.OPCValueList[nodeTree.OPCValueMap.TransTemp].DataValue;
+			if(TransTemp<60){
+				result.score=0;
+				result.info="变压器温度："+TransTemp+"℃，小于60℃，属正常范围！";
+			}else{
+				result.count++;
+				result.score=unit;
+				result.info="变压器温度："+TransTemp+"℃，大于60℃，请立即处理！";
+			}
+			Response.Write("|"+TSS.JSON.encode(result));
+
+			result.info="开始监测总最大需量！";
+			result.score=0;
+			Response.Write("|"+TSS.JSON.encode(result));
+			var TotalEs=o.MyGroup.ObjectInfo.TotalEs;
+			var DmdEs=nodeTree.OPCValueList[nodeTree.OPCValueMap.DmdEs].DataValue;
+			if(DmdEs<TotalEs*0.8){
+				result.score=0;
+				result.info="总最大需量："+DmdEs+"KVA，在设计容量范围内！";
+			}else{
+				result.count++;
+				result.score=unit;
+				result.info="总最大需量："+DmdEs+"KVA，超过设计容量80%，请立即处理！";
+			}
+			Response.Write("|"+TSS.JSON.encode(result));
+
+			result.info="开始监测启用出线柜跳闸！";
+			result.score=0;
+			Response.Write("|"+TSS.JSON.encode(result));
+			var TripLines=nodeTree.OPCValueList[nodeTree.OPCValueMap.TripLines].DataValue;
+			if(TripLines==0){
+				result.score=0;
+				result.info="未发现启用出线柜跳闸！";
+			}else{
+				result.count++;
+				result.score=unit;
+				result.info="发现"+TripLines+"个启用出线柜跳闸，请立即处理！";
+			}
+			Response.Write("|"+TSS.JSON.encode(result));
+
+			result.info="开始监测平均功率因素！";
+			result.score=0;
+			Response.Write("|"+TSS.JSON.encode(result));
+			var TotalPf=nodeTree.OPCValueList[nodeTree.OPCValueMap.TotalPf].DataValue;
+			if(TotalPf>=0.9){
+				result.score=0;
+				result.info="平均功率因素："+TotalPf+"，属正常范围！";
+			}else{
+				result.count++;
+				result.score=unit;
+				result.info="平均功率因素："+TotalPf+"，小于0.9，请立即处理！";
+			}
+			Response.Write("|"+TSS.JSON.encode(result));
+		}
+		if(progress==result.total){
+			result.complete=true;
+			if(result.count==0){
+				result.score=0;
+				result.info="";
+				result.completeinfo="完成诊断，未发现存在异常点！";
+			}else{
+				result.score=0;
+				result.info="";
+				result.completeinfo="完成诊断，共发现"+result.count+"处存在异常点！";
+			}
+			Response.Write("|"+TSS.JSON.encode(result));
+		}			
+	Response.ContentType = "text/plain";
+%>

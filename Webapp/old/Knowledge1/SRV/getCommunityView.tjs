@@ -1,0 +1,58 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result = {
+				flag:true,
+				info:"",
+				count:0,
+				unreview:0,
+				review:0
+			};
+		//
+		var startTime=Request.QueryString("startTime");
+		var endTime=Request.QueryString("endTime");
+		//
+		var szSql="";
+		var userInfo=TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		if(userInfo.userTypeNum<1)
+		{
+
+			szSql="SELECT count(*) as count FROM CommunityDataTable where \"T_Time\">='"+startTime +"' and \"T_Time\"<='"+endTime +"'";
+			var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+			if (resSet.MessageCode>0){
+				result.flag=false;
+				result.info=resSet.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			result.count=resSet.Record[0].count;
+
+			szSql="SELECT count(*) as count FROM CommunityDataTable where \"T_Time\">='"+startTime +"' and \"T_Time\"<='"+endTime +"' and \"T_Review\"=0";
+			var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+			if (resSet.MessageCode>0){
+				result.flag=false;
+				result.info=resSet.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			result.unreview=resSet.Record[0].count;
+
+			szSql="SELECT count(*) as count FROM CommunityDataTable where \"T_Time\">='"+startTime +"' and \"T_Time\"<='"+endTime +"' and \"T_Review\"=1";
+			var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+			if (resSet.MessageCode>0){
+				result.flag=false;
+				result.info=resSet.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			result.review=resSet.Record[0].count;
+
+			
+		}
+
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

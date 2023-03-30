@@ -1,0 +1,123 @@
+/// <reference path="../TSS/lib/vsdoc/api.js" />
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result = {
+				flag:true,
+				buildlist:[]
+			};	
+		var buildlist = Request.QueryString("buildlist");
+		var isall = Request.QueryString("isall"); 
+		var kpiObject=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/BCPS/ObjectClass/Building",""));
+		var tc=new Date();
+		for(var i=0;i<kpiObject.length;i++){
+			if(isall=="false"){
+				if(buildlist.indexOf(kpiObject[i].GroupID)==-1){
+					continue;
+				}
+			}
+			var item={name:kpiObject[i].GroupName,list:[],count:0};
+			//var listNode=TSS.JSON.decode(Server.GetOPCFlatJSON(kpiObject[i].szOPCFullPath+".F"));
+			
+			//if(listNode.length==0){
+				var d={};
+				d["name"]="设施设备在线率";
+				d["info"]=kpiObject[i].GroupName+"未发现太阳能光伏发电的关联设备，不做检查！";
+				item.list.push(d);
+				result.buildlist.push(item);											
+				continue;	
+			//}
+			var online=0,nodecount=0;
+			for(var j=0;j<listNode.length;j++){
+				nodecount++;
+				if(listNode[j].bOnLineFlag=="在线"){
+					online++;
+				}		
+			}
+			
+			var percent=TSS.Utils.floatPrecision(online*100/nodecount,0);
+			if(percent<85){
+				item.count++;
+				var d={};
+				d["name"]="设施设备在线率";
+				d["info"]=kpiObject[i].GroupName+"太阳能光伏发电的关联设备在线率偏低，为："+percent+"%！";
+				item.list.push(d);			
+			}else{	
+				var d={};
+				d["name"]="设施设备在线率";
+				d["info"]=kpiObject[i].GroupName+"太阳能光伏发电的关联设备在线率为："+percent+"%！";
+				item.list.push(d);	
+			}
+
+			var nodeTree=TSS.JSON.decode(Server.GetOPCFlatJSON(kpiObject[i].szOPCFullPath+".F.KPI"));
+			if(nodeTree.length==0){
+				var d={};
+				d["name"]="设施设备在线率";
+				d["info"]=kpiObject[i].GroupName+"未发现太阳能光伏发电的关联设备，不做检查！";
+				item.list.push(d);
+				result.buildlist.push(item);											
+				continue;	
+			}else{
+				//太阳能光伏发电
+				var t1 = tc.DateAdd("d",-2);
+				var t2 = tc;
+				var UseTotalE=0,RecycleTotalE=0,TotalE=0;
+				//使用电量
+				var restUrl="/API/System/IBMS/Mining/Statistics/Day?keyvalue=UseTotalE&iscache=true&groupby=NodeObject&NodeFullTag="+kpiObject[i].szOPCFullPath+".F.KPI$&startTime="+t1.Format("yyyy-MM-dd hh:mm:ss")+"&endTime="+t2.Format("yyyy-MM-dd hh:mm:ss");
+				var restObject=TSS.JSON.decode(TSS.Utils.ExcuteAPI("GET",restUrl));
+				if(restObject.flag)
+				{
+					if(restObject.data.length>0
+						&& restObject.data[0].value.DayMeasure!=null)
+					{
+						UseTotalE=restObject.data[0].value.DayMeasure;
+					}
+				}
+				//并网电量
+				var restUrl="/API/System/IBMS/Mining/Statistics/Day?keyvalue=RecycleTotalE&iscache=true&groupby=NodeObject&NodeFullTag="+kpiObject[i].szOPCFullPath+".F.KPI$&startTime="+t1.Format("yyyy-MM-dd hh:mm:ss")+"&endTime="+t2.Format("yyyy-MM-dd hh:mm:ss");
+				var restObject=TSS.JSON.decode(TSS.Utils.ExcuteAPI("GET",restUrl));
+				if(restObject.flag)
+				{
+					if(restObject.data.length>0
+						&& restObject.data[0].value.DayMeasure!=null)
+					{
+						RecycleTotalE=restObject.data[0].value.DayMeasure;
+					}
+				}
+				//总用电量
+				var restUrl="/API/System/IBMS/Mining/Statistics/Day?keyvalue=TotalE&iscache=true&groupby=NodeObject&NodeFullTag="+kpiObject[i].szOPCFullPath+".A.KPI$&startTime="+t1.Format("yyyy-MM-dd hh:mm:ss")+"&endTime="+t2.Format("yyyy-MM-dd hh:mm:ss");
+				var restObject=TSS.JSON.decode(TSS.Utils.ExcuteAPI("GET",restUrl));
+				if(restObject.flag)
+				{
+					if(restObject.data.length>0
+						&& restObject.data[0].value.DayMeasure!=null)
+					{
+						TotalE=restObject.data[0].value.DayMeasure;
+					}
+				}
+				var percent=TSS.Utils.floatPrecision(UseTotalE/(TotalE+UseTotalE)*100,1)
+				if(RecycleTotalE>UseTotalE&&percent<30){
+					item.count++;
+					var d={};
+					d["name"]="光伏发电使用率";
+					d["info"]=kpiObject[i].GroupName+"太阳能光伏发电使用量不足，太阳能光伏最近二日用电占比："+percent+"%，并网电量："+RecycleTotalE+"千瓦时，使用电量："+UseTotalE+"千瓦时，建议进行线路改造！";		
+					item.list.push(d);
+				}else{
+					var d={};
+					d["name"]="光伏发电使用率";
+					d["info"]=kpiObject[i].GroupName+"太阳能光伏最近二日用电占比"+percent+"%，未发现异常情况！";
+					item.list.push(d);				
+				}
+				result.buildlist.push(item);						
+			}
+		}
+		result.buildlist.sort(function(x, y){
+				return (x.count < y.count) ? 1 : -1;
+		});
+		return TSS.JSON.encode(result);
+		
+	}());
+	Response.ContentType = "text/plain";
+%>

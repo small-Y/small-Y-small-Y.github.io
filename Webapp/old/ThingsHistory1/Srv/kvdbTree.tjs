@@ -1,0 +1,48 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result=[];
+		var parent=Request.QueryString("parent");
+		//
+		var loginInfo = TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		if(!loginInfo.loginStatus)
+		{
+			result.flag=false;
+			result.text="ÉÐÎ´µÇÂ¼";
+			return TSS.JSON.encode(result);
+		}
+		//
+		if(parent=="#")
+		{
+			result[0]={
+						"id":"kvdb",
+						"icon":"fa fa-cubes font-blue-sharp",
+						"text":"¼üÖµÊý¾Ý¿â",
+						"children":true,
+						"state": {
+									"opened": true
+								},
+						"type":"root"
+					};
+		}
+		else
+		{
+			var record=TSS.JSON.decode(System.KVDB.GetDataBaseInfo());
+			for(var i=0;i<record.length;i++)
+			{
+				if(record[i].status<3)
+				{
+					result[result.length]={
+							"id":record[i].name,
+							"text":record[i].name,
+							"children":false,
+							"type":"database-"+record[i].status
+						};
+				}
+			}
+		}
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

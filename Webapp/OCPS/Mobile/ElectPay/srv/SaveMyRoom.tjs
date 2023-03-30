@@ -1,0 +1,74 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var ret={
+			    success:false,
+			    data:[],
+			    msg:""
+		};
+		var roomList = Request.form("roomList");
+		var userID= Request.form("userID");
+		var roomName= Request.form("roomName");
+		//
+ 
+
+	    //return xmlHttp.responseText
+	    //先判断已绑定
+		var res=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,"SELECT \"T_UserID\",\"T_RoomID\",\"T_isBinding\" FROM \"UserRoom\" where \"T_UserID\"='"+userID+"' and \"T_isBinding\"=0 and \"T_RoomID\"='"+roomList+"'"))[0];
+		if(res.MessageCode>0){
+		    ret.msg=res.MessageText;
+		    return  TSS.JSON.encode(ret);
+		}
+		if(res.Record.length==1){
+		    ret.msg="房间已绑定！";
+		    return  TSS.JSON.encode(ret);
+		}
+
+	    //先判断已绑定的房间是否超过5个
+		var res=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,"SELECT \"T_UserID\",\"T_RoomID\",\"T_isBinding\" FROM \"UserRoom\" where \"T_UserID\"='"+userID+"' and \"T_isBinding\"=0"))[0];
+		if(res.MessageCode>0){
+		    ret.msg=res.MessageText;
+		    return  TSS.JSON.encode(ret);
+		}
+		if(res.Record.length>=5){
+		    ret.msg="绑定的房间不能超过5个！";
+		    return  TSS.JSON.encode(ret);
+		}
+
+	    //根据用户和房间进行更新或插入
+
+		var resT=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,"SELECT \"T_UserID\",\"T_RoomID\",\"T_isBinding\" FROM \"UserRoom\" where \"T_UserID\"='"+userID+"' and \"T_RoomID\"='"+roomList+"'"))[0];
+		if(resT.MessageCode>0){
+		    ret.msg=resT.MessageText;
+		    return  TSS.JSON.encode(ret);
+		}
+		if(resT.Record.length==0){
+		    var   res=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,"INSERT INTO \"UserRoom\"(\"T_UserID\",\"T_RoomID\",\"T_RoomName\",\"T_isBinding\") values ('"+userID+"','"+roomList+"','"+roomName+"',0)"))[0];
+		    if(res.MessageCode>0){
+		        ret.msg=res.MessageText;
+		        return  TSS.JSON.encode(ret);
+		    }
+		
+		}else if(resT.Record.length>0){
+            //删除
+		   var  res=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,"DELETE FROM \"UserRoom\" where  \"T_UserID\"='"+userID+"' and \"T_RoomID\"='"+roomList+"'"))[0];
+		    if(res.MessageCode>0){
+		        ret.msg=res.MessageText;
+		        return  TSS.JSON.encode(ret);
+		    }
+            //插入
+		    res=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,"INSERT INTO \"UserRoom\"(\"T_UserID\",\"T_RoomID\",\"T_RoomName\",\"T_isBinding\") values ('"+userID+"','"+roomList+"','"+roomName+"',0)"))[0];
+		    if(res.MessageCode>0){
+		        ret.msg=res.MessageText;
+		        return  TSS.JSON.encode(ret);
+		    }
+		
+		}
+
+		ret.success=true;
+		return TSS.JSON.encode(ret);
+	}());
+	Response.ContentType = "text/plain";
+%>

@@ -1,0 +1,65 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	var startTime = Request.QueryString("startTime");
+	var endTime = Request.QueryString("endTime");
+	//
+	if(startTime=="" || startTime==undefined)
+	{
+		var tc = new Date();
+		startTime = new Date();
+		startTime.setFullYear(tc.getFullYear(),tc.getMonth(),1);
+		startTime.setHours(0,0,0,0);
+	}
+	else
+	{
+		startTime = TSS.Utils.parseDate(startTime);
+	}
+	//
+	if(endTime=="" || endTime==undefined)
+	{
+		endTime = new Date();
+	}
+	else
+	{
+		endTime = TSS.Utils.parseDate(endTime);
+		endTime=endTime.DateAdd("d",1);
+	}
+	//
+	var selAppName = Request.QueryString("selAppName");
+	var selLogLevel = Request.QueryString("selLogLevel");
+	//
+	var ifwhere="\"logTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"logTime\"<'"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' and \"logType\"='积分商城'";
+	if(selAppName!="" && selAppName!=undefined)
+	{
+		var arr=selAppName.split(",");
+		var arrT=[];
+		for(var i=0;i<arr.length;i++){
+			arrT.push("'"+arr[i]+"'");
+		}
+		ifwhere+=" AND \"logAppName\" in ("+arrT.join(",")+")";
+	}
+	//
+	if(selLogLevel!="" && selLogLevel!=undefined)
+	{
+		ifwhere+=" AND \"logLevel\" in ("+selLogLevel+")";
+	}
+	//
+	var logLevel=["普通","成功","通知","告警","严重"];
+	//
+	Response.Clear();
+	Response.Buffer = false;
+	Response.CharSet = "gbk";
+	Response.ContentType = "application/csv";
+	Response.ContentDisposition("attachment; filename=审计日志"+startTime.Format("yyyyMMdd")+endTime.Format("yyyyMMdd")+".csv");
+	Response.Write("序号,名称,IP地址,时间,交易详情,日志级别\n");
+	var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"logTime\",\"logAddr\",\"logAppName\",\"logContent\",\"logUser\",\"logLevel\" from SystemLogData where "+ifwhere+" order by \"logTime\" desc"));
+	if(record.length==1 
+		&& record[0].MessageCode==0)
+	{
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			Response.Write((i+1)+","+record[0].Record[i].logAppName+","+record[0].Record[i].logAddr+","+record[0].Record[i].logTime+","+record[0].Record[i].logContent+","+logLevel[record[0].Record[i].logLevel]+"\n");
+		}
+	}
+%>

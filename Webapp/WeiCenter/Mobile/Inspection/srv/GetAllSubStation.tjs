@@ -1,0 +1,40 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var ret={
+					success:false,
+					data:[],
+					msg:""
+		};
+		var hvRes=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/PCPS/ObjectClass/HighVoltage",""));
+		for(var i=0;i<hvRes.length;i++){
+			ret.data[ret.data.length]={
+				title:hvRes[i].GroupName,
+				value:hvRes[i].GroupFullTag,
+				GroupFullName:hvRes[i].GroupFullName,
+				GroupTag:hvRes[i].GroupTag,
+				isSelect:false
+			}
+		
+		}
+
+		var stRes=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/PCPS/ObjectClass/Substation",""));
+		for(var i=0;i<stRes.length;i++){
+			ret.data[ret.data.length]={
+				title:stRes[i].GroupName,
+				value:stRes[i].GroupFullTag,
+				GroupFullName:stRes[i].GroupFullName,
+				GroupTag:stRes[i].GroupTag,
+				isSelect:false
+			}
+		}
+
+
+		ret.success=true;
+
+		return TSS.JSON.encode(ret);
+	}());
+	Response.ContentType = "text/plain";
+%>

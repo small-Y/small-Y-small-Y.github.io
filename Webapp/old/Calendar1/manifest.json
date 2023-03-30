@@ -1,0 +1,28 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/tax",
+  "appid": "73C98149-620B-4F05-A75A-79B6C626D992",
+  "apptype": "Things",
+  "name": "日 程",
+  "short": "日 程",
+  "description": "管理记录您的日程信息",
+  "author": "ThingsLabs",
+  "version": "1.0.1",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/Calendar/index.tjs",
+	  "container": "personal",
+	  "sort": 17,
+	  "height": 600,
+	  "width": 800
+    },
+    "mobile": {
+	  "enable":true,
+	  "local_path": "/WebApp/Calendar/Mobile/index.tjs",
+	  "container": "personal"
+    }
+  },
+  "icons": {
+    "logo": "Calendar.png"
+  }
+}

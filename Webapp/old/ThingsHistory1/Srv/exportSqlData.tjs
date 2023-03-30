@@ -1,0 +1,95 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	var dbname=Request.QueryString("dbname");
+	var tbname=Request.QueryString("tbname");
+	//
+	Response.Clear();
+	Response.Buffer = false;
+	Response.CharSet = "gbk";
+	Response.ContentType = "application/csv";
+	
+	if(tbname=="" || tbname==undefined)
+	{
+		Response.ContentDisposition("attachment; filename=数据库（"+dbname+"）数据.sql");
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL(dbname,true,"select name,sql from sqlite_master where type='table'"));
+		if(record.length==0)
+		{
+			Response.Write(System.RDC.GetLastError());
+		}
+		if(record[0].MessageCode>0)
+		{
+			Response.Write(record[0].MessageText);
+		}
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			var record1=TSS.JSON.decode(System.RDC.ExcuteSQL(dbname,true,"select * from "+record[0].Record[i].name));
+			if(record1.length==0)
+			{
+				Response.Write(System.RDC.GetLastError());
+			}
+			if(record1[0].MessageCode>0)
+			{
+				Response.Write(record1[0].MessageText);
+			}
+			//
+			var store=[];
+			var field=[];
+			for(var j=0;j<record1[0].Store.length;j++)
+			{
+				store[store.length]=record1[0].Store[j].name;
+				field[field.length]="\""+record1[0].Store[j].name+"\"";
+			}
+			//
+			for(var j=0;j<record1[0].Record.length;j++)
+			{
+				var item=[];
+				for(var k=0;k<store.length;k++)
+				{
+					var dv=record1[0].Record[j][store[k]];
+					if(typeof(dv) == "string" )
+						item[item.length]="'"+dv+"'";
+					else
+						item[item.length]=dv;
+				}
+				Response.Write("INSERT INTO "+record[0].Record[i].name+" ("+field.join()+") VALUES ("+item.join()+");\n");
+			}
+		}
+	}
+	else
+	{
+		Response.ContentDisposition("attachment; filename=数据库表（"+tbname+"）数据.sql");
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL(dbname,true,"select * from "+tbname));
+		if(record.length==0)
+		{
+			Response.Write(System.RDC.GetLastError());
+		}
+		if(record[0].MessageCode>0)
+		{
+			Response.Write(record[0].MessageText);
+		}
+		//
+		var store=[];
+		var field=[];
+		for(var i=0;i<record[0].Store.length;i++)
+		{
+			store[store.length]=record[0].Store[i].name;
+			field[field.length]="\""+record[0].Store[i].name+"\"";
+		}
+		//
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			var item=[];
+			for(var j=0;j<store.length;j++)
+			{
+				var dv=record[0].Record[i][store[j]];
+				if(typeof(dv) == "string" )
+					item[item.length]="'"+dv+"'";
+				else
+					item[item.length]=dv;
+			}
+			Response.Write("INSERT INTO "+tbname+" ("+field.join()+") VALUES ("+item.join()+");\n");
+		}
+	}
+%>

@@ -1,0 +1,3775 @@
+{
+    "desktop": [
+        {
+            "bTensile": true,
+            "imgWrapper": "/Theme/7GWifi/i/wrapper.jpg",
+            "appList": [
+                {
+                    "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                    "appid": "4CE92A2B-F533-40E2-BC12-6BABDCF8DDDB",
+                    "apptype": "Things",
+                    "name": "物联网水资源示范工程",
+                    "short": "给水管网",
+                    "description": "基于资源信息模型(RIM)的新思联信息物理系统。",
+                    "author": "ThingsLabs",
+                    "version": "1.0",
+                    "app": {
+                        "launch": {
+                            "enable": true,
+                            "local_path": "/Project/WCPS/",
+                            "container": "proxy",
+                            "sort": 1000,
+                            "height": 600,
+                            "width": 800,
+                            "webapp": [
+                                {
+                                    "id": "Situation",
+                                    "text": "运行态势",
+                                    "info": "全局总揽资源的态势感知，为了决策与行动提供支持",
+                                    "children": []
+                                },
+                                {
+                                    "id": "AppMap",
+                                    "text": "水管网地图",
+                                    "info": "全局总揽地图信息汇聚、功能导航，用于实现空间维度的监管业务的细节穿透",
+                                    "children": []
+                                },
+                                {
+                                    "id": "PhysicalSpace",
+                                    "text": "水管网感知",
+                                    "info": "全局总揽地图信息汇聚、功能导航，用于实现空间维度的监管业务的细节穿透",
+                                    "children": []
+                                },
+                                {
+                                    "id": "OrganizeSpace",
+                                    "text": "水资源对象",
+                                    "info": "基于赛博空间的对象、属性、方法及业务逻辑关系，便于迭代业务的轻应用扩展",
+                                    "children": [],
+                                    "icon": "undefined"
+                                },
+                                {
+                                    "id": "IoTNetwork",
+                                    "text": "水管网物联",
+                                    "info": "基于网络空间的设备、人员定位与管理，便于运维业务的细节穿透",
+                                    "children": []
+                                },
+                                {
+                                    "id": "workflow",
+                                    "text": "水管网运维",
+                                    "info": "基于业务流程模型的运行管理及服务中心",
+                                    "children": [
+                                        {
+                                            "id": "taskReal",
+                                            "text": "待处理任务单",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "taskHistory",
+                                            "text": "历史工单任务",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "taskSetup",
+                                            "text": "工作人员设置",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "taskReport",
+                                            "text": "工单绩效分析",
+                                            "info": "",
+                                            "children": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": "alarm",
+                                    "text": "水管网诊断",
+                                    "info": "基于资源信息模型的设施运行预警管理及报警中心",
+                                    "children": [
+                                        {
+                                            "id": "realAlarm",
+                                            "text": "实时报警一览",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "alarmHistory",
+                                            "text": "历史报警明细",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "alarmSetup",
+                                            "text": "报警通知设置",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "alarmReport",
+                                            "text": "报警统计分析",
+                                            "info": "",
+                                            "children": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": "mining",
+                                    "text": "水资源分析",
+                                    "info": "基于资源信息模型的自定义数据挖掘工具",
+                                    "children": [
+                                        {
+                                            "id": "addMining",
+                                            "text": "添加数据分析...",
+                                            "info": "",
+                                            "children": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": "tools",
+                                    "text": "管理工具",
+                                    "info": "",
+                                    "children": [
+                                        {
+                                            "id": "mySayma",
+                                            "text": "机器对话",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "myInspect",
+                                            "text": "巡检记录",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "myTransition",
+                                            "text": "异动日志",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "myPublish",
+                                            "text": "运行日志",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "myProject",
+                                            "text": "工程管理",
+                                            "info": "",
+                                            "children": []
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "pad": {
+                            "enable": false,
+                            "local_path": "/WebApp/SmartApp/Pad/",
+                            "container": "webapp",
+                            "webapp": [
+                                {
+                                    "id": "p1",
+                                    "text": "XXXX",
+                                    "icons": "icon.png",
+                                    "info": "",
+                                    "local_path": "/WebApp/SmartApp/Pad/XXX"
+                                }
+                            ]
+                        },
+                        "mobile": {
+                            "enable": false,
+                            "local_path": "/WebApp/SmartApp/Mobile/",
+                            "container": "webapp",
+                            "webapp": []
+                        }
+                    },
+                    "icons": {
+                        "logo": "icon.png"
+                    },
+                    "urlPath": "/Webapp/WCPS",
+                    "top": 60,
+                    "left": 20
+                },
+                {
+                    "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                    "appid": "4CE92A2B-F533-40E2-BC12-6BABDCF7DDDB",
+                    "apptype": "Things",
+                    "name": "电能计量监管系统",
+                    "short": "校园电能",
+                    "description": "",
+                    "author": "ThingsLabs",
+                    "version": "1.0",
+                    "app": {
+                        "launch": {
+                            "enable": true,
+                            "local_path": "/Project/ECPS/",
+                            "container": "proxy",
+                            "sort": "2000",
+                            "height": 600,
+                            "width": 800,
+                            "webapp": [
+                                {
+                                    "id": "Situation",
+                                    "text": "运行态势",
+                                    "info": "全局总揽资源的态势感知，为了决策与行动提供支持",
+                                    "children": []
+                                },
+                                {
+                                    "id": "AppMap",
+                                    "text": "感知能效",
+                                    "info": "全局总揽地图信息汇聚、功能导航，用于实现空间维度的监管业务的细节穿透",
+                                    "children": []
+                                },
+                                {
+                                    "id": "PhysicalSpace",
+                                    "text": "电能监管",
+                                    "info": "全局总揽地图信息汇聚、功能导航，用于实现空间维度的监管业务的细节穿透",
+                                    "children": []
+                                },
+                                {
+                                    "id": "OrganizeSpace",
+                                    "text": "指标管理",
+                                    "info": "基于赛博空间的对象、属性、方法及业务逻辑关系，便于迭代业务的轻应用扩展",
+                                    "children": []
+                                },
+                                {
+                                    "id": "IoTNetwork",
+                                    "text": "电能联网",
+                                    "info": "基于网络空间的设备、人员定位与管理，便于运维业务的细节穿透",
+                                    "children": []
+                                },
+                                {
+                                    "id": "workflow",
+                                    "text": "运行保障",
+                                    "info": "基于业务流程模型的运行管理及服务中心",
+                                    "children": [
+                                        {
+                                            "id": "taskReal",
+                                            "text": "待处理任务单",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "taskHistory",
+                                            "text": "历史工单任务",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "taskSetup",
+                                            "text": "工作人员设置",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "taskReport",
+                                            "text": "工单绩效分析",
+                                            "info": "",
+                                            "children": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": "alarm",
+                                    "text": "电能预警",
+                                    "info": "基于资源信息模型的设施运行预警管理及报警中心",
+                                    "children": [
+                                        {
+                                            "id": "realalarm",
+                                            "text": "实时报警一览",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "alarmhistory",
+                                            "text": "历史报警明细",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "alarmsetup",
+                                            "text": "报警通知设置",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "alarmreport",
+                                            "text": "报警统计分析",
+                                            "info": "",
+                                            "children": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": "mining",
+                                    "text": "电能分析",
+                                    "info": "基于资源信息模型的自定义数据挖掘工具",
+                                    "children": [
+                                        {
+                                            "id": "addMining",
+                                            "text": "添加数据分析...",
+                                            "info": "",
+                                            "children": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": "tools",
+                                    "text": "管理工具",
+                                    "info": "",
+                                    "children": [
+                                        {
+                                            "id": "mySayma",
+                                            "text": "机器对话",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "myInspect",
+                                            "text": "巡检记录",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "myTransition",
+                                            "text": "异动日志",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "myPublish",
+                                            "text": "运行日志",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "myProject",
+                                            "text": "工程管理",
+                                            "info": "",
+                                            "children": []
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "pad": {
+                            "enable": false,
+                            "local_path": "/WebApp/SmartApp/Pad/",
+                            "container": "webapp",
+                            "webapp": [
+                                {
+                                    "id": "p1",
+                                    "text": "XXXX",
+                                    "icons": "icon.png",
+                                    "info": "",
+                                    "local_path": "/WebApp/SmartApp/Pad/XXX"
+                                }
+                            ]
+                        },
+                        "mobile": {
+                            "enable": false,
+                            "local_path": "/WebApp/SmartApp/Mobile/",
+                            "container": "webapp",
+                            "webapp": []
+                        }
+                    },
+                    "icons": {
+                        "logo": "icon.png"
+                    },
+                    "color": "blue-soft",
+                    "urlPath": "/Webapp/ECPS",
+                    "top": 160,
+                    "left": 20
+                },
+                {
+                    "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                    "appid": "4CE92A2B-F523-40E2-BC12-6BABDCF8DDDB",
+                    "apptype": "Things",
+                    "name": "公寓预付费电能管理系统",
+                    "short": "公寓预付费",
+                    "description": "基于资源信息模型(RIM)的公寓预付费电能管理系统。",
+                    "author": "ThingsLabs",
+                    "version": "1.0",
+                    "app": {
+                        "launch": {
+                            "enable": true,
+                            "local_path": "/Project/CCPS/",
+                            "container": "proxy",
+                            "sort": 3000,
+                            "height": 600,
+                            "width": 800,
+                            "webapp": [
+                                {
+                                    "id": "Situation",
+                                    "text": "运 行 态 势",
+                                    "info": "全局总揽资源的态势感知，为了决策与行动提供支持",
+                                    "children": []
+                                },
+                                {
+                                    "id": "AppMap",
+                                    "text": "公 寓 地 图",
+                                    "info": "全局总揽地图信息汇聚、功能导航，用于实现空间维度的监管业务的细节穿透",
+                                    "children": []
+                                },
+                                {
+                                    "id": "PhysicalSpace",
+                                    "text": "公寓预付费",
+                                    "info": "全局总揽地图信息汇聚、功能导航，用于实现空间维度的监管业务的细节穿透",
+                                    "children": []
+                                },
+                                {
+                                    "id": "CyberSpace",
+                                    "text": "预付费对象",
+                                    "info": "基于赛博空间的对象、属性、方法及业务逻辑关系，便于迭代业务的轻应用扩展",
+                                    "children": []
+                                },
+                                {
+                                    "id": "control",
+                                    "text": "预付费管理",
+                                    "info": "基于资源信息模型的设施运行状态管理及控制中心",
+                                    "children": [
+                                        {
+                                            "id": "realControl",
+                                            "text": "实时控制一览",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "controlHistory",
+                                            "text": "历史控制明细",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "controlSetup",
+                                            "text": "任务通知设置",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "controlReport",
+                                            "text": "运行统计分析",
+                                            "info": "",
+                                            "children": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": "workflow",
+                                    "text": "运行保障",
+                                    "info": "基于业务流程模型的运行管理及服务中心",
+                                    "children": [
+                                        {
+                                            "id": "taskReal",
+                                            "text": "待处理任务单",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "taskHistory",
+                                            "text": "历史工单任务",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "taskSetup",
+                                            "text": "工作人员设置",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "taskReport",
+                                            "text": "工单绩效分析",
+                                            "info": "",
+                                            "children": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": "alarm",
+                                    "text": "运行报警",
+                                    "info": "基于资源信息模型的设施运行预警管理及报警中心",
+                                    "children": [
+                                        {
+                                            "id": "realalarm",
+                                            "text": "实时报警一览",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "alarmhistory",
+                                            "text": "历史报警明细",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "alarmsetup",
+                                            "text": "报警通知设置",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "alarmreport",
+                                            "text": "报警统计分析",
+                                            "info": "",
+                                            "children": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": "mining",
+                                    "text": "运行分析",
+                                    "info": "基于资源信息模型的自定义数据挖掘工具",
+                                    "children": [
+                                        {
+                                            "id": "addMining",
+                                            "text": "添加数据分析...",
+                                            "info": "",
+                                            "children": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": "IoTNetwork",
+                                    "text": "公寓物联网",
+                                    "info": "基于网络空间的设备、人员定位与管理，便于运维业务的细节穿透",
+                                    "children": []
+                                },
+                                {
+                                    "id": "tools",
+                                    "text": "管理工具",
+                                    "info": "",
+                                    "children": [
+                                        {
+                                            "id": "mySayma",
+                                            "text": "机器对话",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "myInspect",
+                                            "text": "巡检记录",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "myTransition",
+                                            "text": "异动日志",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "myPublish",
+                                            "text": "运行日志",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "myProject",
+                                            "text": "工程管理",
+                                            "info": "",
+                                            "children": []
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "pad": {
+                            "enable": false,
+                            "local_path": "/WebApp/CCPS/Pad/",
+                            "container": "webapp",
+                            "webapp": []
+                        },
+                        "mobile": {
+                            "enable": true,
+                            "local_path": "",
+                            "container": "webapp",
+                            "webapp": [
+                                {
+                                    "id": "ElectPay",
+                                    "text": "电费充值",
+                                    "icons": "icon.png",
+                                    "info": "",
+                                    "local_path": "/WebApp/CCPS/Mobile/ElectPay"
+                                }
+                            ]
+                        }
+                    },
+                    "icons": {
+                        "logo": "icon.png"
+                    },
+                    "urlPath": "/Webapp/CCPS",
+                    "top": 260,
+                    "left": 20
+                },
+                {
+                    "update_url": "http://webstore.thingslabs.com/service/update/fax",
+                    "appid": "AD3BB962-282F-4EE5-8C33-60F31B85242F",
+                    "apptype": "ThingsCyber",
+                    "name": "机电设备远程运维管理系统",
+                    "short": "机电管养",
+                    "color": "undefined",
+                    "description": "",
+                    "author": "ThingsLabs",
+                    "version": "2.0.1",
+                    "app": {
+                        "launch": {
+                            "enable": true,
+                            "local_path": "/Project/JCPS/",
+                            "container": "proxy",
+                            "sort": 1675995285,
+                            "height": 720,
+                            "width": 1024,
+                            "webapp": [
+                                {
+                                    "id": "Situation",
+                                    "text": "态势感知",
+                                    "info": "",
+                                    "url": "",
+                                    "tree": "none",
+                                    "icon": "fa-adjust",
+                                    "children": []
+                                },
+                                {
+                                    "id": "myProject",
+                                    "text": "工程管理",
+                                    "info": "",
+                                    "url": "",
+                                    "tree": "none",
+                                    "icon": "fa-cog",
+                                    "children": []
+                                }
+                            ]
+                        },
+                        "mobile": {
+                            "enable": false,
+                            "local_path": "",
+                            "container": "proxy",
+                            "webapp": []
+                        }
+                    },
+                    "icons": {
+                        "logo": "1676345873795.png"
+                    },
+                    "urlPath": "/Webapp/JCPS",
+                    "top": 361,
+                    "left": 22
+                },
+                {
+                    "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                    "appid": "4CE92A2B-F633-40E2-BC12-6BABDCF8DDDB",
+                    "apptype": "Things",
+                    "name": "智能路灯远程控制系统",
+                    "short": "校园路灯",
+                    "description": "基于资源信息模型(RIM)的新思联信息物理系统。",
+                    "author": "ThingsLabs",
+                    "version": "1.0",
+                    "app": {
+                        "launch": {
+                            "enable": true,
+                            "local_path": "/Project/LCPS/",
+                            "container": "proxy",
+                            "sort": 7000,
+                            "height": 600,
+                            "width": 800,
+                            "webapp": [
+                                {
+                                    "id": "Situation",
+                                    "text": "运行态势",
+                                    "info": "全局总揽资源的态势感知，为了决策与行动提供支持",
+                                    "children": []
+                                },
+                                {
+                                    "id": "PhysicalSpace",
+                                    "text": "校园路灯",
+                                    "info": "全局总揽地图信息汇聚、功能导航，用于实现空间维度的监管业务的细节穿透",
+                                    "children": []
+                                },
+                                {
+                                    "id": "CyberSpace",
+                                    "text": "路灯对象",
+                                    "info": "基于赛博空间的对象、属性、方法及业务逻辑关系，便于迭代业务的轻应用扩展",
+                                    "children": []
+                                },
+                                {
+                                    "id": "IoTNetwork",
+                                    "text": "路灯联网",
+                                    "info": "基于网络空间的设备、人员定位与管理，便于运维业务的细节穿透",
+                                    "children": []
+                                },
+                                {
+                                    "id": "control",
+                                    "text": "路灯集控",
+                                    "info": "基于资源信息模型的设施运行状态管理及控制中心",
+                                    "children": [
+                                        {
+                                            "id": "realControl",
+                                            "text": "实时控制一览",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "controlHistory",
+                                            "text": "历史控制明细",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "controlSetup",
+                                            "text": "任务通知设置",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "controlReport",
+                                            "text": "运行统计分析",
+                                            "info": "",
+                                            "children": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": "workflow",
+                                    "text": "运行保障",
+                                    "info": "基于业务流程模型的运行管理及服务中心",
+                                    "children": [
+                                        {
+                                            "id": "taskReal",
+                                            "text": "待处理任务单",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "taskHistory",
+                                            "text": "历史工单任务",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "taskSetup",
+                                            "text": "工作人员设置",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "taskReport",
+                                            "text": "工单绩效分析",
+                                            "info": "",
+                                            "children": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": "alarm",
+                                    "text": "运行报警",
+                                    "info": "基于资源信息模型的设施运行预警管理及报警中心",
+                                    "children": [
+                                        {
+                                            "id": "realalarm",
+                                            "text": "实时报警一览",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "alarmhistory",
+                                            "text": "历史报警明细",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "alarmsetup",
+                                            "text": "报警通知设置",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "alarmreport",
+                                            "text": "报警统计分析",
+                                            "info": "",
+                                            "children": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": "mining",
+                                    "text": "运行分析",
+                                    "info": "基于资源信息模型的自定义数据挖掘工具",
+                                    "children": [
+                                        {
+                                            "id": "addMining",
+                                            "text": "添加数据分析...",
+                                            "info": "",
+                                            "children": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": "tools",
+                                    "text": "管理工具",
+                                    "info": "",
+                                    "children": [
+                                        {
+                                            "id": "mySayma",
+                                            "text": "机器对话",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "myInspect",
+                                            "text": "巡检记录",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "myTransition",
+                                            "text": "异动日志",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "myPublish",
+                                            "text": "运行日志",
+                                            "info": "",
+                                            "children": []
+                                        },
+                                        {
+                                            "id": "myProject",
+                                            "text": "工程管理",
+                                            "info": "",
+                                            "children": []
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "pad": {
+                            "enable": false,
+                            "local_path": "/WebApp/SmartApp/Pad/",
+                            "container": "webapp",
+                            "webapp": [
+                                {
+                                    "id": "p1",
+                                    "text": "XXXX",
+                                    "icons": "icon.png",
+                                    "info": "",
+                                    "local_path": "/WebApp/SmartApp/Pad/XXX"
+                                }
+                            ]
+                        },
+                        "mobile": {
+                            "enable": false,
+                            "local_path": "/WebApp/SmartApp/Mobile/",
+                            "container": "webapp",
+                            "webapp": []
+                        }
+                    },
+                    "icons": {
+                        "logo": "icon.png"
+                    },
+                    "urlPath": "/Webapp/LCPS",
+                    "top": 470,
+                    "left": 27
+                }
+            ],
+            "widgetList": [],
+            "dockList": []
+        },
+        {
+            "bTensile": false,
+            "imgWrapper": "",
+            "appList": [],
+            "widgetList": [],
+            "dockList": []
+        },
+        {
+            "bTensile": false,
+            "imgWrapper": "",
+            "appList": [],
+            "widgetList": [],
+            "dockList": []
+        }
+    ],
+    "system": {
+        "myTheme": "/Theme/7GWifi",
+        "serverInfo": {
+            "PlatformName": "北京工业大学校园物联网平台",
+            "PlatformVer": "3.1.1",
+            "PlatformType": "大客户版",
+            "PlatformID": "c5a05b565f1f348283add8b417513ecbba9a4031",
+            "AuthName": "北京工业大学",
+            "HomePage": "TOS20221130001",
+            "ApplyNum": 200,
+            "DeviceNum": 200000,
+            "StartTime": "2023-03-29 10:45:48",
+            "UpdateTime": "2023-03-29 11:17:00",
+            "CpuUsage": 12,
+            "MemoryTotalPhys": 130630,
+            "MemoryUsagePhys": 9258,
+            "DiskTotalSpace": 204447,
+            "DiskUsageSpace": 87385,
+            "FileTotalSpace": 2080069,
+            "FileUsageSpace": 975679,
+            "DataTotalSpace": 2080069,
+            "DataUsageSpace": 975679,
+            "TaskCount": 18,
+            "ActiveSession": 15,
+            "SessionTotal": 79,
+            "DataBasePool": 14,
+            "RunTimeMinute": 149871,
+            "IDCodeOnline": 0,
+            "IDCodeOffline": 0,
+            "IDCodeRecordDay": 0,
+            "AccessOnline": 0,
+            "AccessOffline": 0,
+            "AccessRecordCount": 0,
+            "AccessAlarmCount": 0,
+            "AccessRecordDay": 0,
+            "AccessAlarmDay": 0,
+            "AssetOnline": 0,
+            "AssetOffline": 0,
+            "AssetRecordCount": 0,
+            "AssetAlarmCount": 0,
+            "AssetRecordDay": 0,
+            "AssetAlarmDay": 0,
+            "VideoOnline": 180,
+            "VideoOffline": 0,
+            "VideoPlayCount": 0,
+            "KnowledgeName": "知识中心",
+            "KnowAutoReview": true
+        },
+        "installApp": [
+            {
+                "update_url": "https://webstore.thingslabs.com/service/update/fax",
+                "appid": "3D25CFD7-BFD2-4E1E-905E-6D80FB1C9B93",
+                "apptype": "Things",
+                "name": "物联网联接管理平台",
+                "short": "物联网联接",
+                "description": "统一管理的物联网连接汇聚与点表路由交换",
+                "author": "ThingsLabs",
+                "version": "1.0.1",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/IoTManager/main.html",
+                        "container": "sysapp",
+                        "sort": 1,
+                        "height": 720,
+                        "width": 960
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "/WebApp/IoTManager/Mobile/index.tjs",
+                        "container": "sysapp"
+                    }
+                },
+                "icons": {
+                    "logo": "icon_256.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/IoTManager",
+                "appPath": "IoTManager"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/fax",
+                "appid": "0CB4D644-896A-4ADA-9D5F-58448BD04498",
+                "apptype": "Things",
+                "name": "弹性应用管理中心",
+                "short": "应用管理",
+                "description": "基于信息物理系统的弹性应用管理中心。",
+                "author": "ThingsLabs",
+                "version": "1.0.1",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/WebApp/AppStore/index.ejs",
+                        "container": "system",
+                        "sort": 1,
+                        "height": 678,
+                        "width": 960
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "",
+                        "container": "system"
+                    }
+                },
+                "icons": {
+                    "logo": "store.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/AppStore",
+                "appPath": "AppStore"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/fax",
+                "appid": "167D4A20-E6AD-4EFA-8313-E76358D1F532",
+                "apptype": "Things",
+                "name": "命令控制台",
+                "short": "命令控制台",
+                "description": "ThingsOS 命令控制台",
+                "author": "ThingsLabs",
+                "version": "1.0",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/WebApp/Console/index.ejs",
+                        "container": "system",
+                        "sort": 2,
+                        "height": 678,
+                        "width": 960
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "/WebApp/Console/Mobile/index.tjs",
+                        "container": "system"
+                    }
+                },
+                "icons": {
+                    "logo": "logo.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/Console",
+                "appPath": "Console"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "5D8F8B68-E9E6-48D5-8DD4-3728F67408BE",
+                "apptype": "Things",
+                "name": "统一账户管理中心",
+                "short": "账户管理",
+                "description": "基于组织机构模型的统一账户管理中心。",
+                "author": "ThingsLabs",
+                "version": "1.0",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/WebApp/UserManager/index.ejs",
+                        "container": "system",
+                        "sort": 3,
+                        "height": 678,
+                        "width": 960
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "/WebApp/UserManager/Mobile/index.ejs",
+                        "container": "system"
+                    }
+                },
+                "icons": {
+                    "logo": "icon.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/UserManager",
+                "appPath": "UserManager"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/fax",
+                "appid": "610CA703-EFB3-4726-A949-5990BFFA8B78",
+                "apptype": "Things",
+                "name": "联 络",
+                "short": "联 络",
+                "description": "联络我们这个圈子的人",
+                "author": "ThingsLabs",
+                "version": "1.0.1",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/WebApp/Sayma/index.ejs",
+                        "container": "personal",
+                        "sort": 4,
+                        "height": 678,
+                        "width": 960
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "/WebApp/Sayma/Mobile/index.ejs",
+                        "container": "personal"
+                    }
+                },
+                "icons": {
+                    "logo": "icon.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/Sayma",
+                "appPath": "Sayma"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "2EFFCB40-DD32-4D7C-8B76-9AE4BC3BE776",
+                "apptype": "Things",
+                "name": "备忘录",
+                "short": "备忘录",
+                "description": "随时随地记下您的备忘信息",
+                "author": "ThingsLabs",
+                "version": "1.0.1",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/WebApp/Note/",
+                        "container": "personal",
+                        "sort": 5,
+                        "height": 678,
+                        "width": 960
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "",
+                        "container": "webapp",
+                        "webapp": []
+                    }
+                },
+                "icons": {
+                    "logo": "icon.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/Note",
+                "appPath": "Note"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "73C98149-620B-4F05-A75A-79B6C626D992",
+                "apptype": "Things",
+                "name": "日 程",
+                "short": "日 程",
+                "description": "管理记录您的日程信息",
+                "author": "ThingsLabs",
+                "version": "1.0.1",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/WebApp/Calendar/",
+                        "container": "personal",
+                        "sort": 6,
+                        "height": 678,
+                        "width": 960
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "",
+                        "container": "webapp",
+                        "webapp": []
+                    }
+                },
+                "icons": {
+                    "logo": "Calendar.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/Calendar",
+                "appPath": "Calendar"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "4EE14DC5-B67F-4AB6-AFA5-4C9D662A8184",
+                "apptype": "Things",
+                "name": "积分聚合管理服务系统",
+                "short": "积分聚合",
+                "description": "基于互联网的统一积分聚合管理中心。",
+                "author": "ThingsLabs",
+                "version": "1.0",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/WebApp/PointValue/",
+                        "container": "sysapp",
+                        "sort": 7,
+                        "height": 678,
+                        "width": 960,
+                        "webapp": [
+                            {
+                                "id": "paykpi",
+                                "text": "积分视窗",
+                                "info": "",
+                                "children": []
+                            },
+                            {
+                                "id": "payorder",
+                                "text": "积分交易",
+                                "info": "",
+                                "children": []
+                            },
+                            {
+                                "id": "payactivity",
+                                "text": "积分活动",
+                                "info": "",
+                                "children": []
+                            },
+                            {
+                                "id": "payaccount",
+                                "text": "积分对账",
+                                "info": "",
+                                "children": []
+                            },
+                            {
+                                "id": "paylog",
+                                "text": "审计日志",
+                                "info": "",
+                                "children": []
+                            },
+                            {
+                                "id": "payapp",
+                                "text": "积分应用",
+                                "info": "",
+                                "children": []
+                            }
+                        ]
+                    },
+                    "mobile": {
+                        "enable": true,
+                        "local_path": "",
+                        "container": "sysapp",
+                        "webapp": [
+                            {
+                                "id": "PeopleNetwork",
+                                "text": "新思人脉",
+                                "icons": "connection.png",
+                                "info": "",
+                                "local_path": "/WebApp/PointValue/Mobile/PeopleNetwork/"
+                            }
+                        ]
+                    }
+                },
+                "icons": {
+                    "logo": "icon_256.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/PointValue",
+                "appPath": "PointValue"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/fax",
+                "appid": "ABA2FBAC-058C-474B-99E5-527BEE4315D3",
+                "apptype": "Things",
+                "name": "视频聚合管理服务系统",
+                "short": "视频聚合",
+                "description": "基于AI的的内置视频聚合服务",
+                "author": "ThingsLabs",
+                "version": "2.0",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/WebApp/SmartVideo/",
+                        "container": "webapp",
+                        "sort": 7,
+                        "height": 678,
+                        "width": 960
+                    },
+                    "mobile": {
+                        "enable": true,
+                        "local_path": "",
+                        "container": "webapp",
+                        "webapp": [
+                            {
+                                "id": "VideoInspection",
+                                "text": "视频巡检",
+                                "icons": "icon.png",
+                                "info": "",
+                                "local_path": "/WebApp/SmartVideo/Mobile/"
+                            }
+                        ]
+                    }
+                },
+                "icons": {
+                    "logo": "icon.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/SmartVideo",
+                "appPath": "SmartVideo"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "34AD1296-52A2-4F78-B15F-5699267C7BCD",
+                "apptype": "Things",
+                "name": "天 气",
+                "short": "天 气",
+                "description": "查询实况天气预报信息",
+                "author": "ThingsLabs",
+                "version": "1.0.1",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/WebApp/Weather/index.ejs",
+                        "container": "personal",
+                        "sort": 7,
+                        "height": 678,
+                        "width": 960
+                    },
+                    "mobile": {
+                        "enable": true,
+                        "local_path": "/WebApp/Weather/Mobile.ejs",
+                        "container": "personal"
+                    }
+                },
+                "icons": {
+                    "logo": "weather.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/Weather",
+                "appPath": "Weather"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "BCAD05F9-8D1A-449A-A660-C7AD11F3065C",
+                "apptype": "Things",
+                "name": "公 告",
+                "short": "公 告",
+                "description": "管理发布公告信息",
+                "author": "ThingsLabs",
+                "version": "1.0.1",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/WebApp/Bulletin/",
+                        "container": "personal",
+                        "sort": 8,
+                        "height": 678,
+                        "width": 960
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "",
+                        "container": "webapp",
+                        "webapp": []
+                    }
+                },
+                "icons": {
+                    "logo": "bulletin.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/Bulletin",
+                "appPath": "Bulletin"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "29973520-18C7-48F5-B53B-73F7A9573B44",
+                "apptype": "Things",
+                "name": "消息中心",
+                "short": "消息中心",
+                "description": "管理私人消息的接收及发布工具",
+                "author": "ThingsLabs",
+                "version": "1.0.1",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/WebApp/MessageCenter/index.ejs",
+                        "container": "system",
+                        "sort": 9,
+                        "height": 678,
+                        "width": 960
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "/WebApp/MessageCenter/Mobile/index.ejs",
+                        "container": "system"
+                    }
+                },
+                "icons": {
+                    "logo": "icon_64.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/MessageCenter",
+                "appPath": "MessageCenter"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "205833BA-6463-4F2B-BBC3-F1D483CB3169",
+                "apptype": "Things",
+                "name": "邮件中心",
+                "short": "邮件中心",
+                "description": "查看邮箱及收发个人信息",
+                "author": "ThingsLabs",
+                "version": "1.0.1",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/WebApp/MailCenter/index.ejs",
+                        "container": "system",
+                        "sort": 10,
+                        "height": 678,
+                        "width": 960
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "/WebApp/MailCenter/Mobile/index.ejs",
+                        "container": "system"
+                    }
+                },
+                "icons": {
+                    "logo": "icon_64.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/MailCenter",
+                "appPath": "MailCenter"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "81E75440-3C16-43C7-B5E4-5577A2342B8D",
+                "apptype": "Things",
+                "name": "知识聚合管理服务系统",
+                "short": "知识聚合",
+                "description": "知识聚合的内容发布管理。",
+                "author": "ThingsLabs",
+                "version": "1.0",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/WebApp/Knowledge/index.ejs",
+                        "container": "webapp",
+                        "sort": 10,
+                        "height": 678,
+                        "width": 960,
+                        "webapp": [
+                            {
+                                "id": "knowledgekpi",
+                                "text": "知识视窗",
+                                "info": "",
+                                "children": []
+                            },
+                            {
+                                "id": "knowledgeset",
+                                "text": "知识管理",
+                                "info": "",
+                                "children": []
+                            },
+                            {
+                                "id": "faq",
+                                "text": "咨询答复",
+                                "info": "",
+                                "children": []
+                            },
+                            {
+                                "id": "knowledgetype",
+                                "text": "分类管理",
+                                "info": "",
+                                "children": []
+                            },
+                            {
+                                "id": "knowledgetag",
+                                "text": "标签管理",
+                                "info": "",
+                                "children": []
+                            }
+                        ]
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "",
+                        "container": "webapp",
+                        "webapp": []
+                    }
+                },
+                "icons": {
+                    "logo": "icon_256.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/Knowledge",
+                "appPath": "Knowledge"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "2CD1F74F-31A5-4343-855F-8B5117FE3993",
+                "apptype": "Things",
+                "name": "短信中心",
+                "short": "短信中心",
+                "description": "查看及发送个人手机短信",
+                "author": "ThingsLabs",
+                "version": "1.0",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/WebApp/SMSCenter/index.ejs",
+                        "container": "system",
+                        "sort": 11,
+                        "height": 678,
+                        "width": 960
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "/WebApp/SMSCenter/Mobile/index.ejs",
+                        "container": "system"
+                    }
+                },
+                "icons": {
+                    "logo": "icon_64.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/SMSCenter",
+                "appPath": "SMSCenter"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "1BE4A6CA-4C05-4CCB-944D-777C55A60063",
+                "apptype": "Things",
+                "name": "轻应用管理中心",
+                "short": "轻应用管理",
+                "description": "基于微服务的轻应用注册及消息模板管理",
+                "author": "ThingsLabs",
+                "version": "1.0.1",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/WebApp/WeiCenter/",
+                        "container": "sysapp",
+                        "sort": 12,
+                        "height": 678,
+                        "width": 960,
+                        "webapp": []
+                    },
+                    "pad": {
+                        "enable": true,
+                        "local_path": "",
+                        "container": "system",
+                        "sort": 12,
+                        "height": 720,
+                        "width": 960,
+                        "webapp": [
+                            {
+                                "id": "Recharge",
+                                "text": "学生公寓电费充值",
+                                "info": "",
+                                "children": []
+                            }
+                        ]
+                    },
+                    "mobile": {
+                        "enable": true,
+                        "local_path": "",
+                        "container": "sysapp",
+                        "webapp": [
+                            {
+                                "id": "InspectAssist",
+                                "text": "巡检助手",
+                                "type": "personal",
+                                "group": "",
+                                "icons": "icon.png",
+                                "info": "",
+                                "local_path": "/Webapp/WeiCenter/Mobile/InspectAssist/"
+                            },
+                            {
+                                "id": "WorkAssist",
+                                "text": "工单助手",
+                                "type": "personal",
+                                "group": "",
+                                "icons": "icon.png",
+                                "info": "",
+                                "local_path": "/Webapp/WeiCenter/Mobile/WorkAssist/"
+                            },
+                            {
+                                "id": "Energy",
+                                "text": "掌中能源",
+                                "type": "",
+                                "group": "",
+                                "icons": "icon.png",
+                                "info": "",
+                                "local_path": "/Webapp/WeiCenter/Mobile/Energy/"
+                            },
+                            {
+                                "id": "Diagnose",
+                                "text": "建筑诊断",
+                                "type": "",
+                                "group": "",
+                                "icons": "icon.png",
+                                "info": "",
+                                "local_path": "/Webapp/WeiCenter/Mobile/Diagnose/"
+                            },
+                            {
+                                "id": "Inspection",
+                                "text": "变电所巡检",
+                                "type": "",
+                                "group": "",
+                                "icons": "icon.png",
+                                "info": "",
+                                "local_path": "/Webapp/WeiCenter/Mobile/Inspection/"
+                            },
+                            {
+                                "id": "InspectionHigh",
+                                "text": "开闭所巡检",
+                                "type": "",
+                                "group": "",
+                                "icons": "icon.png",
+                                "info": "",
+                                "local_path": "/Webapp/WeiCenter/Mobile/InspectionHigh/"
+                            },
+                            {
+                                "id": "SearchMeter",
+                                "text": "表具查询",
+                                "type": "",
+                                "group": "",
+                                "icons": "icon.png",
+                                "info": "",
+                                "local_path": "/Webapp/WeiCenter/Mobile/SearchMeter/"
+                            }
+                        ]
+                    }
+                },
+                "icons": {
+                    "logo": "icon_64.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/WeiCenter",
+                "appPath": "WeiCenter"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "4CE92A2B-F533-40E2-BC12-6BABDCF8DDDB",
+                "apptype": "Things",
+                "name": "物联网水资源示范工程",
+                "short": "给水管网",
+                "description": "基于资源信息模型(RIM)的新思联信息物理系统。",
+                "author": "ThingsLabs",
+                "version": "1.0",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/Project/WCPS/",
+                        "container": "proxy",
+                        "sort": 1000,
+                        "height": 600,
+                        "width": 800,
+                        "webapp": [
+                            {
+                                "id": "Situation",
+                                "text": "运行态势",
+                                "info": "全局总揽资源的态势感知，为了决策与行动提供支持",
+                                "children": []
+                            },
+                            {
+                                "id": "AppMap",
+                                "text": "水管网地图",
+                                "info": "全局总揽地图信息汇聚、功能导航，用于实现空间维度的监管业务的细节穿透",
+                                "children": []
+                            },
+                            {
+                                "id": "PhysicalSpace",
+                                "text": "水管网感知",
+                                "info": "全局总揽地图信息汇聚、功能导航，用于实现空间维度的监管业务的细节穿透",
+                                "children": []
+                            },
+                            {
+                                "id": "OrganizeSpace",
+                                "text": "水资源对象",
+                                "info": "基于赛博空间的对象、属性、方法及业务逻辑关系，便于迭代业务的轻应用扩展",
+                                "children": [],
+                                "icon": "undefined"
+                            },
+                            {
+                                "id": "IoTNetwork",
+                                "text": "水管网物联",
+                                "info": "基于网络空间的设备、人员定位与管理，便于运维业务的细节穿透",
+                                "children": []
+                            },
+                            {
+                                "id": "workflow",
+                                "text": "水管网运维",
+                                "info": "基于业务流程模型的运行管理及服务中心",
+                                "children": [
+                                    {
+                                        "id": "taskReal",
+                                        "text": "待处理任务单",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskHistory",
+                                        "text": "历史工单任务",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskSetup",
+                                        "text": "工作人员设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskReport",
+                                        "text": "工单绩效分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "alarm",
+                                "text": "水管网诊断",
+                                "info": "基于资源信息模型的设施运行预警管理及报警中心",
+                                "children": [
+                                    {
+                                        "id": "realAlarm",
+                                        "text": "实时报警一览",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmHistory",
+                                        "text": "历史报警明细",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmSetup",
+                                        "text": "报警通知设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmReport",
+                                        "text": "报警统计分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "mining",
+                                "text": "水资源分析",
+                                "info": "基于资源信息模型的自定义数据挖掘工具",
+                                "children": [
+                                    {
+                                        "id": "addMining",
+                                        "text": "添加数据分析...",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "tools",
+                                "text": "管理工具",
+                                "info": "",
+                                "children": [
+                                    {
+                                        "id": "mySayma",
+                                        "text": "机器对话",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myInspect",
+                                        "text": "巡检记录",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myTransition",
+                                        "text": "异动日志",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myPublish",
+                                        "text": "运行日志",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myProject",
+                                        "text": "工程管理",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "pad": {
+                        "enable": false,
+                        "local_path": "/WebApp/SmartApp/Pad/",
+                        "container": "webapp",
+                        "webapp": []
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "/WebApp/SmartApp/Mobile/",
+                        "container": "webapp",
+                        "webapp": []
+                    }
+                },
+                "icons": {
+                    "logo": "icon.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/WCPS",
+                "appPath": "WCPS"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "4CE92A2B-F533-40E2-BC12-6BABDCF7DDDB",
+                "apptype": "Things",
+                "name": "电能计量监管系统",
+                "short": "校园电能",
+                "description": "",
+                "author": "ThingsLabs",
+                "version": "1.0",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/Project/ECPS/",
+                        "container": "proxy",
+                        "sort": "2000",
+                        "height": 600,
+                        "width": 800,
+                        "webapp": [
+                            {
+                                "id": "Situation",
+                                "text": "运行态势",
+                                "info": "全局总揽资源的态势感知，为了决策与行动提供支持",
+                                "children": []
+                            },
+                            {
+                                "id": "AppMap",
+                                "text": "感知能效",
+                                "info": "全局总揽地图信息汇聚、功能导航，用于实现空间维度的监管业务的细节穿透",
+                                "children": []
+                            },
+                            {
+                                "id": "PhysicalSpace",
+                                "text": "电能监管",
+                                "info": "全局总揽地图信息汇聚、功能导航，用于实现空间维度的监管业务的细节穿透",
+                                "children": []
+                            },
+                            {
+                                "id": "OrganizeSpace",
+                                "text": "指标管理",
+                                "info": "基于赛博空间的对象、属性、方法及业务逻辑关系，便于迭代业务的轻应用扩展",
+                                "children": []
+                            },
+                            {
+                                "id": "IoTNetwork",
+                                "text": "电能联网",
+                                "info": "基于网络空间的设备、人员定位与管理，便于运维业务的细节穿透",
+                                "children": []
+                            },
+                            {
+                                "id": "workflow",
+                                "text": "运行保障",
+                                "info": "基于业务流程模型的运行管理及服务中心",
+                                "children": [
+                                    {
+                                        "id": "taskReal",
+                                        "text": "待处理任务单",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskHistory",
+                                        "text": "历史工单任务",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskSetup",
+                                        "text": "工作人员设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskReport",
+                                        "text": "工单绩效分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "alarm",
+                                "text": "电能预警",
+                                "info": "基于资源信息模型的设施运行预警管理及报警中心",
+                                "children": [
+                                    {
+                                        "id": "realalarm",
+                                        "text": "实时报警一览",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmhistory",
+                                        "text": "历史报警明细",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmsetup",
+                                        "text": "报警通知设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmreport",
+                                        "text": "报警统计分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "mining",
+                                "text": "电能分析",
+                                "info": "基于资源信息模型的自定义数据挖掘工具",
+                                "children": [
+                                    {
+                                        "id": "addMining",
+                                        "text": "添加数据分析...",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "tools",
+                                "text": "管理工具",
+                                "info": "",
+                                "children": [
+                                    {
+                                        "id": "mySayma",
+                                        "text": "机器对话",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myInspect",
+                                        "text": "巡检记录",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myTransition",
+                                        "text": "异动日志",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myPublish",
+                                        "text": "运行日志",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myProject",
+                                        "text": "工程管理",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "pad": {
+                        "enable": false,
+                        "local_path": "/WebApp/SmartApp/Pad/",
+                        "container": "webapp",
+                        "webapp": []
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "/WebApp/SmartApp/Mobile/",
+                        "container": "webapp",
+                        "webapp": []
+                    }
+                },
+                "icons": {
+                    "logo": "icon.png"
+                },
+                "color": "blue-soft",
+                "isUserApp": false,
+                "urlPath": "/Webapp/ECPS",
+                "appPath": "ECPS"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "4CE92A2B-F523-40E2-BC12-6BABDCF8DDDB",
+                "apptype": "Things",
+                "name": "公寓预付费电能管理系统",
+                "short": "公寓预付费",
+                "description": "基于资源信息模型(RIM)的公寓预付费电能管理系统。",
+                "author": "ThingsLabs",
+                "version": "1.0",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/Project/CCPS/",
+                        "container": "proxy",
+                        "sort": 3000,
+                        "height": 600,
+                        "width": 800,
+                        "webapp": [
+                            {
+                                "id": "Situation",
+                                "text": "运 行 态 势",
+                                "info": "全局总揽资源的态势感知，为了决策与行动提供支持",
+                                "children": []
+                            },
+                            {
+                                "id": "AppMap",
+                                "text": "公 寓 地 图",
+                                "info": "全局总揽地图信息汇聚、功能导航，用于实现空间维度的监管业务的细节穿透",
+                                "children": []
+                            },
+                            {
+                                "id": "PhysicalSpace",
+                                "text": "公寓预付费",
+                                "info": "全局总揽地图信息汇聚、功能导航，用于实现空间维度的监管业务的细节穿透",
+                                "children": []
+                            },
+                            {
+                                "id": "CyberSpace",
+                                "text": "预付费对象",
+                                "info": "基于赛博空间的对象、属性、方法及业务逻辑关系，便于迭代业务的轻应用扩展",
+                                "children": []
+                            },
+                            {
+                                "id": "control",
+                                "text": "预付费管理",
+                                "info": "基于资源信息模型的设施运行状态管理及控制中心",
+                                "children": [
+                                    {
+                                        "id": "realControl",
+                                        "text": "实时控制一览",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "controlHistory",
+                                        "text": "历史控制明细",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "controlSetup",
+                                        "text": "任务通知设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "controlReport",
+                                        "text": "运行统计分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "workflow",
+                                "text": "运行保障",
+                                "info": "基于业务流程模型的运行管理及服务中心",
+                                "children": [
+                                    {
+                                        "id": "taskReal",
+                                        "text": "待处理任务单",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskHistory",
+                                        "text": "历史工单任务",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskSetup",
+                                        "text": "工作人员设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskReport",
+                                        "text": "工单绩效分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "alarm",
+                                "text": "运行报警",
+                                "info": "基于资源信息模型的设施运行预警管理及报警中心",
+                                "children": [
+                                    {
+                                        "id": "realalarm",
+                                        "text": "实时报警一览",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmhistory",
+                                        "text": "历史报警明细",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmsetup",
+                                        "text": "报警通知设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmreport",
+                                        "text": "报警统计分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "mining",
+                                "text": "运行分析",
+                                "info": "基于资源信息模型的自定义数据挖掘工具",
+                                "children": [
+                                    {
+                                        "id": "addMining",
+                                        "text": "添加数据分析...",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "IoTNetwork",
+                                "text": "公寓物联网",
+                                "info": "基于网络空间的设备、人员定位与管理，便于运维业务的细节穿透",
+                                "children": []
+                            },
+                            {
+                                "id": "tools",
+                                "text": "管理工具",
+                                "info": "",
+                                "children": [
+                                    {
+                                        "id": "mySayma",
+                                        "text": "机器对话",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myInspect",
+                                        "text": "巡检记录",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myTransition",
+                                        "text": "异动日志",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myPublish",
+                                        "text": "运行日志",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myProject",
+                                        "text": "工程管理",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "pad": {
+                        "enable": false,
+                        "local_path": "/WebApp/CCPS/Pad/",
+                        "container": "webapp",
+                        "webapp": []
+                    },
+                    "mobile": {
+                        "enable": true,
+                        "local_path": "",
+                        "container": "webapp",
+                        "webapp": [
+                            {
+                                "id": "ElectPay",
+                                "text": "电费充值",
+                                "icons": "icon.png",
+                                "info": "",
+                                "local_path": "/WebApp/CCPS/Mobile/ElectPay"
+                            }
+                        ]
+                    }
+                },
+                "icons": {
+                    "logo": "icon.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/CCPS",
+                "appPath": "CCPS"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "4CE22A2B-F633-40E2-BC12-6BABDCF8DDDB",
+                "apptype": "Things",
+                "name": "空调监控系统",
+                "short": "VRV空调",
+                "description": "",
+                "author": "ThingsLabs",
+                "version": "1.0",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/Project/ACPS/",
+                        "container": "proxy",
+                        "sort": "3002",
+                        "height": 600,
+                        "width": 800,
+                        "webapp": [
+                            {
+                                "id": "Situation",
+                                "text": "运行态势",
+                                "info": "全局总揽资源的态势感知，为了决策与行动提供支持",
+                                "children": []
+                            },
+                            {
+                                "id": "PhysicalSpace",
+                                "text": "空调监控",
+                                "info": "全局总揽地图信息汇聚、功能导航，用于实现空间维度的监管业务的细节穿透",
+                                "children": []
+                            },
+                            {
+                                "id": "CyberSpace",
+                                "text": "空调对象",
+                                "info": "基于赛博空间的对象、属性、方法及业务逻辑关系，便于迭代业务的轻应用扩展",
+                                "children": []
+                            },
+                            {
+                                "id": "IoTNetwork",
+                                "text": "空调联网",
+                                "info": "基于网络空间的设备、人员定位与管理，便于运维业务的细节穿透",
+                                "children": []
+                            },
+                            {
+                                "id": "control",
+                                "text": "空调集控",
+                                "info": "基于资源信息模型的设施运行状态管理及控制中心",
+                                "children": [
+                                    {
+                                        "id": "realControl",
+                                        "text": "实时控制一览",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "controlHistory",
+                                        "text": "历史控制明细",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "controlSetup",
+                                        "text": "任务通知设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "controlReport",
+                                        "text": "运行统计分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "workflow",
+                                "text": "运行保障",
+                                "info": "基于业务流程模型的运行管理及服务中心",
+                                "children": [
+                                    {
+                                        "id": "taskReal",
+                                        "text": "待处理任务单",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskHistory",
+                                        "text": "历史工单任务",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskSetup",
+                                        "text": "工作人员设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskReport",
+                                        "text": "工单绩效分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "alarm",
+                                "text": "运行报警",
+                                "info": "基于资源信息模型的设施运行预警管理及报警中心",
+                                "children": [
+                                    {
+                                        "id": "realalarm",
+                                        "text": "实时报警一览",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmhistory",
+                                        "text": "历史报警明细",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmsetup",
+                                        "text": "报警通知设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmreport",
+                                        "text": "报警统计分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "mining",
+                                "text": "运行分析",
+                                "info": "基于资源信息模型的自定义数据挖掘工具",
+                                "children": [
+                                    {
+                                        "id": "addMining",
+                                        "text": "添加数据分析...",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "tools",
+                                "text": "管理工具",
+                                "info": "",
+                                "children": [
+                                    {
+                                        "id": "mySayma",
+                                        "text": "机器对话",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myInspect",
+                                        "text": "巡检记录",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myTransition",
+                                        "text": "异动日志",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myPublish",
+                                        "text": "运行日志",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myProject",
+                                        "text": "工程管理",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "pad": {
+                        "enable": false,
+                        "local_path": "/WebApp/SmartApp/Pad/",
+                        "container": "webapp",
+                        "webapp": []
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "/WebApp/SmartApp/Mobile/",
+                        "container": "webapp",
+                        "webapp": []
+                    }
+                },
+                "icons": {
+                    "logo": "icon.png"
+                },
+                "color": "blue-soft",
+                "isUserApp": false,
+                "urlPath": "/Webapp/ACPS",
+                "appPath": "ACPS"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "6CE92A2B-F533-40E2-BC12-6BABDCF7DDDB",
+                "apptype": "Things",
+                "name": "变电所参数监管系统",
+                "short": "变电所管理",
+                "description": "基于资源信息模型(RIM)的新思联信息物理系统。",
+                "author": "ThingsLabs",
+                "version": "1.0",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/Project/PCPS/",
+                        "container": "proxy",
+                        "sort": 4000,
+                        "height": 600,
+                        "width": 800,
+                        "webapp": [
+                            {
+                                "id": "Situation",
+                                "text": "运行态势",
+                                "info": "全局总揽资源的态势感知，为了决策与行动提供支持",
+                                "children": []
+                            },
+                            {
+                                "id": "AppMap",
+                                "text": "变电所分布",
+                                "info": "全局总揽资源的态势感知，为了决策与行动提供支持",
+                                "children": []
+                            },
+                            {
+                                "id": "PhysicalSpace",
+                                "text": "校园变电所",
+                                "info": "全局总揽地图信息汇聚、功能导航，用于实现空间维度的监管业务的细节穿透",
+                                "children": []
+                            },
+                            {
+                                "id": "CyberSpace",
+                                "text": "变电所对象",
+                                "info": "基于赛博空间的对象、属性、方法及业务逻辑关系，便于迭代业务的轻应用扩展",
+                                "children": []
+                            },
+                            {
+                                "id": "IoTNetwork",
+                                "text": "变电所联网",
+                                "info": "基于网络空间的设备、人员定位与管理，便于运维业务的细节穿透",
+                                "children": []
+                            },
+                            {
+                                "id": "workflow",
+                                "text": "运行保障",
+                                "info": "基于业务流程模型的运行管理及服务中心",
+                                "children": [
+                                    {
+                                        "id": "taskReal",
+                                        "text": "待处理任务单",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskHistory",
+                                        "text": "历史工单任务",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskSetup",
+                                        "text": "工作人员设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskReport",
+                                        "text": "工单绩效分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "alarm",
+                                "text": "运行报警",
+                                "info": "基于资源信息模型的设施运行预警管理及报警中心",
+                                "children": [
+                                    {
+                                        "id": "realalarm",
+                                        "text": "实时报警一览",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmhistory",
+                                        "text": "历史报警明细",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmsetup",
+                                        "text": "报警通知设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmreport",
+                                        "text": "报警统计分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "mining",
+                                "text": "运行分析",
+                                "info": "基于资源信息模型的自定义数据挖掘工具",
+                                "children": [
+                                    {
+                                        "id": "addMining",
+                                        "text": "添加数据分析...",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "tools",
+                                "text": "管理工具",
+                                "info": "",
+                                "children": [
+                                    {
+                                        "id": "mySayma",
+                                        "text": "机器对话",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myInspect",
+                                        "text": "巡检记录",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myTransition",
+                                        "text": "异动日志",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myPublish",
+                                        "text": "运行日志",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myProject",
+                                        "text": "工程管理",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "pad": {
+                        "enable": false,
+                        "local_path": "/WebApp/SmartApp/Pad/",
+                        "container": "webapp",
+                        "webapp": []
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "/WebApp/SmartApp/Mobile/",
+                        "container": "webapp",
+                        "webapp": []
+                    }
+                },
+                "icons": {
+                    "logo": "icon.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/PCPS",
+                "appPath": "PCPS"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "4CE22A2B-F633-40E2-AC12-6BABDCF8DDDB",
+                "apptype": "Things",
+                "name": "校园供暖计量管理系统",
+                "short": "校园供暖",
+                "description": "基于资源信息模型(RIM)的新思联信息物理系统。",
+                "author": "ThingsLabs",
+                "version": "1.0",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/Project/HCPS/",
+                        "container": "proxy",
+                        "sort": 5000,
+                        "height": 600,
+                        "width": 800,
+                        "webapp": [
+                            {
+                                "id": "Situation",
+                                "text": "运行态势",
+                                "info": "全局总揽资源的态势感知，为了决策与行动提供支持",
+                                "children": []
+                            },
+                            {
+                                "id": "PhysicalSpace",
+                                "text": "供暖监控",
+                                "info": "全局总揽地图信息汇聚、功能导航，用于实现空间维度的监管业务的细节穿透",
+                                "children": []
+                            },
+                            {
+                                "id": "CyberSpace",
+                                "text": "暖控对象",
+                                "info": "基于赛博空间的对象、属性、方法及业务逻辑关系，便于迭代业务的轻应用扩展",
+                                "children": []
+                            },
+                            {
+                                "id": "IoTNetwork",
+                                "text": "暖控联网",
+                                "info": "基于网络空间的设备、人员定位与管理，便于运维业务的细节穿透",
+                                "children": []
+                            },
+                            {
+                                "id": "control",
+                                "text": "供暖集控",
+                                "info": "基于资源信息模型的设施运行状态管理及控制中心",
+                                "children": [
+                                    {
+                                        "id": "realControl",
+                                        "text": "实时控制一览",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "controlHistory",
+                                        "text": "历史控制明细",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "controlSetup",
+                                        "text": "任务通知设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "controlReport",
+                                        "text": "运行统计分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "workflow",
+                                "text": "运行保障",
+                                "info": "基于业务流程模型的运行管理及服务中心",
+                                "children": [
+                                    {
+                                        "id": "taskReal",
+                                        "text": "待处理任务单",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskHistory",
+                                        "text": "历史工单任务",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskSetup",
+                                        "text": "工作人员设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskReport",
+                                        "text": "工单绩效分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "alarm",
+                                "text": "运行报警",
+                                "info": "基于资源信息模型的设施运行预警管理及报警中心",
+                                "children": [
+                                    {
+                                        "id": "realalarm",
+                                        "text": "实时报警一览",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmhistory",
+                                        "text": "历史报警明细",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmsetup",
+                                        "text": "报警通知设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmreport",
+                                        "text": "报警统计分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "mining",
+                                "text": "运行分析",
+                                "info": "基于资源信息模型的自定义数据挖掘工具",
+                                "children": [
+                                    {
+                                        "id": "addMining",
+                                        "text": "添加数据分析...",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "tools",
+                                "text": "管理工具",
+                                "info": "",
+                                "children": [
+                                    {
+                                        "id": "mySayma",
+                                        "text": "机器对话",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myInspect",
+                                        "text": "巡检记录",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myTransition",
+                                        "text": "异动日志",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myPublish",
+                                        "text": "运行日志",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myProject",
+                                        "text": "工程管理",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "pad": {
+                        "enable": false,
+                        "local_path": "/WebApp/SmartApp/Pad/",
+                        "container": "webapp",
+                        "webapp": []
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "/WebApp/SmartApp/Mobile/",
+                        "container": "webapp",
+                        "webapp": []
+                    }
+                },
+                "icons": {
+                    "logo": "icon.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/HCPS",
+                "appPath": "HCPS"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "4CE92A2B-F633-40E2-BC12-6BABDCF8DDDB",
+                "apptype": "Things",
+                "name": "智能路灯远程控制系统",
+                "short": "校园路灯",
+                "description": "基于资源信息模型(RIM)的新思联信息物理系统。",
+                "author": "ThingsLabs",
+                "version": "1.0",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/Project/LCPS/",
+                        "container": "proxy",
+                        "sort": 7000,
+                        "height": 600,
+                        "width": 800,
+                        "webapp": [
+                            {
+                                "id": "Situation",
+                                "text": "运行态势",
+                                "info": "全局总揽资源的态势感知，为了决策与行动提供支持",
+                                "children": []
+                            },
+                            {
+                                "id": "PhysicalSpace",
+                                "text": "校园路灯",
+                                "info": "全局总揽地图信息汇聚、功能导航，用于实现空间维度的监管业务的细节穿透",
+                                "children": []
+                            },
+                            {
+                                "id": "CyberSpace",
+                                "text": "路灯对象",
+                                "info": "基于赛博空间的对象、属性、方法及业务逻辑关系，便于迭代业务的轻应用扩展",
+                                "children": []
+                            },
+                            {
+                                "id": "IoTNetwork",
+                                "text": "路灯联网",
+                                "info": "基于网络空间的设备、人员定位与管理，便于运维业务的细节穿透",
+                                "children": []
+                            },
+                            {
+                                "id": "control",
+                                "text": "路灯集控",
+                                "info": "基于资源信息模型的设施运行状态管理及控制中心",
+                                "children": [
+                                    {
+                                        "id": "realControl",
+                                        "text": "实时控制一览",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "controlHistory",
+                                        "text": "历史控制明细",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "controlSetup",
+                                        "text": "任务通知设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "controlReport",
+                                        "text": "运行统计分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "workflow",
+                                "text": "运行保障",
+                                "info": "基于业务流程模型的运行管理及服务中心",
+                                "children": [
+                                    {
+                                        "id": "taskReal",
+                                        "text": "待处理任务单",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskHistory",
+                                        "text": "历史工单任务",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskSetup",
+                                        "text": "工作人员设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskReport",
+                                        "text": "工单绩效分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "alarm",
+                                "text": "运行报警",
+                                "info": "基于资源信息模型的设施运行预警管理及报警中心",
+                                "children": [
+                                    {
+                                        "id": "realalarm",
+                                        "text": "实时报警一览",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmhistory",
+                                        "text": "历史报警明细",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmsetup",
+                                        "text": "报警通知设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmreport",
+                                        "text": "报警统计分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "mining",
+                                "text": "运行分析",
+                                "info": "基于资源信息模型的自定义数据挖掘工具",
+                                "children": [
+                                    {
+                                        "id": "addMining",
+                                        "text": "添加数据分析...",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "tools",
+                                "text": "管理工具",
+                                "info": "",
+                                "children": [
+                                    {
+                                        "id": "mySayma",
+                                        "text": "机器对话",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myInspect",
+                                        "text": "巡检记录",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myTransition",
+                                        "text": "异动日志",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myPublish",
+                                        "text": "运行日志",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myProject",
+                                        "text": "工程管理",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "pad": {
+                        "enable": false,
+                        "local_path": "/WebApp/SmartApp/Pad/",
+                        "container": "webapp",
+                        "webapp": []
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "/WebApp/SmartApp/Mobile/",
+                        "container": "webapp",
+                        "webapp": []
+                    }
+                },
+                "icons": {
+                    "logo": "icon.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/LCPS",
+                "appPath": "LCPS"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "5CE92A2B-F523-40E2-BC12-6BABDCF8DDDB",
+                "apptype": "Things",
+                "name": "机电设备管理系统",
+                "short": "机电管家",
+                "description": "",
+                "author": "ThingsLabs",
+                "version": "1.0",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/Project/OCPS/",
+                        "container": "proxy",
+                        "sort": "8617",
+                        "height": 600,
+                        "width": 800,
+                        "webapp": [
+                            {
+                                "id": "Situation",
+                                "text": "运 行 态 势",
+                                "info": "全局总揽资源的态势感知，为了决策与行动提供支持",
+                                "children": [],
+                                "icon": "fa-heartbeat"
+                            },
+                            {
+                                "id": "GlobalMap",
+                                "text": "办公地图",
+                                "info": "",
+                                "url": "",
+                                "tree": "groupnode",
+                                "icon": "fa-map-o",
+                                "children": []
+                            },
+                            {
+                                "id": "CyberSpace",
+                                "text": "机电对象",
+                                "info": "基于赛博空间的对象、属性、方法及业务逻辑关系，便于迭代业务的轻应用扩展",
+                                "children": [],
+                                "icon": "fa-object-ungroup",
+                                "url": "undefined",
+                                "tree": "none"
+                            },
+                            {
+                                "id": "BusinessSpace",
+                                "text": "业务空间",
+                                "info": "",
+                                "url": "",
+                                "tree": "business",
+                                "icon": "fa-sliders",
+                                "children": []
+                            },
+                            {
+                                "id": "control",
+                                "text": "办公管理",
+                                "info": "基于资源信息模型的设施运行状态管理及控制中心",
+                                "children": [
+                                    {
+                                        "id": "realControl",
+                                        "text": "实时控制一览",
+                                        "info": "",
+                                        "children": [],
+                                        "icon": "fa-keyboard-o"
+                                    },
+                                    {
+                                        "id": "controlHistory",
+                                        "text": "历史控制明细",
+                                        "info": "",
+                                        "children": [],
+                                        "icon": "fa-keyboard-o"
+                                    },
+                                    {
+                                        "id": "controlSetup",
+                                        "text": "任务通知设置",
+                                        "info": "",
+                                        "children": [],
+                                        "icon": "fa-keyboard-o"
+                                    },
+                                    {
+                                        "id": "controlReport",
+                                        "text": "运行统计分析",
+                                        "info": "",
+                                        "children": [],
+                                        "icon": "fa-keyboard-o"
+                                    }
+                                ],
+                                "icon": "fa-keyboard-o"
+                            },
+                            {
+                                "id": "workflow",
+                                "text": "运行保障",
+                                "info": "基于业务流程模型的运行管理及服务中心",
+                                "children": [
+                                    {
+                                        "id": "taskReal",
+                                        "text": "待处理任务单",
+                                        "info": "",
+                                        "children": [],
+                                        "icon": "fa-leaf"
+                                    },
+                                    {
+                                        "id": "taskHistory",
+                                        "text": "历史工单任务",
+                                        "info": "",
+                                        "children": [],
+                                        "icon": "fa-leaf"
+                                    },
+                                    {
+                                        "id": "taskSetup",
+                                        "text": "工作人员设置",
+                                        "info": "",
+                                        "children": [],
+                                        "icon": "fa-leaf"
+                                    },
+                                    {
+                                        "id": "taskReport",
+                                        "text": "工单绩效分析",
+                                        "info": "",
+                                        "children": [],
+                                        "icon": "fa-leaf"
+                                    }
+                                ],
+                                "icon": "fa-leaf"
+                            },
+                            {
+                                "id": "alarm",
+                                "text": "运行报警",
+                                "info": "基于资源信息模型的设施运行预警管理及报警中心",
+                                "children": [
+                                    {
+                                        "id": "realAlarm",
+                                        "text": "实时报警一览",
+                                        "info": "",
+                                        "children": [],
+                                        "icon": "fa-bell-o"
+                                    },
+                                    {
+                                        "id": "alarmHistory",
+                                        "text": "历史报警明细",
+                                        "info": "",
+                                        "children": [],
+                                        "icon": "fa-bell-o"
+                                    },
+                                    {
+                                        "id": "alarmSetup",
+                                        "text": "报警通知设置",
+                                        "info": "",
+                                        "children": [],
+                                        "icon": "fa-bell-o"
+                                    },
+                                    {
+                                        "id": "alarmReport",
+                                        "text": "报警统计分析",
+                                        "info": "",
+                                        "children": [],
+                                        "icon": "fa-bell-o"
+                                    }
+                                ],
+                                "icon": "fa-bell-o"
+                            },
+                            {
+                                "id": "teamwork",
+                                "text": "协同模型",
+                                "info": "",
+                                "icon": "fa-bullseye",
+                                "children": [
+                                    {
+                                        "id": "blockReal",
+                                        "text": "协同模型一览",
+                                        "info": "",
+                                        "url": "",
+                                        "tree": "none",
+                                        "icon": "fa-bullseye",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "blockHistory",
+                                        "text": "历史协同明细",
+                                        "info": "",
+                                        "url": "",
+                                        "tree": "none",
+                                        "icon": "fa-bullseye",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "blockSetup",
+                                        "text": "协同通知设置",
+                                        "info": "",
+                                        "url": "",
+                                        "tree": "none",
+                                        "icon": "fa-bullseye",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "blockReport",
+                                        "text": "协同执行分析",
+                                        "info": "",
+                                        "url": "",
+                                        "tree": "none",
+                                        "icon": "fa-bullseye",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "inspect",
+                                "text": "巡检作业",
+                                "info": "",
+                                "icon": "fa-binoculars",
+                                "children": [
+                                    {
+                                        "id": "inspectReal",
+                                        "text": "待巡检作业项",
+                                        "info": "",
+                                        "url": "",
+                                        "tree": "none",
+                                        "icon": "fa-binoculars",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "inspectHistory",
+                                        "text": "历史巡检作业",
+                                        "info": "",
+                                        "url": "",
+                                        "tree": "none",
+                                        "icon": "fa-binoculars",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "inspectSetup",
+                                        "text": "巡检作业预案",
+                                        "info": "",
+                                        "url": "",
+                                        "tree": "none",
+                                        "icon": "fa-binoculars",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "inspectPeople",
+                                        "text": "巡检人员设置",
+                                        "info": "",
+                                        "url": "",
+                                        "tree": "none",
+                                        "icon": "fa-binoculars",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "inspectReport",
+                                        "text": "巡检作业分析",
+                                        "info": "",
+                                        "url": "",
+                                        "tree": "none",
+                                        "icon": "fa-binoculars",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "rule",
+                                "text": "策略规则",
+                                "info": "",
+                                "icon": "fa-map-signs",
+                                "children": [
+                                    {
+                                        "id": "policyReal",
+                                        "text": "策略规则一览",
+                                        "info": "",
+                                        "url": "",
+                                        "tree": "none",
+                                        "icon": "fa-map-signs",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "policHistory",
+                                        "text": "历史策略明细",
+                                        "info": "",
+                                        "url": "",
+                                        "tree": "none",
+                                        "icon": "fa-map-signs",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "policReport",
+                                        "text": "策略执行分析",
+                                        "info": "",
+                                        "url": "",
+                                        "tree": "none",
+                                        "icon": "fa-map-signs",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "policSetup",
+                                        "text": "策略通知设置",
+                                        "info": "",
+                                        "url": "",
+                                        "tree": "none",
+                                        "icon": "fa-map-signs",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "tools",
+                                "text": "管理工具",
+                                "info": "",
+                                "children": [
+                                    {
+                                        "id": "mySayma",
+                                        "text": "机器对话",
+                                        "info": "",
+                                        "children": [],
+                                        "icon": "fa-gear"
+                                    },
+                                    {
+                                        "id": "myTransition",
+                                        "text": "异动日志",
+                                        "info": "",
+                                        "children": [],
+                                        "icon": "fa-gear"
+                                    },
+                                    {
+                                        "id": "myPublish",
+                                        "text": "运行日志",
+                                        "info": "",
+                                        "children": [],
+                                        "icon": "fa-gear"
+                                    },
+                                    {
+                                        "id": "myProject",
+                                        "text": "工程管理",
+                                        "info": "",
+                                        "children": [],
+                                        "icon": "fa-gear"
+                                    }
+                                ],
+                                "icon": "fa-gear"
+                            },
+                            {
+                                "id": "OLAP",
+                                "text": "数据分析",
+                                "info": "",
+                                "url": "",
+                                "tree": "none",
+                                "icon": "fa-calculator",
+                                "children": []
+                            }
+                        ]
+                    },
+                    "pad": {
+                        "enable": false,
+                        "local_path": "/WebApp/CCPS/Pad/",
+                        "container": "webapp",
+                        "webapp": []
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "",
+                        "container": "webapp",
+                        "webapp": []
+                    }
+                },
+                "icons": {
+                    "logo": "icon.png"
+                },
+                "color": "blue-soft",
+                "isUserApp": false,
+                "urlPath": "/Webapp/OCPS",
+                "appPath": "OCPS"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/tax",
+                "appid": "4CE92A2B-F523-40E2-BC12-6BABDCF5DDDB",
+                "apptype": "Things",
+                "name": "校园建筑节能监管系统",
+                "short": "校园建筑",
+                "description": "基于资源信息模型(RIM)的新思联信息物理系统。",
+                "author": "ThingsLabs",
+                "version": "1.0",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/Project/BCPS/",
+                        "container": "proxy",
+                        "sort": 9000,
+                        "height": 600,
+                        "width": 800,
+                        "webapp": [
+                            {
+                                "id": "Situation",
+                                "text": "运行态势",
+                                "info": "全局总揽资源的态势感知，为了决策与行动提供支持",
+                                "children": []
+                            },
+                            {
+                                "id": "PhysicalSpace",
+                                "text": "校园建筑",
+                                "info": "全局总揽地图信息汇聚、功能导航，用于实现空间维度的监管业务的细节穿透",
+                                "children": []
+                            },
+                            {
+                                "id": "CyberSpace",
+                                "text": "能源对象",
+                                "info": "基于赛博空间的对象、属性、方法及业务逻辑关系，便于迭代业务的轻应用扩展",
+                                "children": []
+                            },
+                            {
+                                "id": "IoTNetwork",
+                                "text": "能源物联",
+                                "info": "基于网络空间的设备、人员定位与管理，便于运维业务的细节穿透",
+                                "children": []
+                            },
+                            {
+                                "id": "workflow",
+                                "text": "绿色运营",
+                                "info": "基于业务流程模型的运行管理及服务中心",
+                                "children": [
+                                    {
+                                        "id": "taskReal",
+                                        "text": "待处理任务单",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskHistory",
+                                        "text": "历史工单任务",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskSetup",
+                                        "text": "工作人员设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "taskReport",
+                                        "text": "工单绩效分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "alarm",
+                                "text": "能效报警",
+                                "info": "基于资源信息模型的设施运行预警管理及报警中心",
+                                "children": [
+                                    {
+                                        "id": "realalarm",
+                                        "text": "实时报警一览",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmhistory",
+                                        "text": "历史报警明细",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmsetup",
+                                        "text": "报警通知设置",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "alarmreport",
+                                        "text": "报警统计分析",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "mining",
+                                "text": "能效分析",
+                                "info": "基于资源信息模型的自定义数据挖掘工具",
+                                "children": [
+                                    {
+                                        "id": "addMining",
+                                        "text": "添加数据分析...",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "tools",
+                                "text": "管理工具",
+                                "info": "",
+                                "children": [
+                                    {
+                                        "id": "mySayma",
+                                        "text": "机器对话",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myInspect",
+                                        "text": "巡检记录",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myTransition",
+                                        "text": "异动日志",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myPublish",
+                                        "text": "运行日志",
+                                        "info": "",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": "myProject",
+                                        "text": "工程管理",
+                                        "info": "",
+                                        "children": []
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "pad": {
+                        "enable": false,
+                        "local_path": "/WebApp/SmartApp/Pad/",
+                        "container": "webapp",
+                        "webapp": []
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "/WebApp/SmartApp/Mobile/",
+                        "container": "webapp",
+                        "webapp": []
+                    }
+                },
+                "icons": {
+                    "logo": "icon.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/BCPS",
+                "appPath": "BCPS"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/fax",
+                "appid": "AD3BB962-282F-4EE5-8C33-60F31B85242F",
+                "apptype": "ThingsCyber",
+                "name": "机电设备远程运维管理系统",
+                "short": "机电管养",
+                "color": "undefined",
+                "description": "",
+                "author": "ThingsLabs",
+                "version": "2.0.1",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "/Project/JCPS/",
+                        "container": "proxy",
+                        "sort": 1675995285,
+                        "height": 720,
+                        "width": 1024,
+                        "webapp": [
+                            {
+                                "id": "Situation",
+                                "text": "态势感知",
+                                "info": "",
+                                "url": "",
+                                "tree": "none",
+                                "icon": "fa-adjust",
+                                "children": []
+                            },
+                            {
+                                "id": "myProject",
+                                "text": "工程管理",
+                                "info": "",
+                                "url": "",
+                                "tree": "none",
+                                "icon": "fa-cog",
+                                "children": []
+                            }
+                        ]
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "",
+                        "container": "proxy",
+                        "webapp": []
+                    }
+                },
+                "icons": {
+                    "logo": "1676345873795.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/Webapp/JCPS",
+                "appPath": "JCPS"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/fax",
+                "appid": "AD3BB962-282F-4EE5-8C33-60F31B85242F",
+                "apptype": "ThingsCyber",
+                "name": "学习交流记录系统",
+                "short": "学习交流",
+                "color": "undefined",
+                "description": "",
+                "author": "ThingsLabs",
+                "version": "2.0.1",
+                "app": {
+                    "launch": {
+                        "enable": true,
+                        "local_path": "../../component/USER/index.html",
+                        "container": "proxy",
+                        "sort": 1675995285,
+                        "height": 720,
+                        "width": 1024,
+                        "webapp": [
+                            {
+                                "id": "Situation",
+                                "text": "态势感知",
+                                "info": "",
+                                "url": "",
+                                "tree": "none",
+                                "icon": "fa-adjust",
+                                "children": []
+                            },
+                            {
+                                "id": "myProject",
+                                "text": "工程管理",
+                                "info": "",
+                                "url": "",
+                                "tree": "none",
+                                "icon": "fa-cog",
+                                "children": []
+                            }
+                        ]
+                    },
+                    "mobile": {
+                        "enable": false,
+                        "local_path": "",
+                        "container": "proxy",
+                        "webapp": []
+                    }
+                },
+                "icons": {
+                    "logo": "remote.png"
+                },
+                "isUserApp": false,
+                "urlPath": "/component/USER",
+                "appPath": "USER"
+            }
+        ],
+        "installWidget": [
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/fwx",
+                "appid": "FF4D4A08-0C23-4589-873D-B2887924B00E",
+                "apptype": "桌面部件",
+                "name": "新知APP",
+                "description": "显示新知移动轻应用的桌面小组件",
+                "author": "ThingsLabs",
+                "version": "1.0",
+                "app": {
+                    "launch": {
+                        "local_path": "../../WebMobile/index.ejs",
+                        "container": "widget",
+                        "height": "760px",
+                        "width": "380px"
+                    },
+                    "setup": {
+                        "local_path": "",
+                        "container": "widget",
+                        "height": 0,
+                        "width": 0
+                    }
+                },
+                "icons": {
+                    "logo": "logo.png"
+                },
+                "isUserWidget": false,
+                "urlPath": "/Widget/myApp"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/fwx",
+                "appid": "AF4D4A08-1C23-4589-873D-B2887924B11D",
+                "apptype": "桌面部件",
+                "name": "计算器",
+                "description": "计算器桌面小组件",
+                "author": "ThingsLabs",
+                "version": "1.0",
+                "app": {
+                    "launch": {
+                        "local_path": "index.html",
+                        "container": "widget",
+                        "height": 265,
+                        "width": 325
+                    },
+                    "setup": {
+                        "local_path": "",
+                        "container": "widget",
+                        "height": 0,
+                        "width": 0
+                    }
+                },
+                "icons": {
+                    "logo": "logo.png"
+                },
+                "isUserWidget": false,
+                "urlPath": "/Widget/Calculator"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/fwx",
+                "appid": "AF4D4A08-0C23-4589-873D-B2887924B00D",
+                "apptype": "桌面部件",
+                "name": "桌面时钟",
+                "description": "显示当前时钟信息的桌面小组件",
+                "author": "hbden",
+                "version": "1.0",
+                "app": {
+                    "launch": {
+                        "local_path": "index.html",
+                        "container": "widget",
+                        "height": 300,
+                        "width": 300
+                    },
+                    "setup": {
+                        "local_path": "",
+                        "container": "widget",
+                        "height": 0,
+                        "width": 0
+                    }
+                },
+                "icons": {
+                    "logo": "logo.png"
+                },
+                "isUserWidget": false,
+                "urlPath": "/Widget/ClockTime"
+            },
+            {
+                "update_url": "http://webstore.thingslabs.com/service/update/fwx",
+                "appid": "AF4D4A08-0C23-4589-873D-B2887924B10D",
+                "apptype": "桌面部件",
+                "name": "智能客服",
+                "description": "用于机器对话的桌面小组件",
+                "author": "ThingsLabs",
+                "version": "1.0",
+                "app": {
+                    "launch": {
+                        "local_path": "index.html",
+                        "container": "widget",
+                        "height": "85%",
+                        "width": "380px"
+                    },
+                    "setup": {
+                        "local_path": "",
+                        "container": "widget",
+                        "height": 0,
+                        "width": 0
+                    }
+                },
+                "icons": {
+                    "logo": "logo.png"
+                },
+                "isUserWidget": false,
+                "urlPath": "/Widget/Sayma"
+            }
+        ],
+        "currentList": []
+    }
+}

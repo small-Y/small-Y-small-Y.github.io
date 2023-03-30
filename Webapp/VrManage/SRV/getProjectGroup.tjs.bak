@@ -1,0 +1,46 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			info:"",
+			aData:[]
+		};
+		var projectTag = Request.QueryString("project");
+		//
+		//return Server.ExecuteAPI("GET","/API/System/SmartApp/Facility?type=group","");
+
+		var xmlHttp = Server.CreateObject("MSXML2.ServerXMLHTTP.6.0");
+
+        var url = 'https://cloud.thingslabs.com/API/System/SmartApp/Facility?type=group';
+        xmlHttp.open('GET', url, false);
+        xmlHttp.setOption(2, 13056);  //https
+        xmlHttp.send();
+        return xmlHttp.responseText;
+
+		var res=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/"+projectTag+"/Facility?type=group",""));
+		for(var i=0;i<res.length;i++){
+			var o={
+				GroupID:res[i].GroupID,
+				GroupName:res[i].GroupName,
+				GroupTag:res[i].GroupTag,
+				GroupFullTag:res[i].GroupFullTag,
+				GroupFullName:res[i].GroupFullName,
+				Longitude:res[i].Longitude,
+				Latitude:res[i].Latitude,
+				ObjectTag:res[i].ObjectInfo.ObjectTag,
+				ObjectName:res[i].ObjectInfo.ObjectName,
+				VrSceneName:"",
+				VrPath:""
+			}
+			result.aData.push(o)
+		}
+		//
+		result.flag=true;
+		//
+		return TSS.JSON.encode(result);
+		
+	}());
+	Response.ContentType = "application/json";
+%>

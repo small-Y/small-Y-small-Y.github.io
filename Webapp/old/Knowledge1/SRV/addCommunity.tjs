@@ -1,0 +1,53 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result = {
+				flag:true,
+				info:""
+			};
+		//
+		var TypeID=Request.Form("TypeID");
+		var T_Title=Request.Form("T_Title");
+		var T_Body=Request.Form("T_Body");
+		var tags=Request.Form("tags");
+		//
+		var szSql="";
+		var userInfo=TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		if(userInfo.userTypeNum<1)
+		{
+
+			var tc=new Date();
+			var communityid=tc.getTime();
+			var userInfo = TSS.JSON.decode(System.OAuth.GetCurrentUser());
+			var serverInfo = TSS.JSON.decode(System.Basic.GetServerStatus());
+			//
+			var userimg=System.Storage.IsFileExist("/@Start/User/"+userInfo.userName+".png")?("/@Start/User/"+userInfo.userName+".png"):"/@Start/User/new.png";
+			var szSQL="Insert into CommunityDataTable (\"T_CommunityID\",\"T_Time\",\"T_UserID\",\"T_UserName\",\"T_UserImg\",\"T_Title\",\"T_Body\",\"T_Open\",\"T_Suggest\",\"T_Link\",\"T_Review\",\"T_AppID\",\"TypeID\") values ("+communityid+",'"+tc.Format("yyyy-MM-dd hh:mm:ss")+"','"+userInfo.userName+"','"+userInfo.fullName+"','"+userimg+"','"+T_Title+"','"+T_Body+"',0,0,0,"+(serverInfo.KnowAutoReview?1:0)+",'OS','"+TypeID+"')";
+			result.szSQL=szSQL;
+			var resSet =TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSQL));
+			if(resSet.length==0)
+			{
+				result.text=System.RDC.GetLastError();
+				return TSS.JSON.encode(result);
+			}
+
+			if(tags!=""){
+				for(var i=0;i<tags.split(",").length;i++){
+					var szSql="insert into CommunityTagTable(\"Tag\",\"T_CommunityID\")values('"+tags.split(",")[i]+"',"+communityid+")";
+
+					var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+					if (resSet.MessageCode>0){
+						result.flag=false;
+						result.info=resSet.MessageText;
+						return TSS.JSON.encode(result);
+					}
+				}
+			}
+		}
+
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

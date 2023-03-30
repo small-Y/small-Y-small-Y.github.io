@@ -1,0 +1,28 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/fax",
+  "appid": "0CB4D644-896A-4ADA-9D5F-58448BD04499",
+  "apptype": "Things",
+  "name": "个人账户管理中心",
+  "short": "个人中心",
+  "description": "管理私人账户及信息",
+  "author": "ThingsLabs",
+  "version": "1.0.1",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/Account/",
+	  "container": "personal",
+	  "sort": 10,
+	  "height": 678,
+	  "width": 960
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "/WebApp/Account/Mobile/",
+	  "container": "personal"
+    }
+  },
+  "icons": {
+    "logo": "icon_256.png"
+  }
+}

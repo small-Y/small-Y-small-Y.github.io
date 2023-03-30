@@ -1,0 +1,26 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/fwx",
+  "appid": "AF4D4A08-0C23-4589-873D-B2887924B10D",
+  "apptype": "桌面部件",
+  "name": "智能客服",
+  "description": "用于机器对话的桌面小组件",
+  "author": "ThingsLabs",
+  "version": "1.0",
+  "app": {
+    "launch": {
+	  "local_path": "index.html",
+	  "container": "widget",
+	  "height": "85%",
+	  "width": "380px"
+    },
+    "setup": {
+	  "local_path": "",
+	  "container": "widget",
+	  "height": 0,
+	  "width": 0
+    }
+  },
+  "icons": {
+    "logo": "logo.png"
+  }
+}

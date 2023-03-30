@@ -1,0 +1,15 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result= TSS.JSON.decode(Server.ExecuteAPI("PUT","/API/Times","enable=true&tag=BackupCheck&name=核心数据库检查与备份&describe=定期检查与备份核心数据库&type=0&year=0&month=0&day=0&hour=0&minute=30&second=0&path=/Webapp/ThingsHistory/SRV/backupCheck.tjs"));
+		if(!result.flag)
+		{
+			return TSS.JSON.encode(result);
+		}
+		//
+		return "OK";
+	}());
+	Response.ContentType = "text/plain";
+%>

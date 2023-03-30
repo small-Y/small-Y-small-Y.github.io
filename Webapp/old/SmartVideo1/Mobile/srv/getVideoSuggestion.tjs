@@ -1,0 +1,52 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result={
+					flag:true,
+					data:[],
+					info:""
+					};
+		//
+		var tc=new Date();
+		var videoid=Request.QueryString("videoid");
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from VideoSuggestionTable where \"T_VideoID\"='"+videoid+"'"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.Message.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		result.data=record[0].Record;
+		//
+		var szSql="SELECT * FROM VideoSuggestionImageTable WHERE \"T_SuggestionID\" in (select \"T_SuggestionID\" from VideoSuggestionTable where \"T_VideoID\"='"+videoid+"')";
+		var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+		if (resSet.MessageCode>0){
+			result.info=resSet.MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<result.data.length;i++)
+		{
+			result.data[i].ImageFile=[];
+			for(var j=0;j<resSet.Record.length;j++)
+			{
+				if(result.data[i].T_SuggestionID==resSet.Record[j].T_SuggestionID)
+				{
+					result.data[i].ImageFile[result.data[i].ImageFile.length]=resSet.Record[j].T_ImageFile;
+				}
+			}
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "text/plain";
+%>

@@ -1,0 +1,15 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result= TSS.JSON.decode(Server.ExecuteAPI("PUT","/API/Times","enable=true&tag=captureVideo&name=视频巡检抓拍&describe=定时视频巡检抓拍&type=1&timespan=900&path=/Webapp/SmartVideo/SRV/captureVideo.tjs"));
+		if(!result.flag)
+		{
+			return TSS.JSON.encode(result);
+		}
+		//
+		return "OK";
+	}());
+	Response.ContentType = "text/plain";
+%>

@@ -1,0 +1,28 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/fax",
+  "appid": "6294D0E0-6E01-4DBD-BBC4-672E2BC5AB09",
+  "apptype": "Things",
+  "name": "统一安全管理中心",
+  "short": "安全管理",
+  "description": "包括对用户及应用、设备及平台的安全管理",
+  "author": "ThingsLabs",
+  "version": "1.0",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/SecureManager/index.tjs",
+	  "container": "system",
+	  "sort": 5,
+	  "height": 600,
+	  "width": 800
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "/WebApp/SecureManager/Mobile/index.tjs",
+	  "container": "system"
+    }
+  },
+  "icons": {
+    "logo": "icon_64.png"
+  }
+}

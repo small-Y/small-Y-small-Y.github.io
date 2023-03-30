@@ -1,0 +1,28 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/fax",
+  "appid": "0CB4D644-896A-4ADA-9D5F-58448BD04498",
+  "apptype": "Things",
+  "name": "弹性应用管理中心",
+  "short": "应用管理",
+  "description": "基于信息物理系统的弹性应用管理中心。",
+  "author": "ThingsLabs",
+  "version": "1.0.1",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/AppStore/index.ejs",
+	  "container": "system",
+	  "sort": 1,
+	  "height": 678,
+	  "width": 960
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "",
+	  "container": "system"
+    }
+  },
+  "icons": {
+    "logo": "store.png"
+  }
+}

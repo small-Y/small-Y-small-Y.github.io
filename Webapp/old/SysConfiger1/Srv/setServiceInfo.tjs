@@ -1,0 +1,56 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+Response.Write(function () {
+	var result={
+		flag:true,
+		msg:""
+	};
+	//
+	var HttpDomain=TSS.Utils.parseBoolean(Request.Form("HttpDomain"));
+	var HttpLog=TSS.Utils.parseBoolean(Request.Form("HttpLog"));
+	var EnableCache=TSS.Utils.parseBoolean(Request.Form("EnableCache"));
+	var NoListing=TSS.Utils.parseBoolean(Request.Form("NoListing"));
+	var FtpEnable=TSS.Utils.parseBoolean(Request.Form("FtpEnable"));
+	var FtpLog=TSS.Utils.parseBoolean(Request.Form("FtpLog"));
+	var ScriptTimeout=Request.Form("ScriptTimeout");
+	var SessionTimeout=Request.Form("SessionTimeout");
+	var DataIPAddr=Request.Form("DataIPAddr");
+	var DataPort=Request.Form("DataPort");
+	var WeatherAddr=Request.Form("WeatherAddr");
+	var AreaCode=Request.Form("AreaCode");
+	//
+	if (!System.Basic.SetHttpConfig(HttpLog,HttpDomain,EnableCache,NoListing,ScriptTimeout,SessionTimeout))
+	{
+		result.flag=false;
+		result.msg="没有权限修改HTTP服务参数！";
+	}
+	//
+	if (!System.Basic.SetFtpConfig(FtpEnable,FtpLog))
+	{
+		result.flag=false;
+		result.msg="没有权限修改FTP服务参数！";
+	}
+	//
+	if (!System.Basic.SetDataServerConfig(DataIPAddr,DataPort))
+	{
+		result.flag=false;
+		result.msg="没有权限修改实时数据库服务参数！";
+	}
+	//
+	if (!System.Basic.SetWeatherConfig(AreaCode==""?false:true,WeatherAddr,AreaCode))
+	{
+		result.flag=false;
+		result.msg="没有权限修改天气服务参数！";
+	}
+	//
+	if (!System.Basic.RestService())
+	{
+		result.flag=false;
+		result.msg=System.Basic.GetLastError();
+	}
+    //
+    return TSS.JSON.encode(result);
+} ());
+Response.ContentType = "text/plain";
+%>

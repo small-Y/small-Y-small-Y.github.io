@@ -1,0 +1,57 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result = {
+				flag:false,
+				info:"",
+				offset:0,
+				open:0
+			};
+		//
+		var videoid=Request.Form("videoid");
+		var userInfo = TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		//
+		var szSql="select \"T_Open\" from VideoDataTable WHERE \"T_VideoID\"='"+videoid+"'";
+		var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+		if (resSet.MessageCode>0){
+			result.info=resSet.MessageText;
+			return TSS.JSON.encode(result);
+		}
+
+		if(resSet.Record.length>0)
+		{
+			result.open=resSet.Record[0].T_Open;
+		}
+		//
+		var szSql="select * from VideoOpenTable WHERE \"T_VideoID\"='"+videoid+"' and \"T_OpenUser\"='"+userInfo.userName+"'";
+		var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+		if (resSet.MessageCode>0){
+			result.info=resSet.MessageText;
+			return TSS.JSON.encode(result);
+		}
+
+		if(resSet.Record.length==0)
+		{
+			var szSql="insert into VideoOpenTable (\"T_VideoID\",\"T_OpenUser\") values ('"+videoid+"','"+userInfo.userName+"')";
+			var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+			if (resSet.MessageCode>0){
+				result.info=resSet.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			var szSql="update VideoDataTable set \"T_Open\"="+(result.open+1)+" WHERE \"T_VideoID\"='"+videoid+"'";
+			var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+			if (resSet.MessageCode>0){
+				result.info=resSet.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			result.offset=1;
+			result.open++;
+		}
+		result.flag=true;
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "text/plain";
+%>

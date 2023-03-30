@@ -1,0 +1,88 @@
+/// <reference path="../TSS/lib/vsdoc/api.js" />
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result = {
+				flag:true,
+				buildlist:[]
+			};	
+		var buildlist = Request.QueryString("buildlist");
+		var isall = Request.QueryString("isall"); 
+		var kpiObject=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/BCPS/ObjectClass/Building",""));
+		var tc=new Date();
+		var listNode=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System/ACPS/ObjectClass/RunKPI?valueTag=*",""));
+		var buildname={};
+		for(var i=0;i<listNode.length;i++){
+		    var name=TSS.Utils.getRightPathName(listNode[i].NodeFullName,1).split(".")[0];
+		    buildname[name]=i;
+		}
+		for(var i=0;i<kpiObject.length;i++){
+			if(isall=="false"){
+				if(buildlist.indexOf(kpiObject[i].GroupID)==-1){
+					continue;
+				}
+			}
+			var item={name:kpiObject[i].GroupName,list:[],count:0};
+			var index=buildname[kpiObject[i].GroupName];
+			
+			if(index==undefined){
+				var d={};
+				d["name"]="设施设备在线率";
+				d["info"]=kpiObject[i].GroupName+"未发现VRV空调系统的关联设备，不做检查！";
+				item.list.push(d);
+				result.buildlist.push(item);											
+				continue;	
+			}
+			var NodeCount=listNode[index].OPCValueList[listNode[index].OPCValueMap.TotalAir].DataValue;
+			var Online=listNode[index].OPCValueList[listNode[index].OPCValueMap.Online].DataValue;
+			var FilterCount=listNode[index].OPCValueList[listNode[index].OPCValueMap.Clean].DataValue;
+			var ErrorCount=listNode[index].OPCValueList[listNode[index].OPCValueMap.Fault].DataValue;
+			var percent=TSS.Utils.floatPrecision(Online/NodeCount*100, 1);
+			if(percent>=80){
+				var d={};
+				d["name"]="设施设备在线率";
+				d["info"]=kpiObject[i].GroupName+"当前内机在线率"+percent+"%，属正常范围！";
+				item.list.push(d);
+			}else{
+				item.count++;
+				var d={};
+				d["name"]="设施设备在线率";
+				d["info"]=kpiObject[i].GroupName+"当前内机在线率较低（"+percent+"%），请立即处理！";
+				item.list.push(d);
+			}
+			if(ErrorCount==0){
+				var d={};
+				d["name"]="检查故障内机";
+				d["info"]=kpiObject[i].GroupName+"未发现故障内机！";
+				item.list.push(d);
+			}else{
+				item.count++;
+				var d={};
+				d["name"]="检查故障内机";
+				d["info"]=kpiObject[i].GroupName+"发现"+ErrorCount+"台故障内机，请立即处理！";
+				item.list.push(d);
+			}
+			if(FilterCount==0){
+				var d={};
+				d["name"]="检查需滤网清洁内机";
+				d["info"]=kpiObject[i].GroupName+"未发现需滤网清洁的内机！";
+				item.list.push(d);
+			}else{
+				item.count++;
+				var d={};
+				d["name"]="检查需滤网清洁内机";
+				d["info"]=kpiObject[i].GroupName+"发现"+FilterCount+"台需清洁滤网的内机，请及时处理！";
+				item.list.push(d);
+			}
+			result.buildlist.push(item);
+		}
+		result.buildlist.sort(function(x, y){
+				return (x.count < y.count) ? 1 : -1;
+		});
+		return TSS.JSON.encode(result);
+		
+	}());
+	Response.ContentType = "text/plain";
+%>

@@ -1,0 +1,198 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:true,
+			info:"",
+			mailPie1:[{name:"失败邮件",y:0,color:"#ff66cc"},{name:"成功邮件",y:0,color:"#3598dc"}],
+			mailPie2:[{name:"失败邮件",y:0,color:"#cccccc"},{name:"成功邮件",y:0,color:"#e7505a"}],
+			mailPie3:[{name:"失败邮件",y:0,color:"#ff66cc"},{name:"成功邮件",y:0,color:"#32c5d2"}],
+			appBar:[{type: 'column',name:"应用发送量",categories:[],data:[]}],
+			phoneBar:[{type: 'column',name:"用户发送量",categories:[],data:[]}]
+		};
+		//
+		var startTime = Request.QueryString("startTime");
+		var endTime = Request.QueryString("endTime");
+		//
+		if(startTime=="" || startTime==undefined)
+		{
+			var tc = new Date();
+			startTime = new Date();
+			startTime.setFullYear(tc.getFullYear(),tc.getMonth(),tc.getDate());
+			startTime.setHours(0,0,0,0);
+			startTime=startTime.DateAdd("d",-2);
+		}
+		else
+		{
+			startTime = TSS.Utils.parseDate(startTime);
+			startTime.setHours(0,0,0,0);
+		}
+
+		if(endTime=="" || endTime==undefined)
+		{
+			endTime = new Date();
+		}
+		else
+		{
+			endTime = TSS.Utils.parseDate(endTime);
+		}
+		//微信人数
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select count(*) as total from MailDataTable where \"T_MailTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"T_MailTime\"<='"+startTime.DateAdd("d",1).Format("yyyy-MM-dd hh:mm:ss") +"' and \"T_Status\"=2"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].Record.length==1)
+		{
+			result.mailPie1[0].y=record[0].Record[0].total;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select count(*) as total from MailDataTable where \"T_MailTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"T_MailTime\"<='"+startTime.DateAdd("d",1).Format("yyyy-MM-dd hh:mm:ss") +"' and \"T_Status\"=1"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].Record.length==1)
+		{
+			result.mailPie1[1].y=record[0].Record[0].total;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select count(*) as total from MailDataTable where \"T_MailTime\">='"+startTime.DateAdd("d",1).Format("yyyy-MM-dd") +"' and \"T_MailTime\"<='"+startTime.DateAdd("d",2).Format("yyyy-MM-dd hh:mm:ss") +"' and \"T_Status\"=2"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].Record.length==1)
+		{
+			result.mailPie2[0].y=record[0].Record[0].total;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select count(*) as total from MailDataTable where \"T_MailTime\">='"+startTime.DateAdd("d",1).Format("yyyy-MM-dd") +"' and \"T_MailTime\"<='"+startTime.DateAdd("d",2).Format("yyyy-MM-dd hh:mm:ss") +"' and \"T_Status\"=1"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].Record.length==1)
+		{
+			result.mailPie2[1].y=record[0].Record[0].total;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select count(*) as total from MailDataTable where \"T_MailTime\">='"+startTime.DateAdd("d",2).Format("yyyy-MM-dd") +"' and \"T_MailTime\"<='"+startTime.DateAdd("d",3).Format("yyyy-MM-dd hh:mm:ss") +"' and \"T_Status\"=2"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].Record.length==1)
+		{
+			result.mailPie3[0].y=record[0].Record[0].total;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select count(*) as total from MailDataTable where \"T_MailTime\">='"+startTime.DateAdd("d",2).Format("yyyy-MM-dd") +"' and \"T_MailTime\"<='"+startTime.DateAdd("d",3).Format("yyyy-MM-dd hh:mm:ss") +"' and \"T_Status\"=1"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].Record.length==1)
+		{
+			result.mailPie3[1].y=record[0].Record[0].total;
+		}
+		//读取应用信息
+		var appList = Session("CPS");
+		if(appList==undefined)
+		{
+			appList = TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System",""));
+			Session("CPS") = appList;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_AppID\",count(*) as total from MailDataTable where \"T_MailTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"T_MailTime\"<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' group by \"T_AppID\""));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			result.appBar[0].categories[i]=(appList.map[record[0].Record[i].T_AppID]==undefined?"系统服务":appList.data[appList.map[record[0].Record[i].T_AppID]].short);
+			result.appBar[0].data[i]=record[0].Record[i].total;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_Recipient\",count(*) as total from MailDataTable where \"T_MailTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"T_MailTime\"<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' group by \"T_Recipient\""));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			result.phoneBar[0].categories[i]=record[0].Record[i].T_Recipient;
+			result.phoneBar[0].data[i]=record[0].Record[i].total;
+		}
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

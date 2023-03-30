@@ -1,0 +1,33 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			"flag":false,
+			"text":"",
+			"data":{}
+		};
+		//
+		var orderid = Request.QueryString("orderid");
+		var sql="select UserScoreOrderTable.*,UserDataTable.\"T_FullName\" from UserScoreOrderTable,UserDataTable where UserScoreOrderTable.\"T_OrderID\"='"+orderid+"' and UserScoreOrderTable.\"T_UserName\"=UserDataTable.\"T_UserName\""
+		var OrderTable=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,sql));
+		if(OrderTable.length==0)
+		{
+			result.text= System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(OrderTable[0].MessageCode>0)
+		{
+			result.text= OrderTable.MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		if(OrderTable[0].Record.length==1)
+		{
+			result.flag=true;
+			result.data=OrderTable[0].Record[0];
+		}
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

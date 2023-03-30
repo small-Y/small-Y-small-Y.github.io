@@ -1,0 +1,71 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result = {
+				flag:false,
+				info:"",
+				count:0,
+				videoid:""
+			};
+		//
+		var videoid=Request.Form("videoid");
+		var suggestion=Request.Form("suggestion");
+		var media=TSS.JSON.decode(Request.Form("media"));
+		var accesstoken=Request.Form("accesstoken");
+		//
+		var tc=new Date();
+		var suggestionid=tc.getTime();
+		var userInfo = TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		result.videoid=videoid;
+
+		var userimg=System.Storage.IsFileExist("/@Start/User/"+userInfo.userName+".png")?("/@Start/User/"+userInfo.userName+".png"):"/@Start/User/new.png";
+		var szSql="Insert into VideoSuggestionTable (\"T_ParentID\",\"T_SuggestionID\",\"T_VideoID\",\"T_Time\",\"T_Body\",\"T_UserID\",\"T_UserName\",\"T_UserImg\") values (0,"+suggestionid+",'"+videoid+"','"+tc.Format("yyyy-MM-dd hh:mm:ss")+"','"+escape(suggestion)+"','"+userInfo.userName+"','"+userInfo.fullName+"','"+userimg+"')";
+		var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+		if (resSet.MessageCode>0){
+			result.info=resSet.MessageText;
+			return TSS.JSON.encode(result);
+		}
+
+		var szSql="select count(*) as n from VideoSuggestionTable WHERE \"T_VideoID\"='"+videoid+"'";
+		var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+		if (resSet.MessageCode>0){
+			result.info=resSet.MessageText;
+			return TSS.JSON.encode(result);
+		}
+
+		if(resSet.Record.length>0)
+		{
+			result.count=resSet.Record[0].n;
+			//
+			var szSql="update VideoDataTable set \"T_Time\"='"+tc.Format("yyyy-MM-dd hh:mm:ss")+"',\"T_Suggest\"="+result.count+" WHERE \"T_VideoID\"='"+videoid+"'";
+			var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+			if (resSet.MessageCode>0){
+				result.info=resSet.MessageText;
+				return TSS.JSON.encode(result);
+			}
+		}
+		//
+		var xmlHttp = Server.CreateObject("MSXML2.ServerXMLHTTP");
+		for(var k=0;k<media.length;k++)
+		{
+			var url='http://file.api.weixin.qq.com/cgi-bin/media/get?access_token='+accesstoken+'&media_id='+media[k];
+			xmlHttp.open('GET',url,false);
+			xmlHttp.send(null);
+			//
+			if(System.Storage.UploadFile("/Upload/Weixin/"+media[k]+".jpg",xmlHttp.responseBody,false))
+			{
+				var szSql="Insert into VideoSuggestionImageTable (\"T_SuggestionID\",\"T_ImageFile\") values ("+suggestionid+",'/Upload/Weixin/"+media[k]+".jpg')";
+				var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+				if (resSet.MessageCode>0){
+					result.info=resSet.MessageText;
+					return TSS.JSON.encode(result);
+				}
+			}
+		}
+		result.flag=true;
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "text/plain";
+%>

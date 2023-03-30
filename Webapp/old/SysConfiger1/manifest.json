@@ -1,0 +1,28 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/fax",
+  "appid": "83A4D72D-67CC-4236-BB65-70EC68433BAB",
+  "apptype": "Things",
+  "name": "偏好配置",
+  "short": "偏好配置",
+  "description": "配置管理虚拟域名、应用代理、短信网关等系统服务",
+  "author": "ThingsLabs",
+  "version": "1.0",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/SysConfiger/index.tjs",
+	  "container": "system",
+	  "sort": 3,
+	  "height": 600,
+	  "width": 800
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "/WebApp/SysConfiger/Mobile/index.tjs",
+	  "container": "system"
+    }
+  },
+  "icons": {
+    "logo": "setup.png"
+  }
+}

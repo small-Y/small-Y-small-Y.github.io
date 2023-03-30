@@ -1,0 +1,55 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	var startTime = Request.QueryString("startTime");
+	var endTime = Request.QueryString("endTime");
+	if(startTime=="" || startTime==undefined)
+	{
+		var tc = new Date();
+		startTime = new Date();
+		startTime.setFullYear(tc.getFullYear(),tc.getMonth(),tc.getDate());
+		startTime.setHours(0,0,0,0);
+		startTime=startTime.DateAdd("d",-2);
+	}
+	else
+	{
+		startTime = TSS.Utils.parseDate(startTime);
+	}
+
+	if(endTime=="" || endTime==undefined)
+	{
+		endTime = new Date();
+	}
+	else
+	{
+		endTime = TSS.Utils.parseDate(endTime);
+		endTime=endTime.DateAdd("d",1);
+	}
+
+	Response.Clear();
+	Response.Buffer = false;
+	Response.CharSet = "gbk";
+	Response.ContentType = "application/csv";
+	Response.ContentDisposition("attachment; filename=时段空气质量"+startTime.Format("yyyyMMdd")+endTime.Format("yyyyMMdd")+".csv");
+	Response.Write("时间,空气质量,AQI指数,PM2.5,风向（风力）\n");
+
+	var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"SELECT wh_time,quality,wind_direction,wind_speed,wind_scale,aqi,pm25 FROM WeatherHourTable where wh_time>='"+startTime.Format("yyyy-MM-dd")+"' and wh_time<'"+endTime.Format("yyyy-MM-dd hh:mm:ss")+"' ORDER BY wh_time"));
+	if(record.length==0)
+	{
+		Response.Write(System.RDC.GetLastError());
+	}
+	if(record[0].MessageCode>0)
+	{
+		Response.Write(record[0].MessageText);
+	}
+
+	var orderList=record[0].Record;
+	for(var i=0;i<orderList.length;i++)
+	{
+		Response.Write(orderList[i].wh_time+","+
+					orderList[i].quality+","+
+					orderList[i].aqi+","+
+					orderList[i].pm25+" μg/m3,"+
+					orderList[i].wind_direction+orderList[i].wind_scale+"级\n");
+	}
+%>

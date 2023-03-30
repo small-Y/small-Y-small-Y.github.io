@@ -1,0 +1,68 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	var userInfo=TSS.JSON.decode(System.OAuth.GetCurrentUser());
+	//
+	if(!userInfo.loginStatus)
+	{
+		Response.Redirect("/API/My/Login/?goto="+escape("/WebMobile/"));
+	}
+	else
+	{
+		var serverInfo=TSS.JSON.decode(System.Basic.GetServerStatus());
+	}
+%>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />	
+	<meta name="keywords" content="Things,ThingsGate,ThingsRouter,ThingsBox,ThingsDB,ThingsView,ThingsOS,ThingsCloud,WebTop,物联网操作系统,物联网网关,智慧能源管理,智慧楼宇管理,智能工业服务,智慧家庭服务,智能云服务平台,信息物理系统" />
+	<meta name="description" content="ThingsOS是一款针对普遍智能对象(智能设备、设施或系统)进行融合、提供服务的资源管理操作系统。具体来说，它是一个在智能能源管理、智能楼宇管理、智能工业服务、智能家庭服务等等方面，提供完整的基于云的开发、组态、宿主和管理服务的独立平台。" />
+	<meta name="copyright" content= "版权所有 Copyright (c) 2016 ThingsLabs.保留所有权利。" />
+	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+	<meta name="msapplication-navbutton-color" content="#b4d9f1" />	
+	<meta name="application-name" content="<%Response.Write(serverInfo.AuthName);%>" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="white" />
+	<meta name="format-detection" content="telephone=no">
+	<meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-title" content="<%Response.Write(serverInfo.AuthName);%>">
+	<meta name="msapplication-TileColor" content="#006600"/>
+	<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
+	<script type="text/javascript" src="/AppEngine/jQuery/jquery2.jsz"></script>
+    
+
+ 	<script type="text/javascript" src="/AppEngine/CoreExt/ThingsUI/base.js"></script>
+
+	<script type="text/javascript" src="./js/jquery-weui.js"></script>
+	 <script type="text/javascript" src="./js/toe.min.js"></script>
+ <script type="text/javascript" src="./js/Payment.js"></script>
+<script type="text/javascript">
+    var opcpath="<%Response.write(Request.QueryString('opcpath'));%>";
+
+</script>
+ <title>充值</title>
+
+	<link type="text/css" rel="stylesheet" href="/AppEngine/CoreExt/ThingsUI/base.min.css" />
+	<link type="text/css" rel="stylesheet" href="css/my.cssz">
+        <style type="text/css">
+        .weui_media_bd table{
+	    width:100%;
+	    height:100%;
+            border-collapse:collapse;
+        }
+
+	.weui_media_bd td{
+	    padding:4px 5px;
+	    font-size: 9pt;
+	    text-align: center;
+	}
+</style>
+  </head>
+
+  <body ontouchstart>
+
+  </body>
+</html>

@@ -1,0 +1,25 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:true,
+			text:""
+		};
+		//
+		var mailid=Request.Form("mailid");
+		var mailto=Request.Form("mailto");
+		var subject=Request.Form("subject");
+		var content=Request.Form("content");
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"update MailDataTable set \"T_Recipient\"='"+mailto+"',\"T_Subject\"='"+subject+"',\"T_Body\"='"+content+"',\"T_Status\"=0 where \"T_MailID\"="+mailid))[0];
+		if(record.MessageCode>0)
+		{
+			result.flag=false;
+			result.text=record.MessageText;
+			return TSS.JSON.encode(result);
+		} 
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

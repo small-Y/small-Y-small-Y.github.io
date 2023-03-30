@@ -1,0 +1,96 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:true,
+			text:""
+		};
+		//
+		var todo=parseInt(Request.Form("todo"));
+		var proxyId=Request.Form("proxyId");
+		var proxyName=Request.Form("proxyName");
+		var proxyServer=Request.Form("proxyServer");
+		var proxyPort=Request.Form("proxyPort");
+		var proxyUrl=Request.Form("proxyUrl");
+		var mapUrl=Request.Form("mapUrl");
+		var proxyInfo=Request.Form("proxyInfo");
+		var allowAnyUser=TSS.Utils.parseBoolean(Request.Form("allowAnyUser"));
+		var allowReWrite=TSS.Utils.parseBoolean(Request.Form("allowReWrite"));
+		var allowRePort=TSS.Utils.parseBoolean(Request.Form("allowRePort"));
+		//计算应用动态接口
+		if(allowRePort)
+		{
+			proxyPort=0;
+			for(var i=1;i<mapUrl.length-1;i++)
+			{
+				proxyPort+=(mapUrl.charCodeAt(i)-30)*(10^(i-1));
+			}
+			proxyPort=500+proxyPort%(65535-500);
+		}
+		//
+		switch(todo)
+		{
+			case 0:
+				{
+					var now = new Date();
+					var proxyId=now.getTime();
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("sysconfig",true,"insert into HttpProxyTable (T_ProxyID,T_ProxyName,T_ProxyServer,T_ProxyUrl,T_ProxyPort,T_MapUrl,T_AllowAnyUser,T_AllowReWrite,T_AllowRePort,T_Info) values ("+proxyId+",'"+proxyName+"','"+proxyServer+"','"+proxyUrl+"',"+proxyPort+",'"+mapUrl+"',"+(allowAnyUser?1:0)+","+(allowReWrite?1:0)+","+(allowRePort?1:0)+",'"+proxyInfo+"')"))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					} 
+				}
+				break;
+			case 1:
+				{
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("sysconfig",true,"update HttpProxyTable set T_ProxyName='"+proxyName+"',T_ProxyServer='"+proxyServer+"',T_ProxyUrl='"+proxyUrl+"',T_ProxyPort="+proxyPort+",T_MapUrl='"+mapUrl+"',T_AllowAnyUser="+(allowAnyUser?1:0)+",T_AllowReWrite="+(allowReWrite?1:0)+",T_AllowRePort="+(allowRePort?1:0)+",T_Info='"+proxyInfo+"' where T_ProxyID="+proxyId))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					} 
+				}
+				break;
+			case 2:
+				{
+					var proxyList=TSS.JSON.decode(Request.Form("proxyList"));
+					for(var i=0;i<proxyList.length;i++)
+					{
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("sysconfig",true,"delete from HttpProxyTable where T_ProxyID="+proxyList[i].id))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+				}
+				break;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("sysconfig",true,"select * from HttpProxyTable"))[0];
+		if(record.MessageCode>0)
+		{
+			TSS.Utils.log(record.MessageText);
+			return TSS.JSON.encode(result);
+		}
+		//
+		var proxyMap={};
+		for(var i=0;i<record.Record.length;i++)
+		{
+			proxyMap[record.Record[i].T_MapUrl]=record.Record[i];
+		}
+		//
+		if (!System.Basic.ApplyProxyMap(TSS.JSON.encode(proxyMap))) {
+			result.flag=false;
+			result.msg="应用代理生效失败！！";
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

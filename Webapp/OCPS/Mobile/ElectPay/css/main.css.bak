@@ -1,0 +1,21 @@
+body, html {
+  height: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.message{
+	position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.message .loading img{
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin: -24px 0 0 -48px;
+}

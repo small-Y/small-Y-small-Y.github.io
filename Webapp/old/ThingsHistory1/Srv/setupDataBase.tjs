@@ -1,0 +1,53 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var method=Request.ServerVariables("REQUEST_METHOD");
+		if(method=="GET")
+		{
+			var dbname=Request.QueryString("dbname");
+			var dbtype=Request.QueryString("dbtype");
+			//
+			var data = System.KVDB.Get("sysconfig", "thingshistory."+dbtype+"."+dbname);
+			if (data == undefined) {
+				var result={
+								"backuptype":"none",
+								"filingtype":"none"
+							};
+				//
+				return TSS.JSON.encode(result);
+			}
+			else {
+				return data;
+			}
+			return TSS.JSON.encode(result);
+		}
+		else if(method=="POST")
+		{
+			var result={
+				flag:false,
+				text:""
+			};
+			//
+			var dbname=Request.Form("dbname");
+			var dbtype=Request.Form("dbtype");
+			//
+			var backuptype=Request.Form("backuptype");
+			var filingtype=Request.Form("filingtype");
+			//
+			var data={
+						"backuptype":backuptype,
+						"filingtype":filingtype
+					};
+			//
+			if(System.KVDB.Set("sysconfig", "thingshistory."+dbtype+"."+dbname, TSS.JSON.encode(data) , true))
+			{
+				result.flag=true;
+				result.text=System.KVDB.GetLastError();
+			}
+			//
+			return TSS.JSON.encode(result);
+		}
+	}());
+	Response.ContentType = "text/plain";
+%>

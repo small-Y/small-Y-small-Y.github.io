@@ -1,0 +1,30 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			data:[]
+		};
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("sysconfig",true,"select * from OAuth2Table"))[0];
+		if(record.MessageCode>0)
+		{
+			TSS.Utils.log(record.MessageText);
+			return TSS.JSON.encode(result);
+		}
+		//
+		result.flag=true;
+		for(var i=0;i<record.Record.length;i++)
+		{
+			result.data[result.data.length]=['<input type="checkbox" id="'+record.Record[i].T_AppID+'" name="selAppID" class="checkboxes">',
+												record.Record[i].T_AppName,
+												record.Record[i].T_AppID,
+												record.Record[i].T_AppSecret,
+												'<a href="javascript:App.doAuth(\''+record.Record[i].T_AppID+'\',\''+record.Record[i].T_AppName+'\',\''+record.Record[i].T_AppSecret+'\');" class="btn btn-sm btn-outline green-haze sbold"><i class="fa fa-pencil"></i> ÐÞ¸Ä</a>'];
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

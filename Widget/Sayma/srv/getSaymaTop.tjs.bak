@@ -1,0 +1,34 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result={
+					flag:false,
+					msg:[],
+					dar:[],
+					cal:[],
+					info:""
+					};
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"SELECT distinct \"T_CallText\" FROM SaymaDataTable where \"T_ToUser\"='Sayma' and \"T_Match\">0.5 and \"T_Match\"<=1 order by \"T_Match\",\"T_CallText\" desc limit 15"));
+		if(record.length==0)
+		{
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			result.cal[i]=record[0].Record[i].T_CallText;
+		}
+		result.flag=true;
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "text/plain";
+%>

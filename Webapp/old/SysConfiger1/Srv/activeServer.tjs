@@ -1,0 +1,27 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+Response.Write(function () {
+	var result={
+		flag:true,
+		data:null,
+		msg:""
+	};
+	//
+	var authName=Request.Form("authName");
+	var homePage=Request.Form("homePage");
+	//
+	if (!System.Basic.ActiveServer(authName,homePage))
+	{
+		result.flag=false;
+		result.msg=System.Basic.GetLastError();
+	}
+	else
+	{
+		result.data=TSS.JSON.decode(System.Basic.GetServerStatus());
+	}
+    //
+    return TSS.JSON.encode(result);
+} ());
+Response.ContentType = "text/plain";
+%>

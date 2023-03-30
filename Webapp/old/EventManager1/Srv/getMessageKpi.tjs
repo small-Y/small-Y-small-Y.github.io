@@ -1,0 +1,186 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:true,
+			info:"",
+			MessagePie1:[],
+			MessagePie2:[{name:"调试级",y:0,color:"#00ccff"},{name:"提示级",y:0,color:"#00cccc"},{name:"告警级",y:0,color:"#ffff00"},{name:"错误级",y:0,color:"#ff9900"},{name:"严重级",y:0,color:"#ff0000"}],
+			MessagePie3:[{name:"未知请求",y:0,color:"#00cc99"},{name:"静态请求",y:0,color:"#006699"},{name:"动态请求",y:0,color:"#6666cc"},{name:"代理请求",y:0,color:"#ff66cc"},{name:"非法请求",y:0,color:"#ff0000"}],
+			appBar:[{type: 'column',name:"操作日志量",categories:[],data:[]}],
+			phoneBar:[{type: 'column',name:"IP访问量",categories:[],data:[]}],
+			userBar:[{type: 'column',name:"用户访问量",categories:[],data:[]}]
+		};
+		//
+		var color1=["#0099ff","#cc33cc","#ff8000","#0080c0","#8080ff","#800080","#8080c0","#ff80c0"];
+		var color2=["#00cc99","#006699","#9999ff","#6666cc","#ff66cc","#ff9900","#99cc00","#ccff00"];
+		var startTime = Request.QueryString("startTime");
+		var endTime = Request.QueryString("endTime");
+		//
+		if(startTime=="" || startTime==undefined)
+		{
+			var tc = new Date();
+			startTime = new Date();
+			startTime.setFullYear(tc.getFullYear(),tc.getMonth(),tc.getDate());
+			startTime.setHours(0,0,0,0);
+			startTime=startTime.DateAdd("d",-2);
+		}
+		else
+		{
+			startTime = TSS.Utils.parseDate(startTime);
+			startTime.setHours(0,0,0,0);
+		}
+
+		if(endTime=="" || endTime==undefined)
+		{
+			endTime = new Date();
+		}
+		else
+		{
+			endTime = TSS.Utils.parseDate(endTime);
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"logType\",count(*) as total from SystemLogData where \"logTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"logTime\"<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' and \"logUser\"!='system' group by \"logType\" order by total desc limit 10"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			result.MessagePie1[result.MessagePie1.length]={
+					name:record[0].Record[i].logType,
+					color:color1[i%8],
+					y:record[0].Record[i].total
+				};
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"logLevel\",count(*) as total from SystemLogData where \"logTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"logTime\"<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' group by \"logLevel\""));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			if(record[0].Record[i].logLevel<5)
+				result.MessagePie2[record[0].Record[i].logLevel].y=record[0].Record[i].total;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"logType\",count(*) as total from UrlLogData where \"logTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"logTime\"<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' group by \"logType\""));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			if(record[0].Record[i].logType<5)
+				result.MessagePie3[record[0].Record[i].logType].y=record[0].Record[i].total;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"logAppName\",count(*) as total from SystemLogData where \"logTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"logTime\"<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' and \"logUser\"!='system' group by \"logAppName\" order by total desc limit 20"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			result.appBar[0].categories[i]=record[0].Record[i].logAppName;
+			result.appBar[0].data[i]=record[0].Record[i].total;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"logAddr\",count(*) as total from UrlLogData where \"logTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"logTime\"<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' and \"logUser\"!='' group by \"logAddr\" order by total desc limit 20"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			result.phoneBar[0].categories[i]=record[0].Record[i].logAddr;
+			result.phoneBar[0].data[i]=record[0].Record[i].total;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"logUser\",count(*) as total from UrlLogData where \"logTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"logTime\"<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' and \"logUser\"!='' group by \"logUser\" order by total desc limit 20"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			result.userBar[0].categories[i]=record[0].Record[i].logUser;
+			result.userBar[0].data[i]=record[0].Record[i].total;
+		}
+		//
+		for(var i=0;i<result.MessagePie2.length;i++)
+		{
+			if(result.MessagePie2[i].y==0)
+			{
+				result.MessagePie2.splice(i,1);
+				i--;
+			}
+		}
+		//
+		for(var i=0;i<result.MessagePie3.length;i++)
+		{
+			if(result.MessagePie3[i].y==0)
+			{
+				result.MessagePie3.splice(i,1);
+				i--;
+			}
+		}
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

@@ -1,0 +1,35 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/fax",
+  "appid": "ABA2FBAC-058C-474B-99E5-527BEE4315D3",
+  "apptype": "Things",
+  "name": "视频聚合管理服务系统",
+  "short": "视频聚合",
+  "description": "基于AI的的内置视频聚合服务",
+  "author": "ThingsLabs",
+  "version": "2.0",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/SmartVideo/",
+	  "container": "webapp",
+	  "sort": 7,
+	  "height": 678,
+	  "width": 960
+    },
+    "mobile": {
+	  "enable":true,
+	  "local_path": "",
+	  "container": "webapp",
+	  "webapp":[{
+		"id":"VideoInspection",
+		"text": "视频巡检",
+		"icons":"icon.png",
+		 "info":"",
+		"local_path": "/WebApp/SmartVideo/Mobile/"
+	  }]
+    }
+  },
+  "icons": {
+    "logo": "icon.png"
+  }
+}

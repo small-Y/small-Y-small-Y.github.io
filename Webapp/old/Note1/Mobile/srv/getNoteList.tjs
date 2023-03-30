@@ -1,0 +1,53 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result = {
+				flag:false,
+				info:"",
+				data:{}
+			};
+		//
+		var pagestart=Request.QueryString("pagestart");
+		var pagenumber=Request.QueryString("pagenumber");
+		//
+		var my = TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		var szSql="select * from NoteTable where \"T_UserID\"="+my.userID+" order by \"T_Time\" desc limit "+pagenumber+" offset "+pagestart;
+		var resSet = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,szSql))[0];
+		if (resSet.MessageCode>0){
+			result.info=resSet.MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		var tc = new Date();
+		startTime = new Date();
+		startTime.setFullYear(tc.getFullYear(),tc.getMonth(),tc.getDate());
+		startTime.setHours(0,0,0,0);
+		//
+		var weekDay=['周日','周一','周二','周三','周四','周五','周六'];
+		for(var i=0;i<resSet.Record.length;i++)
+		{
+			var key=TSS.Utils.parseDate(resSet.Record[i].T_Time).Format("MM月dd日")+'&nbsp;'+weekDay[TSS.Utils.parseDate(resSet.Record[i].T_Time).getDay()];
+			if(TSS.Utils.parseDate(resSet.Record[i].T_Time)>startTime)
+				key="<font color='#FF5722'>今天</font>";
+			else if(TSS.Utils.parseDate(resSet.Record[i].T_Time)>startTime.DateAdd("d",-1))
+				key="<font color='#2196F3'>昨天</font>";
+			else if(TSS.Utils.parseDate(resSet.Record[i].T_Time)>startTime.DateAdd("d",-2))
+				key="<font color='#009688'>前天</font>";
+			//
+			if(result.data[key]==undefined)
+			{
+				result.data[key]=[];
+				result.data[key][0]=resSet.Record[i];
+			}
+			else
+			{
+				result.data[key][result.data[key].length]=resSet.Record[i];
+			}
+		}
+		result.flag=true;
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

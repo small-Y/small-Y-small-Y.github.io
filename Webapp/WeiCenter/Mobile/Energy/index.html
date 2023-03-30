@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />	
+	<meta name="keywords" content="Things,ThingsGate,ThingsRouter,ThingsBox,ThingsHistory,ThingsView,ThingsOS,ThingsCloud,WebTop,物联网操作系统,物联网网关,智慧能源管理,智慧楼宇管理,智能工业服务,智慧家庭服务,智能云服务平台,信息物理系统" />
+	<meta name="description" content="ThingsOS是一款针对普遍智能对象(智能设备、设施或系统)进行融合、提供服务的资源管理操作系统。具体来说，它是一个在智能能源管理、智能楼宇管理、智能工业服务、智能家庭服务等等方面，提供完整的基于云的开发、组态、宿主和管理服务的独立平台。" />
+	<meta name="copyright" content= "版权所有 Copyright (c) 2016 ThingsLabs.保留所有权利。" />
+	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+	<meta name="msapplication-navbutton-color" content="#b4d9f1" />	
+	<meta name="format-detection" content="telephone=no">
+	<meta name="apple-touch-fullscreen" content="yes">
+	<meta name="msapplication-TileColor" content="#006600"/>
+	<meta name="MobileOptimized" content="320">
+	<title>掌中能源</title>
+	<!--平台样式-->
+	<!--应用样式-->
+      <link href="css/weui.css" rel="stylesheet" />
+	<link type="text/css" rel="stylesheet" href="./css/jquery-weui.css">
+    <link type="text/css" rel="stylesheet" href="./css/iconfont.css">
+	<link type="text/css" rel="stylesheet" href="./css/main.css">
+      
+  </head>
+
+  <body ontouchstart>
+      <div class="titlebar"><span class="back" id="btnBack"><i class="icon iconfont">&#xe620;</i></span><span class="back" id="btnBackList" style="display:none"><i class="icon iconfont">&#xe620;</i></span><span class="title"><b>&nbsp;&nbsp;&nbsp;&nbsp;全部建筑</b></span><span class="right" id="btnRefresh" style="float: right; line-height: 44px; padding: 0 10px;"><i class="icon iconfont">&#xe62c;</i></span></div>
+	<div class="tab_pannel" id="tab_main">
+        <div class="content" style="background-color: rgb(247, 247, 250)">
+            <div class="build-list">
+            </div>
+        </div>
+	</div>
+      <div class="detail" style=" background: #f7f7fa; display: none; overflow: auto; height: 100%; width: 100%;">
+          <div class="content" style="overflow-y: auto; position: absolute; top: 45px; width: 100%;  -webkit-overflow-scrolling: touch;">
+          </div>
+          <div class="weui-tabbar" style="background-color: #fff;z-index:1">
+              <a href="javascript:;" class="weui-tabbar__item weui-bar__item_on">
+                  <img src="css/images/fxnh-on.png" name="fxnh" alt="分项能耗" class="weui-tabbar__icon">
+                  <p class="weui-tabbar__label" >分项能耗</p>
+              </a>
+              <a href="javascript:;" class="weui-tabbar__item">
+                  <img src="css/images/fhxz-off.png" name="fhxz" alt="分户性质" class="weui-tabbar__icon">
+                  <p class="weui-tabbar__label">分户性质</p>
+              </a>
+              <a href="javascript:;" class="weui-tabbar__item">
+                  <img src="css/images/ggbf-off.png" name="ggbf" alt="公共部分" class="weui-tabbar__icon">
+                  <p class="weui-tabbar__label" >公共部分</p>
+
+              </a>
+              <a href="javascript:;" class="weui-tabbar__item">
+                  <img src="css/images/ysfl-off.png" name="ysfl" alt="用水分类" class="weui-tabbar__icon">
+                  <p class="weui-tabbar__label">用水分类</p>
+
+              </a>
+          </div>
+      </div>
+      <div class="js_dialog" id="iosDialog1" style="display:none">
+          <div class="weui-mask"></div>
+          <div class="weui-dialog">
+              <div class="weui-dialog__hd"><strong class="weui-dialog__title">确认分享</strong></div>
+              <div class="weui-dialog__bd">确认将分享</div>
+              <div class="weui-dialog__ft">
+                  <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+                  <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">确认</a>
+              </div>
+          </div>
+      </div>
+          <!--基础库-->
+      <script src="js/lib/jquery.min.js"></script>
+        <script src ="/AppEngine/CoreExt/ThingsUI/base.jsq"></script>
+          <script src="js/lib/toe.min.js"></script>
+           <script src="js/lib/highcharts.js"></script>
+          <!--平台库-->
+          <!--应用库-->
+          <script type="text/javascript" src="./js/lib/jquery-weui.min.js"></script>
+          <script type="text/javascript" src="./js/main.js"></script>
+</body>
+</html>

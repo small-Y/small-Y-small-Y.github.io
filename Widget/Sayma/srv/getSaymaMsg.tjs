@@ -1,0 +1,50 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result={
+					flag:false,
+					msg:[],
+					dar:[],
+					cal:[],
+					info:""
+					};
+		//
+		var startTime = Request.QueryString("startTime");
+		var msgList=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/Sayma?startTime="+startTime+"&from=Sayma",""));
+		if(msgList.data.length>0)
+		{
+			result.msg=msgList.data;
+		}
+		//
+		var calList=TSS.JSON.decode(Server.ExecuteAPI("GET","/API/Calendar",""));
+		if(calList.data.length>0)
+		{
+			result.dar=calList.data;
+		}
+		//
+		if(result.msg.length==0 && result.dar.length==0)
+		{
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"SELECT distinct \"T_CallText\",\"T_Match\" FROM SaymaDataTable where \"T_Match\">0.5 and \"T_Match\"<1 order by \"T_Match\" desc limit 15"));
+			if(record.length==0)
+			{
+				result.info=System.RDC.GetLastError();
+				return TSS.JSON.encode(result);
+			}
+			if(record[0].MessageCode>0)
+			{
+				result.info=record[0].MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record[0].Record.length;i++)
+			{
+				result.cal[i]=record[0].Record[i].T_CallText;
+			}
+		}
+		result.flag=true;
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "text/plain";
+%>

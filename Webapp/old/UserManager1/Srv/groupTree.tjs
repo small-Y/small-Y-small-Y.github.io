@@ -1,0 +1,74 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result=[];
+		var parent=Request.QueryString("parent");
+		//
+		var loginInfo = TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		if(!loginInfo.loginStatus)
+		{
+			result.flag=false;
+			result.text="尚未登录";
+			return TSS.JSON.encode(result);
+		}
+		//
+		if(parent=="#")
+		{
+			var basic = TSS.JSON.decode(System.Basic.GetServerStatus());
+			result[0]={
+						"id":1,
+						"icon":"icon-social-dribbble font-blue-sharp",
+						"text":basic.AuthName,
+						"children":true,
+						"state": {
+									"opened": true
+								},
+						"li_attr":basic,
+						"type":"root"
+					};
+		}
+		else
+		{
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserGroupTable where \"T_ParentID\"="+parent+" and \"T_CreateUserID\"="+loginInfo.userID))[0];
+			if(record.MessageCode>0)
+			{
+				TSS.Utils.log(record.MessageText);
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record.Record.length;i++)
+			{
+				result[result.length]={
+					"id":record.Record[i].T_GroupID,
+					"text":record.Record[i].T_GroupName,
+					"children":record.Record[i].T_Children>0?true:false,
+					"li_attr":record.Record[i],
+					"type":"default"
+				};
+			}
+			//			
+			if(loginInfo.isUserSuper && parent=="1")
+			{
+				result[result.length]={
+						"id":10,
+						"text":"未定义组",
+						"children":false,
+						"li_attr":{
+							"T_ParentID":1,
+							"T_RoleID":10,
+							"T_CreateUserID":0,
+							"T_CreateTime":"",
+							"T_RoleName":"未定义组",
+							"T_FullName":"未定义组",
+							"T_Children":0,
+							"T_RoleInfo":""
+						},
+						"type":"default"
+					};
+			}
+		}
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

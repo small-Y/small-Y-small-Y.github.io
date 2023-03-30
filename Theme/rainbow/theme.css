@@ -1,0 +1,25 @@
+@charset "utf-8";
+.dialog
+{
+	background: #336666 url(./i/dialog.png) repeat-x left top;
+}
+
+.dialog .bar
+{
+    color:#ffffff;
+}
+
+.dialog-max
+{
+	background: #336666 url(./i/dialog.png) repeat-x left top;
+}
+
+.dialog-max .bar
+{
+    color:#ffffff;
+}
+
+.dialog-fullscreen
+{
+   	background: #336666 url(./i/dialog.png) repeat-x left top;
+}

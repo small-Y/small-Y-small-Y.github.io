@@ -1,0 +1,42 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			data:[]
+		};
+		//
+		var now=new Date();
+		var tc=new Date(now.getFullYear(),now.getMonth(),now.getDate(),0,0,0,0);
+		var record = TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"SELECT wh_time,wh_text,temperature,wind_direction,wind_speed,wind_scale,humidity,aqi,pm25 FROM WeatherHourTable where wh_time>='"+tc.Format("yyyy-MM-dd")+"' ORDER BY wh_time"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		result.flag=true;
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			result.data[result.data.length]=[i+1,
+											record[0].Record[i].wh_time,
+											record[0].Record[i].wh_text,
+											record[0].Record[i].temperature+' ¡æ',
+											record[0].Record[i].humidity+' %',
+											record[0].Record[i].wind_direction+record[0].Record[i].wind_scale+'¼¶',
+											record[0].Record[i].aqi,
+											record[0].Record[i].pm25+' ¦Ìg/m3'];
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

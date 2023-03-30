@@ -1,0 +1,1364 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Server.ScriptTimeout=900;
+	Response.Write(function () {
+		var result={
+			flag:true,
+			parentId:0,
+			userId:0,
+			text:""
+		};
+		var todo=parseInt(Request.Form("todo"));
+		var parentId=Request.Form("parentId");
+		var userId=Request.Form("userId");
+		var organizeId=Request.Form("organizeId");
+		var fullName=Request.Form("fullName");
+		var nickName=Request.Form("nickName");
+		var callName=Request.Form("callName");
+		var userName=Request.Form("userName");
+		var userPass=Request.Form("userPass");
+		var userType=Request.Form("userType");
+		var eMail=Request.Form("eMail");
+		var phoneNum=Request.Form("phoneNum");
+		var allowIPAddr=Request.Form("allowIPAddr");
+		var ssoID=Request.Form("ssoID");
+		var openID=Request.Form("openID");
+		var userCardID=Request.Form("userCardID");
+		var userSN=Request.Form("userSN");
+		var userCity=Request.Form("userCity");
+		var userProvince=Request.Form("userProvince");
+		var userCountry=Request.Form("userCountry");
+		var addrCode=Request.Form("addrCode");
+		var userAddress=Request.Form("userAddress");
+		var userInfo=Request.Form("userInfo");
+		//
+		var loginInfo = TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		if(!loginInfo.loginStatus)
+		{
+			result.flag=false;
+			result.text="尚未登录";
+			return TSS.JSON.encode(result);
+		}
+		//
+		switch(todo)
+		{
+			case 0:
+				{
+					var now = new Date();
+					var userId=now.getTime(); 
+					//
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into UserDataTable (\"T_ParentID\",\"T_UserID\",\"T_CreateUserID\",\"T_CreateTime\",\"T_OrgID\",\"T_UserName\",\"T_UserPass\",\"T_FullName\",\"T_NickName\",\"T_Call\",\"T_UserCardID\",\"T_UserSN\",\"T_City\",\"T_Province\",\"T_Country\",\"T_EMail\",\"T_PhoneNum\",\"T_AddressCode\",\"T_UserAddress\",\"T_UserInfo\",\"T_UserType\",\"T_AllowIPAddr\",\"T_SSOID\",\"T_OpenID\") values ("+parentId+","+userId+","+loginInfo.userID+",'"+now.Format("yyyy-MM-dd hh:mm:ss")+"',"+organizeId+",'"+userName+"','"+userPass+"','"+fullName+"','"+nickName+"','"+callName+"','"+userCardID+"','"+userSN+"','"+userCity+"','"+userProvince+"','"+userCountry+"','"+eMail+"','"+phoneNum+"','"+addrCode+"','"+userAddress+"','"+userInfo+"',"+userType+",'"+allowIPAddr+"','"+ssoID+"','"+openID+"')"))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					var groupList=TSS.JSON.decode(Request.Form("groups"));
+					for(var i=0;i<groupList.length;i++)
+					{
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into UserGroupRelationTable (\"T_UserID\",\"T_GroupID\") values ("+userId+","+groupList[i]+")"))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					//
+					var roleList=TSS.JSON.decode(Request.Form("roles"));
+					for(var i=0;i<roleList.length;i++)
+					{
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into UserRoleRelationTable (\"T_UserID\",\"T_RoleID\") values ("+userId+","+roleList[i]+")"))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					//
+					var funcList=TSS.JSON.decode(Request.Form("func"));
+					for(var i=0;i<funcList.length;i++)
+					{
+						var appid=funcList[i];
+						var tag="*";
+						//
+						if(funcList[i].indexOf(".")>0)
+						{
+							appid=funcList[i].substr(0,funcList[i].indexOf("."));
+							tag=funcList[i].substr(funcList[i].indexOf(".")+1);
+						}
+						//
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into UserRightRelationTable (\"T_UserID\",\"T_RightTag\",\"T_AppID\") values ("+userId+",'"+tag+"','"+appid+"')"))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					//
+					var resList=TSS.JSON.decode(Request.Form("res"));
+					for(var i=0;i<resList.length;i++)
+					{
+						var appid=resList[i];
+						var tag="*";
+						//
+						if(resList[i].indexOf(".")>0)
+						{
+							appid=resList[i].substr(0,resList[i].indexOf("."));
+							tag=resList[i].substr(resList[i].indexOf(".")+1);
+						}
+						//
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into UserResourceRelationTable (\"T_UserID\",\"T_ResourceTag\",\"T_AppID\") values ("+userId+",'"+tag+"','"+appid+"')"))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					//
+					var videoList=TSS.JSON.decode(Request.Form("video"));
+					for(var i=0;i<videoList.length;i++)
+					{
+						var recordid=videoList[i];
+						var tag="*";
+						//
+						if(videoList[i].indexOf(".")>0)
+						{
+							recordid=videoList[i].substr(0,videoList[i].indexOf("."));
+							tag=videoList[i].substr(videoList[i].indexOf(".")+1);
+						}
+						//
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into UserVideoRelationTable (\"T_UserID\",\"T_VideoID\",\"T_RecordID\") values ("+userId+",'"+tag+"','"+recordid+"')"))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					//
+					result.parentId=parentId;
+					result.userId=userId;
+				}
+				break;
+			case 1:
+				{
+					//
+					if(userPass=="")
+					{
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"update UserDataTable set \"T_OrgID\"="+organizeId+",\"T_UserName\"='"+userName+"',\"T_FullName\"='"+fullName+"',\"T_NickName\"='"+nickName+"',\"T_Call\"='"+callName+"',\"T_UserCardID\"='"+userCardID+"',\"T_UserSN\"='"+userSN+"',\"T_City\"='"+userCity+"',\"T_Province\"='"+userProvince+"',\"T_Country\"='"+userCountry+"',\"T_EMail\"='"+eMail+"',\"T_PhoneNum\"='"+phoneNum+"',\"T_AddressCode\"='"+addrCode+"',\"T_UserAddress\"='"+userAddress+"',\"T_UserInfo\"='"+userInfo+"',\"T_UserType\"="+userType+",\"T_AllowIPAddr\"='"+allowIPAddr+"',\"T_SSOID\"='"+ssoID+"',\"T_OpenID\"='"+openID+"' where \"T_UserID\"="+userId))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					else
+					{
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"update UserDataTable set \"T_OrgID\"="+organizeId+",\"T_UserName\"='"+userName+"',\"T_UserPass\"='"+userPass+"',\"T_FullName\"='"+fullName+"',\"T_NickName\"='"+nickName+"',\"T_Call\"='"+callName+"',\"T_UserCardID\"='"+userCardID+"',\"T_UserSN\"='"+userSN+"',\"T_City\"='"+userCity+"',\"T_Province\"='"+userProvince+"',\"T_Country\"='"+userCountry+"',\"T_EMail\"='"+eMail+"',\"T_PhoneNum\"='"+phoneNum+"',\"T_AddressCode\"='"+addrCode+"',\"T_UserAddress\"='"+userAddress+"',\"T_UserInfo\"='"+userInfo+"',\"T_UserType\"="+userType+",\"T_AllowIPAddr\"='"+allowIPAddr+"',\"T_SSOID\"='"+ssoID+"',\"T_OpenID\"='"+openID+"' where \"T_UserID\"="+userId))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					//
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from UserGroupRelationTable where \"T_UserID\"="+userId))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					var groupList=TSS.JSON.decode(Request.Form("groups"));
+					for(var i=0;i<groupList.length;i++)
+					{
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into UserGroupRelationTable (\"T_UserID\",\"T_GroupID\") values ("+userId+","+groupList[i]+")"))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					//
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from UserRoleRelationTable where \"T_UserID\"="+userId+" and \"T_RoleID\" in (select \"T_RoleID\" from UserRoleTable where \"T_CreateUserID\"="+loginInfo.userID+")"))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					var roleList=TSS.JSON.decode(Request.Form("roles"));
+					for(var i=0;i<roleList.length;i++)
+					{
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into UserRoleRelationTable (\"T_UserID\",\"T_RoleID\") values ("+userId+","+roleList[i]+")"))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					//获取当前管理用户权限
+					var funcMap=new Array();
+					if(loginInfo.isUserSuper)
+					{
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from UserRightRelationTable where \"T_UserID\"="+userId))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					else
+					{
+						if(loginInfo.rightList!=undefined)
+						{
+							var aid;
+							for(aid in loginInfo.rightList)
+							{
+								if(loginInfo.rightList[aid]!=undefined)
+								{
+									for(var k=0;k<loginInfo.rightList[aid].length;k++)
+									{
+										funcMap[aid+"."+loginInfo.rightList[aid][k]]=1;
+										var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from UserRightRelationTable where \"T_UserID\"="+userId+" and \"T_AppID\"='"+aid+"' and \"T_RightTag\"='"+loginInfo.rightList[aid][k]+"'"))[0];
+										if(record.MessageCode>0)
+										{
+											result.flag=false;
+											result.text=record.MessageText;
+											return TSS.JSON.encode(result);
+										}
+									}
+								}
+							}
+						}
+					}
+					//
+					var funcList=TSS.JSON.decode(Request.Form("func"));
+					for(var i=0;i<funcList.length;i++)
+					{
+						var appid=funcList[i];
+						var tag="*";
+						//
+						if(funcList[i].indexOf(".")>0)
+						{
+							appid=funcList[i].substr(0,funcList[i].indexOf("."));
+							tag=funcList[i].substr(funcList[i].indexOf(".")+1);
+						}
+						//
+						if(loginInfo.isUserSuper
+							|| funcMap[appid+"."+tag]==1)
+						{
+							var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into UserRightRelationTable (\"T_UserID\",\"T_RightTag\",\"T_AppID\") values ("+userId+",'"+tag+"','"+appid+"')"))[0];
+							if(record.MessageCode>0)
+							{
+								result.flag=false;
+								result.text=record.MessageText;
+								return TSS.JSON.encode(result);
+							}
+						}
+					}
+					//获取当前管理用户资源
+					var resMap=new Array();
+					if(loginInfo.isUserSuper)
+					{
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from UserResourceRelationTable where \"T_UserID\"="+userId))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					else
+					{
+						if(loginInfo.resourceList!=undefined)
+						{
+							var aid;
+							for(aid in loginInfo.resourceList)
+							{
+								if(loginInfo.resourceList[aid]!=undefined)
+								{
+									for(var k=0;k<loginInfo.resourceList[aid].length;k++)
+									{
+										resMap[aid+"."+loginInfo.resourceList[aid][k]]=1;
+										var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from UserResourceRelationTable where \"T_UserID\"="+userId+" and \"T_AppID\"='"+aid+"' and \"T_ResourceTag\"='"+loginInfo.resourceList[aid][k]+"'"))[0];
+										if(record.MessageCode>0)
+										{
+											result.flag=false;
+											result.text=record.MessageText;
+											return TSS.JSON.encode(result);
+										}
+									}
+								}
+							}
+						}
+					}
+					//
+					var resList=TSS.JSON.decode(Request.Form("res"));
+					for(var i=0;i<resList.length;i++)
+					{
+						var appid=resList[i];
+						var tag="*";
+						//
+						if(resList[i].indexOf(".")>0)
+						{
+							appid=resList[i].substr(0,resList[i].indexOf("."));
+							tag=resList[i].substr(resList[i].indexOf(".")+1);
+						}
+						//
+						if(loginInfo.isUserSuper
+							|| resMap[appid+"."+tag]==1)
+						{
+							var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into UserResourceRelationTable (\"T_UserID\",\"T_ResourceTag\",\"T_AppID\") values ("+userId+",'"+tag+"','"+appid+"')"))[0];
+							if(record.MessageCode>0)
+							{
+								result.flag=false;
+								result.text=record.MessageText;
+								return TSS.JSON.encode(result);
+							}
+						}
+					}
+					//获取当前管理用户视频
+					var videoMap=new Array();
+					if(loginInfo.isUserSuper)
+					{
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from UserVideoRelationTable where \"T_UserID\"="+userId))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+					else
+					{
+						if(loginInfo.videoList!=undefined)
+						{
+							var aid;
+							for(aid in loginInfo.videoList)
+							{
+								if(loginInfo.videoList[aid]!=undefined)
+								{
+									for(var k=0;k<loginInfo.videoList[aid].length;k++)
+									{
+										videoMap[aid+"."+loginInfo.videoList[aid][k]]=1;
+										var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from UserVideoRelationTable where \"T_UserID\"="+userId+" and \"T_RecordID\"='"+aid+"' and \"T_VideoID\"='"+loginInfo.videoList[aid][k]+"'"))[0];
+										if(record.MessageCode>0)
+										{
+											result.flag=false;
+											result.text=record.MessageText;
+											return TSS.JSON.encode(result);
+										}
+									}
+								}
+							}
+						}
+					}
+					//
+					var videoList=TSS.JSON.decode(Request.Form("video"));
+					for(var i=0;i<videoList.length;i++)
+					{
+						var recordid=videoList[i];
+						var tag="*";
+						//
+						if(videoList[i].indexOf(".")>0)
+						{
+							recordid=videoList[i].substr(0,videoList[i].indexOf("."));
+							tag=videoList[i].substr(videoList[i].indexOf(".")+1);
+						}
+						//
+						if(loginInfo.isUserSuper
+							|| videoMap[recordid+"."+tag]==1)
+						{
+							var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"insert into UserVideoRelationTable (\"T_UserID\",\"T_VideoID\",\"T_RecordID\") values ("+userId+",'"+tag+"','"+recordid+"')"))[0];
+							if(record.MessageCode>0)
+							{
+								result.flag=false;
+								result.text=record.MessageText;
+								return TSS.JSON.encode(result);
+							}
+						}
+					}
+					//
+					result.parentId=parentId;
+					result.userId=userId;
+				}
+				break;
+			case 2:
+				{
+					var userList=TSS.JSON.decode(Request.Form("userList"));
+					for(var i=0;i<userList.length;i++)
+					{
+						System.OAuth.RemoveUserConfig(userList[i].name);
+						//
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from FriendUserTable where \"T_From\"='"+userList[i].name+"' or \"T_To\"='"+userList[i].name+"'"))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+						//
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from UserDataTable where \"T_UserID\"="+userList[i].id))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from UserGroupRelationTable where \"T_UserID\"="+userList[i].id))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from UserRoleRelationTable where \"T_UserID\"="+userList[i].id))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from UserRightRelationTable where \"T_UserID\"="+userList[i].id))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from UserResourceRelationTable where \"T_UserID\"="+userList[i].id))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"delete from UserVideoRelationTable where \"T_UserID\"="+userList[i].id))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+					}
+
+					result.parentId=parentId;
+					result.userId=userId;
+				}
+				break;
+			case 3:
+				{
+					var userType=["管理员账户","访问者账户","接口账户","禁用账户"];
+					var orgMap=new Array();
+					var basic = TSS.JSON.decode(System.Basic.GetServerStatus());
+					orgMap[2]=basic.AuthName;
+					//
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_ParentID\",\"T_OrgID\",\"T_OrgName\",\"T_FullName\" from OrganizationDataTable order by \"T_FullName\""))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					for(var i=0;i<record.Record.length;i++)
+					{
+						orgMap[record.Record[i].T_OrgID]=record.Record[i].T_FullName;
+					}
+					//
+					var fromId=Request.Form("fromId");
+					var fromType=parseInt(Request.Form("fromType"));
+					var sql="select * from UserDataTable";
+					if(fromType==0)
+					{
+						var sql="WITH RECURSIVE userlist(\"T_GroupID\",\"T_GroupName\",\"T_ParentID\") AS "  
+							+"   ( SELECT \"T_GroupID\",\"T_GroupName\",\"T_ParentID\" from UserGroupTable " 
+							+"	 WHERE \"T_GroupID\"="+fromId
+							+"	 UNION ALL " 
+							+"	 SELECT a.\"T_GroupID\",a.\"T_GroupName\",a.\"T_ParentID\" FROM " 
+							+"		 UserGroupTable a,userlist b WHERE b.\"T_GroupID\" = a.\"T_ParentID\""
+							+"   ) SELECT * from userlist";
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,sql))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+						
+						var idList=[];
+						for(var i=0;i<record.Record.length;i++)
+						{
+							idList[idList.length]=record.Record[i].T_GroupID;
+						}
+						//
+						sql="select * from UserDataTable where \"T_UserID\" in (select \"T_UserID\" from UserGroupRelationTable where \"T_GroupID\" in ("+idList.join(",")+")) and \"T_CreateUserID\"="+loginInfo.userID;
+					}
+					else if(fromType==1)
+					{
+						var sql="WITH RECURSIVE userlist(\"T_OrgID\",\"T_OrgName\",\"T_ParentID\") AS "  
+								+"   ( SELECT \"T_OrgID\",\"T_OrgName\",\"T_ParentID\" from OrganizationDataTable " 
+								+"	 WHERE \"T_OrgID\"="+fromId
+								+"	 UNION ALL " 
+								+"	 SELECT a.\"T_OrgID\",a.\"T_OrgName\",a.\"T_ParentID\" FROM    " 
+								+"		 OrganizationDataTable a,userlist b WHERE b.\"T_OrgID\" = a.\"T_ParentID\"" 
+								+"   ) SELECT * from userlist";
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,sql))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+						
+						var idList=[];
+						for(var i=0;i<record.Record.length;i++)
+						{
+							idList[idList.length]=record.Record[i].T_OrgID;
+						}
+						//
+						if(idList.length==0)
+						{
+							result.flag=false;
+							result.text="没有需要生效的账号！！";
+							return TSS.JSON.encode(result);
+						}
+						//
+						if(loginInfo.isUserSuper || loginInfo.isUserAdmin)
+							sql="select * from UserDataTable where \"T_OrgID\"  in ("+idList.join(",")+") and \"T_UserID\"!="+loginInfo.userID;
+						else
+							sql="select * from UserDataTable where \"T_OrgID\"  in ("+idList.join(",")+") and \"T_UserType\">0 and \"T_UserID\"!="+loginInfo.userID;
+					}
+					else if(fromType==2)
+					{
+						var sql="WITH RECURSIVE userlist(\"T_RoleID\",\"T_RoleName\",\"T_ParentID\") AS "  
+							+"   ( SELECT \"T_RoleID\",\"T_RoleName\",\"T_ParentID\" from UserRoleTable " 
+							+"	 WHERE \"T_RoleID\"="+fromId
+							+"	 UNION ALL" 
+							+"	 SELECT a.\"T_RoleID\",a.\"T_RoleName\",a.\"T_ParentID\" FROM    " 
+							+"		 UserRoleTable a,userlist b WHERE b.\"T_RoleID\" = a.\"T_ParentID\"" 
+							+"   ) SELECT * from userlist";
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,sql))[0];
+						if(record.MessageCode>0)
+						{
+							result.flag=false;
+							result.text=record.MessageText;
+							return TSS.JSON.encode(result);
+						}
+						
+						var idList=[];
+						for(var i=0;i<record.Record.length;i++)
+						{
+							idList[idList.length]=record.Record[i].T_RoleID;
+						}
+						//
+						if(idList.length==0)
+						{
+							result.flag=false;
+							result.text="没有需要生效的账号！！";
+							return TSS.JSON.encode(result);
+						}
+						//
+						sql="select * from UserDataTable where \"T_UserID\" in (select \"T_UserID\" from UserRoleRelationTable where \"T_RoleID\" in ("+idList.join(",")+")) and \"T_CreateUserID\"="+loginInfo.userID;
+					}
+					else if(fromType==3)
+					{
+						sql="select * from UserDataTable where \"T_UserID\"  in ("+fromId+")";
+					}
+
+					var userMap=new Array(); 
+					var record0=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,sql))[0];
+					if(record0.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record0.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					var userList=[];
+					for(var i=0;i<record0.Record.length;i++)
+					{
+						userMap[record0.Record[i].T_UserID]=record0.Record[i];
+						userMap[record0.Record[i].T_UserID].T_OrgName=orgMap[record0.Record[i].T_OrgID];
+						userMap[record0.Record[i].T_UserID].T_UserTypeName=userType[record0.Record[i].T_UserType];
+						userMap[record0.Record[i].T_UserID].T_RightList={};
+						userMap[record0.Record[i].T_UserID].T_ResourceList={};
+						userMap[record0.Record[i].T_UserID].T_VideoList={};
+						//
+						userList[userList.length]=record0.Record[i].T_UserID;
+					}
+					//
+					if(userList.length==0)
+					{
+						result.flag=false;
+						result.text="你选择的策略范围，没有需要生效的用户！！";
+						return TSS.JSON.encode(result);
+					}
+					else
+					{
+						result.text="你选择的策略范围，有"+userList.length+"个生效的用户！！";
+					}
+					//获取用户权限
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserRightRelationTable where \"T_UserID\" in ("+userList.join(",")+")"))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					for(var i=0;i<record.Record.length;i++)
+					{
+						if(userMap[record.Record[i].T_UserID]!=undefined)
+						{
+							var rLength=0;
+							if(userMap[record.Record[i].T_UserID].T_RightList[record.Record[i].T_AppID]==undefined)
+								userMap[record.Record[i].T_UserID].T_RightList[record.Record[i].T_AppID]=[];
+							else
+								rLength=userMap[record.Record[i].T_UserID].T_RightList[record.Record[i].T_AppID].length;
+							//
+							var bFind=false;
+							for(var k=0;k<rLength;k++)
+							{
+								if(userMap[record.Record[i].T_UserID].T_RightList[record.Record[i].T_AppID][k]==record.Record[i].T_RightTag)
+								{
+									bFind=true;
+									break;
+								}
+							}
+							//
+							if(!bFind)
+								userMap[record.Record[i].T_UserID].T_RightList[record.Record[i].T_AppID][rLength]=record.Record[i].T_RightTag;
+						}
+					}
+					//获取用户组权限
+					var record1=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserGroupRelationTable where \"T_UserID\" in ("+userList.join(",")+")"))[0];
+					if(record1.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record1.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from GroupRightRelationTable"))[0];
+					if(record2.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record2.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//获取用户组角色权限
+					var record3=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from GroupRoleRelationTable"))[0];
+					if(record3.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record3.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					var record4=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from RoleRightRelationTable"))[0];
+					if(record4.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record4.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					for(var i=0;i<record1.Record.length;i++)
+					{
+						for(var j=0;j<record2.Record.length;j++)
+						{
+							if(record1.Record[i].T_GroupID==record2.Record[j].T_GroupID
+								&& userMap[record1.Record[i].T_UserID]!=undefined)
+							{
+								var rLength=0;
+								if(userMap[record1.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID]==undefined)
+									userMap[record1.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID]=[];
+								else
+									rLength=userMap[record1.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID].length;
+								//
+								var bFind=false;
+								for(var k=0;k<rLength;k++)
+								{
+									if(userMap[record1.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID][k]==record2.Record[j].T_RightTag)
+									{
+										bFind=true;
+										break;
+									}
+								}
+								//
+								if(!bFind)
+									userMap[record1.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID][rLength]=record2.Record[j].T_RightTag;
+							}
+						}
+						//
+						for(var j=0;j<record3.Record.length;j++)
+						{
+							if(record1.Record[i].T_GroupID==record3.Record[j].T_GroupID)
+							{
+								for(var k=0;k<record4.Record.length;k++)
+								{
+									if(record3.Record[j].T_RoleID==record4.Record[k].T_RoleID
+										&& userMap[record1.Record[i].T_UserID]!=undefined)
+									{
+										var rLength=0;
+										if(userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID]==undefined)
+											userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID]=[];
+										else
+											rLength=userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID].length;
+										//
+										var bFind=false;
+										for(var l=0;l<rLength;l++)
+										{
+											if(userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID][l]==record4.Record[k].T_RightTag)
+											{
+												bFind=true;
+												break;
+											}
+										}
+										//
+										if(!bFind)
+											userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID][rLength]=record4.Record[k].T_RightTag;
+									}
+								}
+							}
+						}
+					}
+					//获取部门权限
+					var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from OrgRightRelationTable"))[0];
+					if(record2.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record2.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//获取部门角色权限
+					var record3=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from OrgRoleRelationTable"))[0];
+					if(record3.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record3.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					for(var i=0;i<record0.Record.length;i++)
+					{
+						for(var j=0;j<record2.Record.length;j++)
+						{
+							if(record0.Record[i].T_OrgID==record2.Record[j].T_OrgID
+								&& userMap[record0.Record[i].T_UserID]!=undefined)
+							{
+								var rLength=0;
+								if(userMap[record0.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID]==undefined)
+									userMap[record0.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID]=[];
+								else
+									rLength=userMap[record0.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID].length;
+								//
+								var bFind=false;
+								for(var k=0;k<rLength;k++)
+								{
+									if(userMap[record0.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID][k]==record2.Record[j].T_RightTag)
+									{
+										bFind=true;
+										break;
+									}
+								}
+								//
+								if(!bFind)
+									userMap[record0.Record[i].T_UserID].T_RightList[record2.Record[j].T_AppID][rLength]=record2.Record[j].T_RightTag;
+							}
+						}
+						//
+						for(var j=0;j<record3.Record.length;j++)
+						{
+							if(record0.Record[i].T_OrgID==record3.Record[j].T_OrgID)
+							{
+								for(var k=0;k<record4.Record.length;k++)
+								{
+									if(record3.Record[j].T_RoleID==record4.Record[k].T_RoleID
+										&& userMap[record0.Record[i].T_UserID]!=undefined)
+									{
+										var rLength=0;
+										if(userMap[record0.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID]==undefined)
+											userMap[record0.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID]=[];
+										else
+											rLength=userMap[record0.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID].length;
+										//
+										var bFind=false;
+										for(var l=0;l<rLength;l++)
+										{
+											if(userMap[record0.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID][l]==record4.Record[k].T_RightTag)
+											{
+												bFind=true;
+												break;
+											}
+										}
+										//
+										if(!bFind)
+											userMap[record0.Record[i].T_UserID].T_RightList[record4.Record[k].T_AppID][rLength]=record4.Record[k].T_RightTag;
+									}
+								}
+							}
+						}
+					}
+					//获取用户角色权限
+					var record1=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserRoleRelationTable where \"T_UserID\" in ("+userList.join(",")+")"))[0];
+					if(record1.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record1.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					for(var i=0;i<record1.Record.length;i++)
+					{
+						for(var j=0;j<record4.Record.length;j++)
+						{
+							if(record1.Record[i].T_RoleID==record4.Record[j].T_RoleID
+								&& userMap[record1.Record[i].T_UserID]!=undefined)
+							{
+								var rLength=0;
+								if(userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[j].T_AppID]==undefined)
+									userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[j].T_AppID]=[];
+								else
+									rLength=userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[j].T_AppID].length;
+								//
+								var bFind=false;
+								for(var k=0;k<rLength;k++)
+								{
+									if(userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[j].T_AppID][k]==record4.Record[j].T_RightTag)
+									{
+										bFind=true;
+										break;
+									}
+								}
+								//
+								if(!bFind)
+									userMap[record1.Record[i].T_UserID].T_RightList[record4.Record[j].T_AppID][rLength]=record4.Record[j].T_RightTag;
+							}
+						}
+					}
+					//获取用户资源权限
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserResourceRelationTable where \"T_UserID\" in ("+userList.join(",")+")"))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					for(var i=0;i<record.Record.length;i++)
+					{
+						if(userMap[record.Record[i].T_UserID]!=undefined)
+						{
+							var rLength=0;
+							if(userMap[record.Record[i].T_UserID].T_ResourceList[record.Record[i].T_AppID]==undefined)
+								userMap[record.Record[i].T_UserID].T_ResourceList[record.Record[i].T_AppID]=[];
+							else
+								rLength=userMap[record.Record[i].T_UserID].T_ResourceList[record.Record[i].T_AppID].length;
+							//
+							var bFind=false;
+							for(var k=0;k<rLength;k++)
+							{
+								if(userMap[record.Record[i].T_UserID].T_ResourceList[record.Record[i].T_AppID][k]==record.Record[i].T_ResourceTag)
+								{
+									bFind=true;
+									break;
+								}
+							}
+							//
+							if(!bFind)
+								userMap[record.Record[i].T_UserID].T_ResourceList[record.Record[i].T_AppID][rLength]=record.Record[i].T_ResourceTag;
+						}
+					}
+					//获取用户组资源权限
+					var record1=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserGroupRelationTable where \"T_UserID\" in ("+userList.join(",")+")"))[0];
+					if(record1.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record1.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from GroupResourceRelationTable"))[0];
+					if(record2.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record2.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//获取用户组角色资源权限
+					var record3=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from GroupRoleRelationTable"))[0];
+					if(record3.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record3.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					var record4=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from RoleResourceRelationTable"))[0];
+					if(record4.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record4.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					for(var i=0;i<record1.Record.length;i++)
+					{
+						for(var j=0;j<record2.Record.length;j++)
+						{
+							if(record1.Record[i].T_GroupID==record2.Record[j].T_GroupID
+								&& userMap[record1.Record[i].T_UserID]!=undefined)
+							{
+								var rLength=0;
+								if(userMap[record1.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID]==undefined)
+									userMap[record1.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID]=[];
+								else
+									rLength=userMap[record1.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID].length;
+								//
+								var bFind=false;
+								for(var k=0;k<rLength;k++)
+								{
+									if(userMap[record1.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID][k]==record2.Record[j].T_ResourceTag)
+									{
+										bFind=true;
+										break;
+									}
+								}
+								//
+								if(!bFind)
+									userMap[record1.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID][rLength]=record2.Record[j].T_ResourceTag;
+							}
+						}
+						//
+						for(var j=0;j<record3.Record.length;j++)
+						{
+							if(record1.Record[i].T_GroupID==record3.Record[j].T_GroupID)
+							{
+								for(var k=0;k<record4.Record.length;k++)
+								{
+									if(record3.Record[j].T_RoleID==record4.Record[k].T_RoleID
+										&& userMap[record1.Record[i].T_UserID]!=undefined)
+									{
+										var rLength=0;
+										if(userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID]==undefined)
+											userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID]=[];
+										else
+											rLength=userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID].length;
+										//
+										var bFind=false;
+										for(var l=0;l<rLength;l++)
+										{
+											if(userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID][l]==record4.Record[k].T_ResourceTag)
+											{
+												bFind=true;
+												break;
+											}
+										}
+										//
+										if(!bFind)
+											userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID][rLength]=record4.Record[k].T_ResourceTag;
+									}
+								}
+							}
+						}
+					}
+					//获取部门资源权限
+					var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from OrgResourceRelationTable"))[0];
+					if(record2.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record2.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//获取部门角色资源权限
+					var record3=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from OrgRoleRelationTable"))[0];
+					if(record3.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record3.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					for(var i=0;i<record0.Record.length;i++)
+					{
+						for(var j=0;j<record2.Record.length;j++)
+						{
+							if(record0.Record[i].T_OrgID==record2.Record[j].T_OrgID
+								&& userMap[record0.Record[i].T_UserID]!=undefined)
+							{
+								var rLength=0;
+								if(userMap[record0.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID]==undefined)
+									userMap[record0.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID]=[];
+								else
+									rLength=userMap[record0.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID].length;
+								//
+								var bFind=false;
+								for(var k=0;k<rLength;k++)
+								{
+									if(userMap[record0.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID][k]==record2.Record[j].T_ResourceTag)
+									{
+										bFind=true;
+										break;
+									}
+								}
+								//
+								if(!bFind)
+									userMap[record0.Record[i].T_UserID].T_ResourceList[record2.Record[j].T_AppID][rLength]=record2.Record[j].T_ResourceTag;
+							}
+						}
+						//
+						for(var j=0;j<record3.Record.length;j++)
+						{
+							if(record0.Record[i].T_OrgID==record3.Record[j].T_OrgID)
+							{
+								for(var k=0;k<record4.Record.length;k++)
+								{
+									if(record3.Record[j].T_RoleID==record4.Record[k].T_RoleID
+										&& userMap[record0.Record[i].T_UserID]!=undefined)
+									{
+										var rLength=0;
+										if(userMap[record0.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID]==undefined)
+											userMap[record0.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID]=[];
+										else
+											rLength=userMap[record0.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID].length;
+										//
+										var bFind=false;
+										for(var l=0;l<rLength;l++)
+										{
+											if(userMap[record0.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID][l]==record4.Record[k].T_ResourceTag)
+											{
+												bFind=true;
+												break;
+											}
+										}
+										//
+										if(!bFind)
+											userMap[record0.Record[i].T_UserID].T_ResourceList[record4.Record[k].T_AppID][rLength]=record4.Record[k].T_ResourceTag;
+									}
+								}
+							}
+						}
+					}
+					//获取用户角色资源权限
+					var record1=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserRoleRelationTable where \"T_UserID\" in ("+userList.join(",")+")"))[0];
+					if(record1.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record1.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					for(var i=0;i<record1.Record.length;i++)
+					{
+						for(var j=0;j<record4.Record.length;j++)
+						{
+							if(record1.Record[i].T_RoleID==record4.Record[j].T_RoleID
+								&& userMap[record1.Record[i].T_UserID]!=undefined)
+							{
+								var rLength=0;
+								if(userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[j].T_AppID]==undefined)
+									userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[j].T_AppID]=[];
+								else
+									rLength=userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[j].T_AppID].length;
+								//
+								var bFind=false;
+								for(var k=0;k<rLength;k++)
+								{
+									if(userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[j].T_AppID][k]==record4.Record[j].T_ResourceTag)
+									{
+										bFind=true;
+										break;
+									}
+								}
+								//
+								if(!bFind)
+									userMap[record1.Record[i].T_UserID].T_ResourceList[record4.Record[j].T_AppID][rLength]=record4.Record[j].T_ResourceTag;
+							}
+						}
+					}
+					//获取用户视频权限
+					var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserVideoRelationTable where \"T_UserID\" in ("+userList.join(",")+")"))[0];
+					if(record.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					for(var i=0;i<record.Record.length;i++)
+					{
+						if(userMap[record.Record[i].T_UserID]!=undefined)
+						{
+							var rLength=0;
+							if(userMap[record.Record[i].T_UserID].T_VideoList[record.Record[i].T_RecordID]==undefined)
+								userMap[record.Record[i].T_UserID].T_VideoList[record.Record[i].T_RecordID]=[];
+							else
+								rLength=userMap[record.Record[i].T_UserID].T_VideoList[record.Record[i].T_RecordID].length;
+							//
+							var bFind=false;
+							for(var k=0;k<rLength;k++)
+							{
+								if(userMap[record.Record[i].T_UserID].T_VideoList[record.Record[i].T_RecordID][k]==record.Record[i].T_VideoID)
+								{
+									bFind=true;
+									break;
+								}
+							}
+							//
+							if(!bFind)
+								userMap[record.Record[i].T_UserID].T_VideoList[record.Record[i].T_RecordID][rLength]=record.Record[i].T_VideoID;
+						}
+					}
+					//获取用户组视频权限
+					var record1=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserGroupRelationTable where \"T_UserID\" in ("+userList.join(",")+")"))[0];
+					if(record1.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record1.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from GroupVideoRelationTable"))[0];
+					if(record2.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record2.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//获取用户组角色资源权限
+					var record3=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from GroupRoleRelationTable"))[0];
+					if(record3.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record3.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					var record4=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from RoleVideoRelationTable"))[0];
+					if(record4.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record4.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					for(var i=0;i<record1.Record.length;i++)
+					{
+						for(var j=0;j<record2.Record.length;j++)
+						{
+							if(record1.Record[i].T_GroupID==record2.Record[j].T_GroupID
+								&& userMap[record1.Record[i].T_UserID]!=undefined)
+							{
+								var rLength=0;
+								if(userMap[record1.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID]==undefined)
+									userMap[record1.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID]=[];
+								else
+									rLength=userMap[record1.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID].length;
+								//
+								var bFind=false;
+								for(var k=0;k<rLength;k++)
+								{
+									if(userMap[record1.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID][k]==record2.Record[j].T_VideoID)
+									{
+										bFind=true;
+										break;
+									}
+								}
+								//
+								if(!bFind)
+									userMap[record1.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID][rLength]=record2.Record[j].T_VideoID;
+							}
+						}
+						//
+						for(var j=0;j<record3.Record.length;j++)
+						{
+							if(record1.Record[i].T_GroupID==record3.Record[j].T_GroupID
+								&& userMap[record1.Record[i].T_UserID]!=undefined)
+							{
+								for(var k=0;k<record4.Record.length;k++)
+								{
+									if(record3.Record[j].T_RoleID==record4.Record[k].T_RoleID)
+									{
+										var rLength=0;
+										if(userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID]==undefined)
+											userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID]=[];
+										else
+											rLength=userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID].length;
+										//
+										var bFind=false;
+										for(var l=0;l<rLength;l++)
+										{
+											if(userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID][l]==record4.Record[k].T_VideoID)
+											{
+												bFind=true;
+												break;
+											}
+										}
+										//
+										if(!bFind)
+											userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID][rLength]=record4.Record[k].T_VideoID;
+									}
+								}
+							}
+						}
+					}
+					//获取部门视频权限
+					var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from OrgVideoRelationTable"))[0];
+					if(record2.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record2.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//获取部门角色资源权限
+					var record3=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from OrgRoleRelationTable"))[0];
+					if(record3.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record3.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					for(var i=0;i<record0.Record.length;i++)
+					{
+						for(var j=0;j<record2.Record.length;j++)
+						{
+							if(record0.Record[i].T_OrgID==record2.Record[j].T_OrgID
+								&& userMap[record0.Record[i].T_UserID]!=undefined)
+							{
+								var rLength=0;
+								if(userMap[record0.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID]==undefined)
+									userMap[record0.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID]=[];
+								else
+									rLength=userMap[record0.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID].length;
+								//
+								var bFind=false;
+								for(var k=0;k<rLength;k++)
+								{
+									if(userMap[record0.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID][k]==record2.Record[j].T_VideoID)
+									{
+										bFind=true;
+										break;
+									}
+								}
+								//
+								if(!bFind)
+									userMap[record0.Record[i].T_UserID].T_VideoList[record2.Record[j].T_RecordID][rLength]=record2.Record[j].T_VideoID;
+							}
+						}
+						//
+						for(var j=0;j<record3.Record.length;j++)
+						{
+							if(record0.Record[i].T_OrgID==record3.Record[j].T_OrgID)
+							{
+								for(var k=0;k<record4.Record.length;k++)
+								{
+									if(record3.Record[j].T_RoleID==record4.Record[k].T_RoleID
+										&& userMap[record0.Record[i].T_UserID]!=undefined)
+									{
+										var rLength=0;
+										if(userMap[record0.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID]==undefined)
+											userMap[record0.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID]=[];
+										else
+											rLength=userMap[record0.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID].length;
+										//
+										var bFind=false;
+										for(var l=0;l<rLength;l++)
+										{
+											if(userMap[record0.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID][l]==record4.Record[k].T_VideoID)
+											{
+												bFind=true;
+												break;
+											}
+										}
+										//
+										if(!bFind)
+											userMap[record0.Record[i].T_UserID].T_VideoList[record4.Record[k].T_RecordID][rLength]=record4.Record[k].T_VideoID;
+									}
+								}
+							}
+						}
+					}
+					//获取用户角色视频权限
+					var record1=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from UserRoleRelationTable where \"T_UserID\" in ("+userList.join(",")+")"))[0];
+					if(record1.MessageCode>0)
+					{
+						result.flag=false;
+						result.text=record1.MessageText;
+						return TSS.JSON.encode(result);
+					}
+					//
+					for(var i=0;i<record1.Record.length;i++)
+					{
+						for(var j=0;j<record4.Record.length;j++)
+						{
+							if(record1.Record[i].T_RoleID==record4.Record[j].T_RoleID
+								&& userMap[record1.Record[i].T_UserID]!=undefined)
+							{
+								var rLength=0;
+								if(userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[j].T_RecordID]==undefined)
+									userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[j].T_RecordID]=[];
+								else
+									rLength=userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[j].T_RecordID].length;
+								//
+								var bFind=false;
+								for(var k=0;k<rLength;k++)
+								{
+									if(userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[j].T_RecordID][k]==record4.Record[j].T_VideoID)
+									{
+										bFind=true;
+										break;
+									}
+								}
+								//
+								if(!bFind)
+									userMap[record1.Record[i].T_UserID].T_VideoList[record4.Record[j].T_RecordID][rLength]=record4.Record[j].T_VideoID;
+							}
+						}
+					}
+					//
+					for(var i=0;i<record0.Record.length;i++)
+					{
+						if(userMap[record0.Record[i].T_UserID]!=undefined)
+						{
+							if (!System.OAuth.ApplyUserItem(record0.Record[i].T_UserName, TSS.JSON.encode(userMap[record0.Record[i].T_UserID])))
+							{
+								result.flag=false;
+								result.text=System.OAuth.GetLastError();
+								return TSS.JSON.encode(result);
+							}
+						}
+						else
+						{
+							Server.DebugPrint(record0.Record[i].T_UserName+"("+record0.Record[i].T_UserID+")");
+						}
+					}
+				}
+				break;
+		}
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

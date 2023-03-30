@@ -1,0 +1,121 @@
+{
+    "update_url": "http://webstore.thingslabs.com/service/update/tax",
+    "appid": "E02ADEA5-1125-4D00-9C36-36A7B84936ED",
+    "apptype": "Things",
+    "name": "北工大校园运行管理平台",
+    "short": "运行管理平台",
+    "description": "基于资源信息模型(RIM)的校园运行管理平台。",
+    "author": "ThingsLabs",
+    "version": "1.0",
+    "app": {
+        "launch": {
+            "enable": false,
+            "local_path": "http://172.21.96.135/",
+            "container": "webapp",
+            "sort": 8888,
+            "height": 600,
+            "width": 800
+        },
+        "pad": {
+            "enable": false,
+            "local_path": "http://172.21.96.135/",
+            "container": "webapp",
+            "webapp": [
+                {
+                    "id": "supervision",
+                    "text": "综合监管",
+                    "info": "",
+		     "sort": 1,
+                    "children": [
+                    ]
+                },
+                {
+                    "id": "intelligentPlace",
+                    "text": "智慧场所",
+                    "info": "",
+		     "sort": 2,
+                    "children": [
+                    ]
+                },
+                {
+                    "id": "safeOperation",
+                    "text": "安全运行",
+                    "info": "",
+		     "sort": 3,
+                    "children": [
+                        {
+                            "id": "realControl",
+                            "text": "实时控制一览",
+                            "info": "",
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "id": "publicService",
+                    "text": "公共服务",
+                    "info": "",
+		     "sort": 4,
+                    "children": [
+                    ]
+                },
+                {
+                    "id": "energyManag",
+                    "text": "能源管理",
+                    "info": "",
+		    "sort": 5,
+                    "children": [
+		     {
+                            "id": "EnergyStatistics",
+                            "text": "能耗统计",
+                            "info": "",
+                            "children": []
+                        },
+			{
+                            "id": "EnergyAudit",
+                            "text": "能源审计",
+                            "info": "",
+                            "children": []
+                        },
+			{
+                            "id": "EnergyPublicity",
+                            "text": "能效公示",
+                            "info": "",
+                            "children": []
+                        },
+			{
+                            "id": "EnergyQuota",
+                            "text": "定额管理",
+                            "info": "",
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "id": "decisionMaking",
+                    "text": "可视化决策",
+                    "info": "",
+		     "sort": 6,
+                    "children": [
+                        {
+                            "id": "realControl",
+                            "text": "实时控制一览",
+                            "info": "",
+                            "children": []
+                        }
+                    ]
+                }
+            ]
+        },
+        "mobile": {
+            "enable": false,
+            "local_path": "http://172.21.96.135/",
+            "container": "webapp",
+            "webapp": [
+            ]
+        }
+    },
+    "icons": {
+        "logo": "icon.png"
+    }
+}

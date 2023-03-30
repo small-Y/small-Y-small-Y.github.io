@@ -1,0 +1,98 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:true,
+			info:"",
+			RunPie1:[{name:"连续运行增量",y:0,color:"#c0c0c0"},{name:"已连续运行",y:0,color:"#00cc99"}],
+			RunPie2:[{name:"并行处理增量",y:0,color:"#c0c0c0"},{name:"并行处理任务",y:0,color:"#33ccff"}],
+			RunPie3:[{name:"连接池增量",y:0,color:"#c0c0c0"},{name:"数据库连接池",y:0,color:"#ff6600"}],
+			spaceLine:[{type: 'spline',name:"磁盘存储增量",color:"#00cc99",data:[]}],
+			taskLine:[{type: 'spline',name:"并行处理任务",color:"#33ccff",data:[]}],
+			urlLine:[{type: 'spline',name:"URL访问量",color:"#ff6600",data:[]}]
+		};
+		//
+		var startTime = Request.QueryString("startTime");
+		var endTime = Request.QueryString("endTime");
+		//
+		if(startTime=="" || startTime==undefined)
+		{
+			var tc = new Date();
+			startTime = new Date();
+			startTime.setFullYear(tc.getFullYear(),tc.getMonth(),tc.getDate());
+			startTime.setHours(0,0,0,0);
+			startTime=startTime.DateAdd("d",-2);
+		}
+		else
+		{
+			startTime = TSS.Utils.parseDate(startTime);
+			startTime.setHours(0,0,0,0);
+		}
+
+		if(endTime=="" || endTime==undefined)
+		{
+			endTime = new Date();
+		}
+		else
+		{
+			endTime = TSS.Utils.parseDate(endTime);
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select max(\"nTDBCount\") as \"nTDBCount\",max(\"nHttpTaskCount\") as \"nHttpTaskCount\" from SystemPerformance where  \"updateTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"updateTime\"<'"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"'"));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].Record.length==1)
+		{
+			var serverInfo=TSS.JSON.decode(System.Basic.GetServerStatus());
+			var runTime=TSS.Utils.parseDate(serverInfo.StartTime);
+			result.RunPie1[0].y=(runTime<startTime?0:TSS.Utils.dateDiff("n",startTime,runTime));
+			result.RunPie1[1].y=TSS.Utils.dateDiff("n",runTime,new Date());
+			result.RunPie2[0].y=serverInfo.TaskCount>record[0].Record[0].nHttpTaskCount?0:(record[0].Record[0].nHttpTaskCount-serverInfo.TaskCount);
+			result.RunPie2[1].y=serverInfo.TaskCount;
+			result.RunPie3[0].y=serverInfo.DataBasePool>record[0].Record[0].nTDBCount?0:(record[0].Record[0].nTDBCount-serverInfo.DataBasePool);
+			result.RunPie3[1].y=serverInfo.DataBasePool;
+		}
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"updateTime\",(\"nDiskUsageSpace\"+\"nFileUsageSpace\"+\"nDataUsageSpace\") as \"nUsageSpace\",\"nHttpTaskCount\",\"nUrlDataCount\" from SystemPerformance where \"updateTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"updateTime\"<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' order by \"updateTime\""));
+		if(record.length==0)
+		{
+			result.flag=false;
+			result.info=System.RDC.GetLastError();
+			return TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+			result.flag=false;
+			result.info=record[0].MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		result.spaceLine[0].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+		result.taskLine[0].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+		result.urlLine[0].data[0]=[Date.UTC(startTime.getFullYear(),startTime.getMonth(),startTime.getDate(),0,0,0),null];
+		for(var i=0;i<record[0].Record.length;i++)
+		{
+			var updateTime=TSS.Utils.parseDate(record[0].Record[i].updateTime);
+			if(i<record[0].Record.length-1)
+				result.spaceLine[0].data[i+1]=[Date.UTC(updateTime.getFullYear(),updateTime.getMonth(),updateTime.getDate(),updateTime.getHours(),updateTime.getMinutes(),0),(record[0].Record[i+1].nUsageSpace-record[0].Record[i].nUsageSpace)];
+			result.taskLine[0].data[i+1]=[Date.UTC(updateTime.getFullYear(),updateTime.getMonth(),updateTime.getDate(),updateTime.getHours(),updateTime.getMinutes(),0),record[0].Record[i].nHttpTaskCount];
+			result.urlLine[0].data[i+1]=[Date.UTC(updateTime.getFullYear(),updateTime.getMonth(),updateTime.getDate(),updateTime.getHours(),updateTime.getMinutes(),0),record[0].Record[i].nUrlDataCount];
+		}
+		result.spaceLine[0].data[result.spaceLine[0].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+		result.taskLine[0].data[result.taskLine[0].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+		result.urlLine[0].data[result.urlLine[0].data.length]=[Date.UTC(endTime.getFullYear(),endTime.getMonth(),endTime.getDate(),0,0,0),null];
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

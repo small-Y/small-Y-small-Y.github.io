@@ -1,0 +1,78 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			data:[]
+		};
+		//
+		var loginInfo = TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		if(!loginInfo.loginStatus)
+		{
+			result.flag=false;
+			result.text="ÉÐÎ´µÇÂ¼";
+			return TSS.JSON.encode(result);
+		}
+		//
+		var orgid=2;
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_OrgID\" from UserDataTable where \"T_UserID\"="+loginInfo.userID))[0];
+		if(record.MessageCode>0)
+		{
+			return record.MessageText;
+		}
+		//
+		if(record.Record.length>0)
+		{
+			orgid=record.Record[0].T_OrgID;
+		}
+		//
+		if(orgid>2)
+		{
+			var sql="SELECT \"T_ParentID\",\"T_OrgID\",\"T_OrgName\",\"T_FullName\" from OrganizationDataTable  WHERE \"T_OrgID\"="+orgid;
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,sql))[0];
+			if(record.MessageCode>0)
+			{
+				TSS.Utils.log(record.MessageText);
+				return TSS.JSON.encode(result);
+			}
+			//
+			if(record.Record.length>0)
+			{
+				result.data[0]={
+					"id":record.Record[0].T_OrgID,
+					"shortname":record.Record[0].T_OrgName,
+					"fullname":record.Record[0].T_FullName
+				};
+			}
+		}
+		//
+		var sql="WITH RECURSIVE  down(\"T_ParentID\",\"T_OrgID\",\"T_OrgName\",\"T_FullName\") AS "  
+							+"   ( SELECT \"T_ParentID\",\"T_OrgID\",\"T_OrgName\",\"T_FullName\" from OrganizationDataTable " 
+							+"	 WHERE \"T_ParentID\"="+orgid
+							+"	 UNION ALL " 
+							+"	 SELECT a.\"T_ParentID\",a.\"T_OrgID\",a.\"T_OrgName\",a.\"T_FullName\" FROM  " 
+							+"		 OrganizationDataTable a,down b WHERE b.\"T_OrgID\" = a.\"T_ParentID\"" 
+							+"   ) SELECT * from down";
+
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,sql))[0];
+		if(record.MessageCode>0)
+		{
+			TSS.Utils.log(record.MessageText);
+			return TSS.JSON.encode(result);
+		}
+		//
+		result.flag=true;
+		for(var i=0;i<record.Record.length;i++)
+		{
+			result.data[result.data.length]={
+				"id":record.Record[i].T_OrgID,
+				"shortname":record.Record[i].T_OrgName,
+				"fullname":record.Record[i].T_FullName
+			};
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

@@ -1,0 +1,14 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.write(function () {
+		result={
+			server:TSS.JSON.decode(System.Basic.GetServerInfo()),
+      		message:TSS.JSON.decode(System.Basic.GetMessageInfo()),
+      		weather:TSS.JSON.decode(System.Basic.GetWeatherInfo()),
+      		weixin:TSS.JSON.decode(System.Basic.GetWeixinInfo())
+		};
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "text/plain";
+%>

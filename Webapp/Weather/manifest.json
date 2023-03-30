@@ -1,0 +1,28 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/tax",
+  "appid": "34AD1296-52A2-4F78-B15F-5699267C7BCD",
+  "apptype": "Things",
+  "name": "天 气",
+  "short": "天 气",
+  "description": "查询实况天气预报信息",
+  "author": "ThingsLabs",
+  "version": "1.0.1",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/Weather/index.ejs",
+	  "container": "personal",
+	  "sort": 18,
+	  "height": 678,
+	  "width": 960
+    },
+    "mobile": {
+	  "enable":true,
+	  "local_path": "/WebApp/Weather/Mobile.ejs",
+	  "container": "personal"
+    }
+  },
+  "icons": {
+    "logo": "weather.png"
+  }
+}

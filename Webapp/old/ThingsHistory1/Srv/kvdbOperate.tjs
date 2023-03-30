@@ -1,0 +1,102 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var method=Request.ServerVariables("REQUEST_METHOD");
+		if(method=="GET")
+		{
+			var result="";
+			var dbname=Request.QueryString("dbname");
+			var colloc=Request.QueryString("colloc");
+			var key1=Request.QueryString("key1");
+			var key2=Request.QueryString("key2");
+			//
+			if(colloc=="" || colloc==undefined)
+			{
+				if(key1!="" && key1!=undefined)
+					result+=(key1+":"+System.KVDB.Get(dbname,key1)+"\r\n");
+
+				if(key2!="" && key2!=undefined)
+					result+=(key2+":"+System.KVDB.Get(dbname,key2)+"\r\n");
+			}
+			else
+			{
+				var record=null;
+				if(key2!="" && key2!=undefined)
+				{
+					if(key1!="" && key1!=undefined)
+					{
+						record=System.KVDB.PkrGet(dbname,colloc,key1,key2);
+					}
+					else
+					{
+						record=System.KVDB.PkrGet(dbname,colloc,key2,null);
+					}
+				}
+				else
+				{
+					if(key1!="" && key1!=undefined)
+					{
+						record=System.KVDB.PkrGet(dbname,colloc,key1,null);
+					}
+					else
+					{
+						record=System.KVDB.PkrGet(dbname,colloc,null,null);
+					}
+				}
+				//
+				var params = new Enumerator(record);
+				while (!params.atEnd()) {
+					var key=params.item();
+					var data=record(key);
+				  
+					result+=(key+":"+data+"\r\n");
+				  
+					params.moveNext();
+				}
+			}
+			//
+			return result;
+		}
+		else if(method=="POST")
+		{
+			var dbname=Request.Form("dbname");
+			var colloc=Request.Form("colloc");
+			var key=Request.Form("key");
+			var value=Request.Form("value");
+			//
+			if(colloc=="" || colloc==undefined)
+			{
+				if(!System.KVDB.Set(dbname, key,value,true))
+					return "写入键值数据（"+key+"）失败，"+System.KVDB.GetLastError();
+			}
+			else
+			{
+				if(!System.KVDB.PkrSet(dbname, colloc,key,value,true))
+					return "写入集合（"+colloc+"）中键值数据（"+key+"）失败，"+System.KVDB.GetLastError();
+			}
+			//
+			return "写入键值数据（"+key+":"+value+"）成功！";
+		}
+		else if(method=="DELETE")
+		{
+			var dbname=Request.Form("dbname");
+			var colloc=Request.Form("colloc");
+			var key=Request.Form("key");
+			//
+			if(colloc=="" || colloc==undefined)
+			{
+				if(!System.KVDB.Delete(dbname, key))
+					return "删除键值数据（"+key+"）失败，"+System.KVDB.GetLastError();
+			}
+			else
+			{
+				if(!System.KVDB.PkrDelete(dbname, colloc,key))
+					return "删除集合（"+colloc+"）中键值数据（"+key+"）失败，"+System.KVDB.GetLastError();
+			}
+			//
+			return "删除键值数据（"+key+"）成功！";
+		}
+	}());
+	Response.ContentType = "text/plain";
+%>

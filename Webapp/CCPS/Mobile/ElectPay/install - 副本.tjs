@@ -1,0 +1,226 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+	Response.write(function(){
+		var result={
+					flag:true,
+					info:""
+				};
+
+		//检查业务数据库是否存在
+		if(!System.RDC.ExistsDataBase("ElectPay",true))
+		{
+			//创建数据库
+			if (!System.RDC.CreateDataBase("ElectPay",true)) {
+				result.flag=false;
+				result.info=System.RDC.GetLastError();
+				return (jsoncallback!= undefined)?(jsoncallback+"("+TSS.JSON.encode(result)+")"):TSS.JSON.encode(result);
+			 }
+			//用户绑定表
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",true,"CREATE TABLE [UserRoom] ([T_UserID]   TEXT NOT NULL,[T_RoomID] TEXT NOT NULL,[T_RoomName] TEXT NOT NULL,[T_isBinding] INTEGER NOT NULL)"));
+			if(record.length==0)
+			{
+				result.flag=false;
+				result.info=System.RDC.GetLastError();
+				return (jsoncallback!= undefined)?(jsoncallback+"("+TSS.JSON.encode(result)+")"):TSS.JSON.encode(result);
+			}
+			if(record[0].MessageCode>0)
+			{
+				result.flag=false;
+				result.info=record[0].MessageText;
+				return (jsoncallback!= undefined)?(jsoncallback+"("+TSS.JSON.encode(result)+")"):TSS.JSON.encode(result);
+			}
+			//ID CHECK表
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",true,"CREATE TABLE [ssm_idlist] ([idlist]   TEXT  PRIMARY KEY NOT NULL )"));
+			if(record.length==0)
+			{
+				result.flag=false;
+				result.info=System.RDC.GetLastError();
+				return (jsoncallback!= undefined)?(jsoncallback+"("+TSS.JSON.encode(result)+")"):TSS.JSON.encode(result);
+			}
+			if(record[0].MessageCode>0)
+			{
+				result.flag=false;
+				result.info=record[0].MessageText;
+				return (jsoncallback!= undefined)?(jsoncallback+"("+TSS.JSON.encode(result)+")"):TSS.JSON.encode(result);
+			}
+			//充值业务表
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",true,"CREATE TABLE [SSM_TRANSACTION] ("
+																				+"ROWID	 TEXT NOT NULL ,	"
+																				+"PayID		 TEXT NOT NULL ,"
+																				+"InsideNO		 TEXT NOT NULL ,"
+																				+"OutsideNO		 TEXT NOT NULL ,"
+																				+"BusinessType		 TEXT NOT NULL ,"
+																				+"PayUserID		 TEXT NOT NULL ,"
+																				+"PayUserName		 TEXT NOT NULL ,"
+																				+"ReceiveUserID		 TEXT NOT NULL ,"
+																				+"ReceiveUserName		 TEXT NOT NULL ,"
+																				+"AmountPay		 TEXT NOT NULL ,"
+																				+"PayType		 TEXT NOT NULL ,"
+																				+"PreBalance		 TEXT NOT NULL ,"
+																				+"Balance	 TEXT NOT NULL ,	"
+																				+"OperateStatus		 TEXT NOT NULL ,"
+																				+"BusinessStatus		 TEXT NOT NULL ,"
+																				+"Note		 TEXT NOT NULL ,"
+																				+"Operator		 TEXT NOT NULL ,"
+																				+"CreateTime	 timestamp NOT NULL 	"
+																				+"UpdateTime	 timestamp NOT NULL 	"
+																				+")"));
+			if(record.length==0)
+			{
+				result.flag=false;
+				result.info=System.RDC.GetLastError();
+				return (jsoncallback!= undefined)?(jsoncallback+"("+TSS.JSON.encode(result)+")"):TSS.JSON.encode(result);
+			}
+			if(record[0].MessageCode>0)
+			{
+				result.flag=false;
+				result.info=record[0].MessageText;
+				return (jsoncallback!= undefined)?(jsoncallback+"("+TSS.JSON.encode(result)+")"):TSS.JSON.encode(result);
+			}
+			
+			
+
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",true,"CREATE TABLE [PayAppInfo] ("
+                                                                    +"AppID		 TEXT NOT NULL ,"
+                                                                    +"AppKEY     TEXT NOT NULL "
+                                                                    +")"));
+		if(record.length==0)
+		{
+		    result.flag=false;
+		    result.info=System.RDC.GetLastError();
+		    return (jsoncallback!= undefined)?(jsoncallback+"("+TSS.JSON.encode(result)+")"):TSS.JSON.encode(result);
+		}
+		if(record[0].MessageCode>0)
+		{
+		    result.flag=false;
+		    result.info=record[0].MessageText;
+		    return (jsoncallback!= undefined)?(jsoncallback+"("+TSS.JSON.encode(result)+")"):TSS.JSON.encode(result);
+		}
+		
+			
+			//时间策略表
+			
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",true,"CREATE TABLE [SSM_TACTICS] ("
+																	+"ProjectID		TEXT NOT NULL ,	"
+																	+"TacticsID		TEXT NOT NULL ,	"
+																	+"TacticsType		TEXT NOT NULL ,	"
+																	+"tYear		TEXT NOT NULL ,	"
+																	+"tMonth		TEXT NOT NULL ,	"
+																	+"tDay		TEXT NOT NULL ,	"
+																	+"tHour		TEXT NOT NULL ,	"
+																	+"tMinute		TEXT NOT NULL ,	"
+																	+"tSecond		TEXT NOT NULL ,	"
+																	+"isWeek		TEXT NOT NULL ,	"
+																	+"tWeek		TEXT NOT NULL ,	"
+																	+"BeginTime		timestamp NOT NULL ,	"
+																	+"EndTime		timestamp NOT NULL ,	"
+																	+"CreateTime		timestamp NOT NULL ,	"
+																	+"CreateOperator		TEXT NOT NULL "
+																	+")"));
+			if(record.length==0)
+			{
+				result.flag=false;
+				result.info=System.RDC.GetLastError();
+				return (jsoncallback!= undefined)?(jsoncallback+"("+TSS.JSON.encode(result)+")"):TSS.JSON.encode(result);
+			}
+			if(record[0].MessageCode>0)
+			{
+				result.flag=false;
+				result.info=record[0].MessageText;
+				return (jsoncallback!= undefined)?(jsoncallback+"("+TSS.JSON.encode(result)+")"):TSS.JSON.encode(result);
+			}
+			
+			//费控表
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",true,"CREATE TABLE [SSM_TACTICS] ("
+																									+"ROWID		TEXT NOT NULL ,	"
+																									+"ProjectID		TEXT NOT NULL ,	"
+																									+"BatchID		TEXT NOT NULL ,	"
+																									+"TaskID		TEXT NOT NULL ,	"
+																									+"TaskInitiateType		TEXT NOT NULL ,	"
+																									+"TaskInitiateID		TEXT NOT NULL ,	"
+																									+"TaskCauseType		TEXT NOT NULL ,	"
+																									+"TaskCauseID		TEXT NOT NULL ,	"
+																									+"TaskTargetType		TEXT NOT NULL ,	"
+																									+"TaskTargetID		TEXT NOT NULL ,	"
+																									+"TaskTypeID		TEXT NOT NULL ,	"
+																									+"TaskStatu		TEXT NOT NULL ,	"
+																									+"Parameter		TEXT NOT NULL ,	"
+																									+"TaskTacticsID		TEXT NOT NULL ,	"
+																									+"CreateTime		timestamp NOT NULL ,	"
+																									+"CreateOperator		TEXT NOT NULL "
+																									+")"));
+			if(record.length==0)
+			{
+				result.flag=false;
+				result.info=System.RDC.GetLastError();
+				return (jsoncallback!= undefined)?(jsoncallback+"("+TSS.JSON.encode(result)+")"):TSS.JSON.encode(result);
+			}
+			if(record[0].MessageCode>0)
+			{
+				result.flag=false;
+				result.info=record[0].MessageText;
+				return (jsoncallback!= undefined)?(jsoncallback+"("+TSS.JSON.encode(result)+")"):TSS.JSON.encode(result);
+			}
+			//费控审计表
+						var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",true,"CREATE TABLE [SSM_TASKAUDITLOG] ("
+																										+"ProjectID		TEXT NOT NULL ,	"
+																										+"TaskID		TEXT NOT NULL ,	"
+																										+"TaskInitiateType	TEXT NOT NULL ,		"
+																										+"TaskInitiateID		TEXT NOT NULL ,	"
+																										+"TaskCauseType		TEXT NOT NULL ,	"
+																										+"TaskCauseID		TEXT NOT NULL ,	"
+																										+"TaskTargetType		TEXT NOT NULL ,	"
+																										+"TaskTargetID		TEXT NOT NULL ,	"
+																										+"TaskTypeID		TEXT NOT NULL ,	"
+																										+"TaskHandle		TEXT NOT NULL ,	"
+																										+"TaskHandleResult 		TEXT NOT NULL ,	"
+																										+"CreateTime		timestamp NOT NULL ,	"
+																										+"CreateOperator		TEXT NOT NULL "
+																										+")"));
+			if(record.length==0)
+			{
+				result.flag=false;
+				result.info=System.RDC.GetLastError();
+				return (jsoncallback!= undefined)?(jsoncallback+"("+TSS.JSON.encode(result)+")"):TSS.JSON.encode(result);
+			}
+			if(record[0].MessageCode>0)
+			{
+				result.flag=false;
+				result.info=record[0].MessageText;
+				return (jsoncallback!= undefined)?(jsoncallback+"("+TSS.JSON.encode(result)+")"):TSS.JSON.encode(result);
+			}
+		}
+		
+					var result2= TSS.JSON.decode(Server.ExecuteAPI("PUT","/API/Times","enable=true&tag=ExecuteCharge&name=执行充值业务&describe=执行预付费充值业务&type=1&timespan=10&path=/Webapp/Payment/Mobile/ElectPay/SRV/ExecuteEleCharge.tjs"));
+			if(!result2.flag)
+			{
+				result.flag=false;
+				result.info=result2.info;
+				return TSS.JSON.encode(result);
+			}
+			
+			var result2= TSS.JSON.decode(Server.ExecuteAPI("PUT","/API/Times","enable=true&tag=ExecuteFinished&name=支付完结操作&describe=执行预付费充值支付完结业务&type=1&timespan=10&path=/Webapp/Payment/Mobile/ElectPay/SRV/ExecuteEleFinished.tjs"));
+			if(!result2.flag)
+			{
+				result.flag=false;
+				result.info=result2.info;
+				return TSS.JSON.encode(result);
+			}
+			
+			var result2= TSS.JSON.decode(Server.ExecuteAPI("PUT","/API/Times","enable=true&tag=ExecuteRefund&name=执行退款业务&describe=执行预付费退款业务&type=1&timespan=10&path=/Webapp/Payment/Mobile/ElectPay/SRV/ExecuteEleRefund.tjs"));
+			if(!result2.flag)
+			{
+				result.flag=false;
+				result.info=result2.info;
+				return TSS.JSON.encode(result);
+			}
+		
+
+			
+		//
+		return (jsoncallback!= undefined)?(jsoncallback+"("+TSS.JSON.encode(result)+")"):TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "text/plain";
+%>

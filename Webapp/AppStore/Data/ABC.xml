@@ -1,0 +1,1 @@
+﻿<tree id='0'><item text='ABC建模' id='myProject' child='0' tooltip='' img='fa-lemon-o'></item><item text='联机分析' id='OLAP' child='1' tooltip='' img='fa-line-chart'><item text='添加联机分析...' id='addMining' child='0' tooltip='添加联机数据分析' img='fa-line-chart'></item></item><item text='监控地图' id='BaiduMap' child='0' tooltip='' img='fa-location-arrow' tree='node'></item></tree>

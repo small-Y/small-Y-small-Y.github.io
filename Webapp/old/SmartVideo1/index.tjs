@@ -1,0 +1,142 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+    if(!System.Storage.IsFileExist(Request.ServerVariables("PATH_INFO")+"manifest.json"))
+	{
+        Response.Write("该应用程序未正确安装！");
+        Response.End();
+    }
+
+    var  appItem = TSS.JSON.decode(System.Storage.ReadTextFile(Request.ServerVariables("PATH_INFO") + "manifest.json"));
+    if(appItem)
+    {
+        Response.Cookies("AppID") = appItem.appid;
+        Response.Cookies("AppID").path = Request.ServerVariables("PATH_INFO");
+    }
+%>
+<!DOCTYPE html>
+<html>
+<head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta name="copyright" content= "<%=appItem.author%>" />
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+        <title><%=appItem.name%></title>
+        <!-- BEGIN GLOBAL MANDATORY STYLES -->
+        <link href="/AppEngine/Bootstrap/Metronic/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <link href="/AppEngine/Bootstrap/Metronic/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="/AppEngine/Bootstrap/Metronic/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="/AppEngine/Bootstrap/Metronic/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
+        <link href="/AppEngine/Bootstrap/Metronic/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
+        <!-- END GLOBAL MANDATORY STYLES -->
+        <!-- BEGIN PAGE LEVEL PLUGINS -->
+        <link href="/AppEngine/Bootstrap/Metronic/global/plugins/jstree/dist/themes/default/style.min.css" rel="stylesheet" type="text/css" />
+        <link href="/AppEngine/Bootstrap/Metronic/global/plugins/bootstrap-toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+        <link href="/AppEngine/Bootstrap/Metronic/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+        <!-- END PAGE LEVEL PLUGINS -->
+        <!-- BEGIN THEME GLOBAL STYLES -->
+        <link href="/AppEngine/Bootstrap/Metronic/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
+        <link href="/AppEngine/Bootstrap/Metronic/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
+        <!-- END THEME GLOBAL STYLES -->
+        <!-- 自定义样式 -->
+		<link rel="stylesheet" type="text/css" href="/AppEngine/CoreExt/ThingsUI/base.css"/>
+        <link rel="stylesheet" type="text/css" href="Resources/CSS/base.css"/>
+    </head>
+    <body>
+        <!-- 主框架Div -->
+        <div id="mainFrame">
+			<div class="row">
+				<div class="col-xs-5 col-sm-5 col-md-4 col-lg-3" style="padding-right: 12px;">
+					<div class="portlet light bordered" style="padding-bottom: 10px;">
+						<div class="portlet-title" style="margin-bottom: 0px;">
+							<div class="caption">
+								<i class="fa fa-television font-purple-plum"></i>
+								<span class="caption-subject bold font-purple-plum uppercase"> 视频直播 </span>
+							</div>
+							<div class="inputs">
+								<div class="portlet-input input-inline input-small">
+									<div class="input-icon right">
+										<i class="icon-magnifier"></i>
+										<input type="text" class="form-control input-circle" placeholder="查找..."> </div>
+								</div>
+							</div>
+						</div>
+						<div class="portlet-body">
+							<ul id="videolist" class="scroller" style="position: relative;height:400px;overflow:auto;"></ul>
+						</div>
+					</div>
+					<!-- END Portlet PORTLET-->
+				</div>
+				<div class="col-xs-7 col-sm-7 col-md-8 col-lg-9" style="padding-left: 0;">
+					<div class="portlet light bordered">
+						<div class="portlet-title">
+							<div class="caption font-green-sharp">
+								<i class="fa fa-video-camera font-green-sharp"></i>
+								<span id="ListTitle" class="caption-subject bold uppercase"> 网络摄像机</span>
+							</div>
+							<div class="actions">
+								<a href="javascript:App.doPlay(0);" class="btn btn-circle btn-default btn-sm">
+									<i class="fa fa-history"></i> 回放 </a>&nbsp;
+								<a href="javascript:App.doPlay(1);" class="btn btn-circle btn-default btn-sm" style="position: relative;">
+									<span class="video-play"><i class="fa fa fa-play"></i></span><span class="video-stop"><i class="fa fa fa-stop"></i></span> 直播</a>&nbsp;
+								<a class="btn btn-circle btn-icon-only btn-default fullscreen" href="javascript:;"></a>
+							</div>
+						</div>
+						<div class="portlet-body">
+							<div id="playVideo" style="">
+								<div class="wrapper">
+									<img src="/Upload/Video/connect.jpg" width="100%" border="0">
+								</div>
+							</div>
+							<div class="chat-form">			
+								<div class="input-cont">	
+									<input class="form-control" type="text" placeholder="打印视频字幕信息...">	
+								</div>							
+								<div class="btn-cont">					
+									<span class="arrow"></span>	
+									<a href="#" class="btn blue icn-only"><i class="fa fa-arrow-right icon-white"></i></a>							
+								</div>						
+							</div>
+						</div>
+					</div>
+					<!-- END Portlet PORTLET-->
+				</div>
+			</div>
+        </div>
+        <!-- 加载信息 -->
+        <div id="startingCover">
+		    <div id="startingLogo"></div>
+		    <div id="startingText">正加载核心组件...</div>
+		    <div id="startingVer">&copy;2015&nbsp;<%=appItem.author%>.</div>
+	    </div>
+		<!-- BEGIN CORE PLUGINS -->
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/jquery.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+        <!-- END CORE PLUGINS -->
+        <!-- 系统库文件 -->
+        <script type="text/javascript" src="/AppEngine/CoreExt/ThingsUI/base.js"></script>
+        <!-- 应用库文件 -->
+        <script type="text/javascript">
+            document.getElementById('startingText').innerHTML = '正加载通用组件...';
+        </script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/jstree/dist/jstree.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/bootbox/bootbox.min.js" type="text/javascript"></script>
+        <script src="/AppEngine/Bootstrap/Metronic/global/plugins/bootstrap-toastr/toastr.min.js" type="text/javascript"></script>
+		<script src="/AppEngine/Bootstrap/Metronic/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js" type="text/javascript"></script>
+		<script src="/AppEngine/Bootstrap/Metronic/global/plugins/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" type="text/javascript"></script>
+        <!-- 应用程序文件 -->
+        <script type="text/javascript">
+            document.getElementById('startingText').innerHTML = '正加载应用组件...';
+         </script>
+        <script type="text/javascript" src="Scripts/main.js"></script>
+        <script type="text/javascript" src="Scripts/webapp.js"></script>
+        <script type="text/javascript">
+            document.getElementById('startingText').innerHTML = '正启动应用程序...';
+        </script>
+    </body>
+</html>

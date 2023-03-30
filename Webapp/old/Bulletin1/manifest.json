@@ -1,0 +1,28 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/tax",
+  "appid": "BCAD05F9-8D1A-449A-A660-C7AD11F3065C",
+  "apptype": "Things",
+  "name": "公 告",
+  "short": "公 告",
+  "description": "管理发布公告信息",
+  "author": "ThingsLabs",
+  "version": "1.0.1",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/Bulletin/index.tjs",
+	  "container": "personal",
+	  "sort": 19,
+	  "height": 600,
+	  "width": 800
+    },
+    "mobile": {
+	  "enable":true,
+	  "local_path": "/WebApp/Bulletin/Mobile/",
+	  "container": "personal"
+    }
+  },
+  "icons": {
+    "logo": "bulletin.png"
+  }
+}

@@ -1,0 +1,96 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			text:"",
+			data:[]
+		};
+		//
+		var startTime = Request.QueryString("startTime");
+		var endTime = Request.QueryString("endTime");
+		//
+		if(startTime=="" || startTime==undefined)
+		{
+			var tc = new Date();
+			startTime = new Date();
+			startTime.setFullYear(tc.getFullYear(),tc.getMonth(),tc.getDate());
+			startTime.setHours(0,0,0,0);
+			startTime=startTime.DateAdd("d",-7);
+		}
+		else
+		{
+			startTime = TSS.Utils.parseDate(startTime);
+		}
+
+		if(endTime=="" || endTime==undefined)
+		{
+			endTime = new Date();
+		}
+		else
+		{
+			endTime = TSS.Utils.parseDate(endTime);
+			endTime=endTime.DateAdd("d",1);
+		}
+		//
+		var LogType=new Array();
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"typeID\",\"typeStr\" from UrlLogType"));
+		if(record.length==0 
+			|| record[0].MessageCode>0)
+		{
+			TSS.Utils.log(record.MessageText);
+			return TSS.JSON.encode(result);
+		}
+		//
+		var typeList=record[0].Record;
+		for(var i=0;i<typeList.length;i++)
+		{
+			LogType[typeList[i].typeID]=typeList[i].typeStr;
+		}
+		//
+		var sql="select * from UrlLogData where \"logTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"logTime\"<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' and \"logUser\"!='' limit 2500";
+		var selUrlType = Request.QueryString("selUrlType");
+		if(selUrlType!="" && selUrlType!=undefined)
+		{
+			sql+=" AND \"logType\" in ("+selUrlType+")";
+		}
+		var selUrlStatus = Request.QueryString("selUrlStatus");
+		if(selUrlStatus!="" && selUrlStatus!=undefined)
+		{
+			sql+=" AND \"logStatus\" in ("+selUrlStatus+")";
+		}
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,sql))[0];
+		if(record.MessageCode>0)
+		{
+			result.text=record.MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//
+		result.flag=true;
+		for(var i=0;i<record.Record.length;i++)
+		{
+			Server.DebugPrint(record.Record[i].logContent);
+			var strStatus='<span class="text-muted">³É¹¦</span>';
+			var strType='<span class="text-muted">'+LogType[record.Record[i].logType]+'</span>';
+			var strContent='<span class="text-muted">'+record.Record[i].logContent+'</span>';
+			if(!record.Record[i].logStatus)
+			{
+				strStatus='<span class="text-danger">Ê§°Ü</span>';
+				strType='<span class="text-danger">'+LogType[record.Record[i].logType]+'</span>';
+				strContent='<span class="text-danger">'+record.Record[i].logContent+'</span>';
+			}
+			//
+			result.data[result.data.length]=['<input type="checkbox" id="'+record.Record[i].logID+'" name="selMessageID" class="checkboxes">',
+												record.Record[i].logTime,
+												record.Record[i].logAddr,
+												record.Record[i].logUser,
+												strContent,
+												strType,
+												strStatus];
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

@@ -1,0 +1,113 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result=[];
+		var parent=Request.QueryString("parent");
+		var id=Request.QueryString("id");
+		var type=Request.QueryString("type");
+		//
+		var loginInfo = TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		if(!loginInfo.loginStatus)
+		{
+			result.flag=false;
+			result.text="ÉÐÎ´µÇÂ¼";
+			return TSS.JSON.encode(result);
+		}
+		//
+		var roleMap=new Array();
+		if(type=="org")
+		{
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_RoleID\" from OrgRoleRelationTable where \"T_OrgID\"="+id))[0];
+			if(record.MessageCode>0)
+			{
+				result.text=record.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record.Record.length;i++)
+			{
+				roleMap[record.Record[i].T_RoleID]=1;
+			}
+		}
+		else if(type=="group")
+		{
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_RoleID\" from GroupRoleRelationTable where \"T_GroupID\"="+id))[0];
+			if(record.MessageCode>0)
+			{
+				result.text=record.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record.Record.length;i++)
+			{
+				roleMap[record.Record[i].T_RoleID]=1;
+			}
+		}
+		else if(type=="user")
+		{
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_RoleID\" from UserRoleRelationTable where \"T_UserID\"="+id))[0];
+			if(record.MessageCode>0)
+			{
+				result.text=record.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			for(var i=0;i<record.Record.length;i++)
+			{
+				roleMap[record.Record[i].T_RoleID]=1;
+			}
+		}
+		//
+		if(parent=="#")
+		{
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_ParentID\",\"T_RoleID\",\"T_RoleName\" from UserRoleTable where \"T_CreateUserID\"="+loginInfo.userID))[0];
+			if(record.MessageCode>0)
+			{
+				result.text=record.MessageText;
+				return TSS.JSON.encode(result);
+			}
+			//
+			function getchildren(pid)
+			{
+				var child=[];
+				for(var i=0;i<record.Record.length;i++)
+				{
+					if(record.Record[i].T_ParentID==pid)
+					{
+						child[child.length]={
+							"id":record.Record[i].T_RoleID,
+							"text":record.Record[i].T_RoleName,
+							"children":getchildren(record.Record[i].T_RoleID),
+							"state": {
+										"selected": roleMap[record.Record[i].T_RoleID]==1?true:false,
+										"opened": roleMap[record.Record[i].T_RoleID]==1?true:false
+									},
+							"type":"default"
+						};
+					}
+				}
+				return child;
+			}
+			//
+			var basic = TSS.JSON.decode(System.Basic.GetServerStatus());
+			result[0]={
+						"id":3,
+						"icon":"icon-social-dribbble font-blue-sharp",
+						"text":basic.AuthName,
+						"children":getchildren(3),
+						"state": {
+									"selected": roleMap[3]==1?true:false,
+									"opened": true
+								},
+						"type":"root"
+					};
+			//
+		}
+		else
+		{
+		}
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

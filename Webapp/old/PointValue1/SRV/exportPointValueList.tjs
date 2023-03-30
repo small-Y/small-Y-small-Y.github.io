@@ -1,0 +1,148 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	var startTime = Request.QueryString("startTime");
+	var endTime = Request.QueryString("endTime");
+	//
+	if(startTime=="" || startTime==undefined)
+	{
+		var tc = new Date();
+		startTime = new Date();
+		startTime.setFullYear(tc.getFullYear(),tc.getMonth(),1);
+		startTime.setHours(0,0,0,0);
+	}
+	else
+	{
+		startTime = TSS.Utils.parseDate(startTime);
+	}
+	//
+	if(endTime=="" || endTime==undefined)
+	{
+		endTime = new Date();
+	}
+	else
+	{
+		endTime = TSS.Utils.parseDate(endTime);
+		endTime=endTime.DateAdd("d",1);
+	}
+	//
+	var selChannel = Request.QueryString("selChannel");
+	var selPayApp = Request.QueryString("selPayApp");
+	//
+	var ifwhere="\"T_OrderTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"T_OrderTime\"<'"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"'";
+	if(selPayApp!="" && selPayApp!=undefined)
+	{
+		var arr=selPayApp.split(",");
+		var arrT=[];
+		for(var i=0;i<arr.length;i++){
+			arrT.push("'"+arr[i]+"'");
+		}
+		ifwhere+=" AND \"T_Payid\" in ("+arrT.join(",")+")";
+	}
+	//
+	if(selChannel!="" && selChannel!=undefined)
+	{
+		var arr=selChannel.split(",");
+		var arrT=[];
+		for(var i=0;i<arr.length;i++){
+			arrT.push("'"+arr[i]+"'");
+		}
+		ifwhere+=" AND \"T_Channel\" in ("+arrT.join(",")+")";
+	}
+	//
+	var record1=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_Year\",\"T_Month\",\"T_Day\",sum(\"T_Paid\") as paid,sum(\"T_Refund\") as refund from OrderTable where "+ ifwhere+" group by \"T_Year\",\"T_Month\",\"T_Day\""));
+	if(record1.length==0)
+	{
+		Response.Write(System.RDC.GetLastError());
+	}
+	if(record1[0].MessageCode>0)
+	{
+		Response.Write(record1[0].MessageText);
+	}
+	//
+	var dayMap1=[];
+	for(var i=0;i<record1[0].Record.length;i++)
+	{
+		dayMap1[record1[0].Record[i].T_Year+"-"+record1[0].Record[i].T_Month+"-"+record1[0].Record[i].T_Day]=i;
+	}
+	//
+	var record2=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select \"T_Year\",\"T_Month\",\"T_Day\",count(\"T_Paid\") as paid_count from OrderTable where "+ ifwhere+" and \"T_Paid\">0 group by \"T_Year\",\"T_Month\",\"T_Day\""));
+	if(record2.length==0)
+	{
+		Response.Write(System.RDC.GetLastError());
+	}
+	if(record2[0].MessageCode>0)
+	{
+		Response.Write(record2[0].MessageText);
+	}
+	//
+	var dayMap2=[];
+	for(var i=0;i<record2[0].Record.length;i++)
+	{
+		dayMap2[record2[0].Record[i].T_Year+"-"+record2[0].Record[i].T_Month+"-"+record2[0].Record[i].T_Day]=i;
+	}
+	//
+	var record3=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select T_Year\",\"T_Month\",\"T_Day\",count(\"T_Refund\") as refund_count from OrderTable where "+ ifwhere+" and \"T_Refund\">0 group by \"T_Year\",\"T_Month\",\"T_Day\""));
+	if(record3.length==0)
+	{
+		Response.Write(System.RDC.GetLastError());
+	}
+	if(record3[0].MessageCode>0)
+	{
+		Response.Write(record3[0].MessageText);
+	}
+	//
+	var dayMap3=[];
+	for(var i=0;i<record3[0].Record.length;i++)
+	{
+		dayMap3[record3[0].Record[i].T_Year+"-"+record3[0].Record[i].T_Month+"-"+record3[0].Record[i].T_Day]=i;
+	}
+	//
+	var tc1=startTime;
+	tc1.setHours(0,0,0,0);
+	var tc2=tc1.DateAdd("d",1);
+	var paid=0;
+	var refund=0;
+	var paid_count=0;
+	var refund_count=0;
+	//
+	Response.Clear();
+	Response.Buffer = false;
+	Response.CharSet = "gbk";
+	Response.ContentType = "application/csv";
+	Response.ContentDisposition("attachment; filename=财务对账表"+startTime.Format("yyyyMMdd")+endTime.Format("yyyyMMdd")+".csv");
+	Response.Write("日期,收入金额,支出金额,成交金额,支付订单,退款订单\n");
+	while(tc1<endTime)
+	{
+		var idx1=dayMap1[tc1.getFullYear()+"-"+(tc1.getMonth()+1)+"-"+tc1.getDate()];
+		var idx2=dayMap2[tc1.getFullYear()+"-"+(tc1.getMonth()+1)+"-"+tc1.getDate()];
+		var idx3=dayMap3[tc1.getFullYear()+"-"+(tc1.getMonth()+1)+"-"+tc1.getDate()];
+		if(idx1==undefined)
+		{
+			Response.Write(tc1.Format("yyyy-MM-dd")+",——,——,——,——,——\n");
+		}
+		else
+		{
+			Response.Write(tc1.Format("yyyy-MM-dd")+","+
+					TSS.Utils.formatNumber(record1[0].Record[idx1].paid/100,"#,##0.00")+"元,"+
+					TSS.Utils.formatNumber(record1[0].Record[idx1].refund/100,"#,##0.00")+"元,"+
+					TSS.Utils.formatNumber((record1[0].Record[idx1].paid-record1[0].Record[idx1].refund)/100,"#,##0.00")+'元,'+
+					(idx2==undefined?0:record2[0].Record[idx2].paid_count)+"笔,"+
+					(idx3==undefined?0:record3[0].Record[idx3].refund_count)+"笔\n");
+				//
+				if(record1[0].Record[idx1].paid>0)
+					paid+=parseInt(record1[0].Record[idx1].paid);
+				if(record1[0].Record[idx1].refund>0)
+					refund+=parseInt(record1[0].Record[idx1].refund);
+				if(idx2!=undefined && record2[0].Record[idx2].paid_count>0)
+					paid_count+=parseInt(record2[0].Record[idx2].paid_count);
+				if(idx3!=undefined && record3[0].Record[idx3].refund_count>0)
+					refund_count+=parseInt(record3[0].Record[idx3].refund_count);
+		}
+		//
+		tc1=tc2;
+		tc2=tc2.DateAdd("d",1);
+	}
+	//
+	Response.Write("合计,"+TSS.Utils.formatNumber(paid/100,"#,##0.00")+"元,"+TSS.Utils.formatNumber(refund/100,"#,##0.00")+"元,"+TSS.Utils.formatNumber((paid-refund)/100,"#,##0.00")+"元,"+TSS.Utils.formatNumber(paid_count,"#,##0")+"笔,"+TSS.Utils.formatNumber(refund_count,"#,##0")+"笔\n");
+%>

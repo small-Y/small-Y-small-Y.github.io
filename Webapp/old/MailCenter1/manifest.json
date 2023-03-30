@@ -1,0 +1,28 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/tax",
+  "appid": "205833BA-6463-4F2B-BBC3-F1D483CB3169",
+  "apptype": "Things",
+  "name": "邮件中心",
+  "short": "邮件中心",
+  "description": "查看邮箱及收发个人信息",
+  "author": "ThingsLabs",
+  "version": "1.0.1",
+  "app": {
+    "launch": {
+	  "enable":true,
+	  "local_path": "/WebApp/MailCenter/index.tjs",
+	  "container": "system",
+	  "sort": 15,
+	  "height": 600,
+	  "width": 800
+    },
+    "mobile": {
+	  "enable":false,
+	  "local_path": "/WebApp/MailCenter/Mobile/index.tjs",
+	  "container": "system"
+    }
+  },
+  "icons": {
+    "logo": "icon_64.png"
+  }
+}

@@ -1,0 +1,26 @@
+{
+"update_url":"http://webstore.thingslabs.com/service/update/fwx",
+  "appid": "FF4D4A08-0C23-4589-873D-B2887924B00E",
+  "apptype": "桌面部件",
+  "name": "新知APP",
+  "description": "显示新知移动轻应用的桌面小组件",
+  "author": "ThingsLabs",
+  "version": "1.0",
+  "app": {
+    "launch": {
+	  "local_path": "../../WebMobile/index.tjs",
+	  "container": "widget",
+	  "height": "760px",
+	  "width": "380px"
+    },
+    "setup": {
+	  "local_path": "",
+	  "container": "widget",
+	  "height": 0,
+	  "width": 0
+    }
+  },
+  "icons": {
+    "logo": "logo.png"
+  }
+}

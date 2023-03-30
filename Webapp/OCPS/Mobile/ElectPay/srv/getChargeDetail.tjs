@@ -1,0 +1,51 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<!--#INCLUDE FILE="base_extend.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.clear();
+Response.write(function(){
+    var ret={"success":false,"gData":[],"nData":[],"msg":""};
+
+    var NodeID = Request.form("opcpath");
+    var startDate = Request.form("startDate");
+    var endDate = Request.form("endDate");
+    var TOP = Request.form("TOP");
+    var xmlHttp = Server.CreateObject("MSXML2.ServerXMLHTTP.6.0");
+
+    var url =  TSS.Project.ElectPayUrl+"getChargeDetail.fwp?NodeID="+NodeID+"&startDate="+startDate+"&endDate="+endDate+"&TOP="+TOP;
+    xmlHttp.open('GET', url, false, "wxpay", "frontviewjf3907");
+    xmlHttp.setOption(2, 13056);  //https
+    xmlHttp.send();
+    var res=TSS.JSON.decode(xmlHttp.responseText);
+    if(res.success){
+        for(var i=0,len=res.Data.length;i<len;i++){
+            if(res.Data[i].Operator=="Î¢ÐÅÖ§¸¶"){
+                var sql="SELECT \"PayUserID\",\"PayUserName\" FROM \"SSM_TRANSACTION\"  WHERE \"OutsideNO\"='"+res.Data[i].DataIndex+"'";
+                var res1=TSS.JSON.decode(System.RDC.ExcuteSQL("ElectPay",false,sql))[0];
+
+                if(res1.length==0)
+                {
+                    return System.RDC.GetLastError();
+                }
+
+                if(res1.MessageCode>0){
+                    return res1.MessageText;
+                }
+                if(res1.Record.length==1){
+                
+                    res.Data[i].PayUserName= res1.Record[0].PayUserName
+                }
+                
+            }
+        }
+        return TSS.JSON.encode(res);
+    }else{
+	    
+        ret.msg=res.msg;
+        return TSS.JSON.encode(ret);
+    }
+		
+		
+}());
+Response.ContentType = "text/plain";
+%>

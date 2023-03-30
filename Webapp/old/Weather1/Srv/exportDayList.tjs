@@ -1,0 +1,56 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	var startTime = Request.QueryString("startTime");
+	var endTime = Request.QueryString("endTime");
+	if(startTime=="" || startTime==undefined)
+	{
+		var tc = new Date();
+		startTime = new Date();
+		startTime.setFullYear(tc.getFullYear(),tc.getMonth(),tc.getDate());
+		startTime.setHours(0,0,0,0);
+		startTime=startTime.DateAdd("d",-2);
+	}
+	else
+	{
+		startTime = TSS.Utils.parseDate(startTime);
+	}
+
+	if(endTime=="" || endTime==undefined)
+	{
+		endTime = new Date();
+	}
+	else
+	{
+		endTime = TSS.Utils.parseDate(endTime);
+		endTime=endTime.DateAdd("d",1);
+	}
+
+	Response.Clear();
+	Response.Buffer = false;
+	Response.CharSet = "gbk";
+	Response.ContentType = "application/csv";
+	Response.ContentDisposition("attachment; filename=逐日天气气象"+startTime.Format("yyyyMMdd")+endTime.Format("yyyyMMdd")+".csv");
+	Response.Write("时间,星期,气象,最低气温,最高气温,风向（风力）\n");
+
+	var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"SELECT wh_date,wh_day,wh_text,wh_code1,wh_code2,high,low,cop,wind FROM WeatherDayTable where wh_date>='"+startTime.Format("yyyy-MM-dd")+"' and wh_date<'"+endTime.Format("yyyy-MM-dd hh:mm:ss")+"' ORDER BY wh_date"));
+	if(record.length==0)
+	{
+		Response.Write(System.RDC.GetLastError());
+	}
+	if(record[0].MessageCode>0)
+	{
+		Response.Write(record[0].MessageText);
+	}
+
+	var orderList=record[0].Record;
+	for(var i=0;i<orderList.length;i++)
+	{
+		Response.Write(orderList[i].wh_date+","+
+					orderList[i].wh_day+","+
+					orderList[i].wh_text+","+
+					orderList[i].low+" ℃,"+
+					orderList[i].high+" ℃,"+
+					orderList[i].cop+"\n");
+	}
+%>

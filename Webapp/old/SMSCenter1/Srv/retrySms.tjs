@@ -1,0 +1,24 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:true,
+			text:""
+		};
+		//
+		var smsid=Request.Form("smsid");
+		var phonenum=Request.Form("phonenum");
+		var content=Request.Form("content");
+		//
+		var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"update SMSDataTable set \"T_SmsPhone\"='"+phonenum+"',\"T_SmsMessage\"='"+content+"',\"T_Status\"=0 where \"T_SmsID\"="+smsid))[0];
+		if(record.MessageCode>0)
+		{
+			result.flag=false;
+			result.text=record.MessageText;
+			return TSS.JSON.encode(result);
+		} 
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>

@@ -1,0 +1,71 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	var userInfo=TSS.JSON.decode(System.OAuth.GetCurrentUser());
+	//
+	if(!userInfo.loginStatus)
+	{
+		Response.Redirect("/API/My/Login/?goto="+escape("/Webapp/Bulletin/Mobile/"));
+	}
+%>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />	
+	<meta name="keywords" content="Things,ThingsGate,ThingsRouter,ThingsBox,ThingsDB,ThingsView,ThingsOS,ThingsCloud,WebTop,物联网操作系统,物联网网关,智慧能源管理,智慧楼宇管理,智能工业服务,智慧家庭服务,智能云服务平台,信息物理系统" />
+	<meta name="description" content="ThingsOS是一款针对普遍智能对象(智能设备、设施或系统)进行融合、提供服务的资源管理操作系统。具体来说，它是一个在智能能源管理、智能楼宇管理、智能工业服务、智能家庭服务等等方面，提供完整的基于云的开发、组态、宿主和管理服务的独立平台。" />
+	<meta name="copyright" content= "版权所有 Copyright (c) 2016 ThingsLabs.保留所有权利。" />
+	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+	<meta name="msapplication-navbutton-color" content="#b4d9f1" />	
+	<meta name="application-name" content="备忘录" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="white" />
+	<meta name="format-detection" content="telephone=no">
+	<meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-title" content="备忘录">
+	<meta name="msapplication-TileImage" content="../logo-144.png"/>
+	<meta name="msapplication-TileColor" content="#006600"/>
+
+    <title>备忘录</title>
+
+	<link rel="icon" href="/favicon.ico" type="image/x-icon" />
+	<link rel="shortcut icon" href="/favicon.ico" sizes="16x16" type="image/x-icon" />
+	<link rel="shortcut icon" href="/logo.png" sizes="32x32" type="image/png" />
+	<link rel="shortcut icon" href="/logo.png" sizes="64x64" type="image/png" />
+	<link rel="bookmark" href="/favicon.ico" type="image/x-icon" />
+
+	<link rel="apple-touch-icon-precomposed" sizes="57x57" href="../logo-57.png">
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../logo-72.png">
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../logo-114.png">
+	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../logo-144.png">
+
+	<link type="text/css" rel="stylesheet" href="/AppEngine/CoreExt/ThingsUI/base.min.css" />
+	<link type="text/css" rel="stylesheet" href="css/weui.min.css">
+	<link type="text/css" rel="stylesheet" href="css/jquery-weui.css">
+	<link type="text/css" rel="stylesheet" href="css/iconfont.css">
+	<link type="text/css" rel="stylesheet" href="css/main.css">
+
+  </head>
+
+  <body ontouchstart>
+    <div class="weui_tab">
+	  <div class="weui_title_bar" id="title_bar"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;全部便签</b><span class="btn"><i class="icon iconfont" style="font-size:18pt;">&#xe616;</i></span></div>
+      <div class="weui_tab_body" id="tab_body"></div>
+      <div class="weui_tab_main" id="tab_main">
+			<div class="subtitle_bar"></div>
+			<div class="subtitle_body"></div>
+	  </div>
+    </div>
+
+	<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
+    <script type="text/javascript" src="/AppEngine/jQuery/jquery2.jsz"></script>
+    <script type="text/javascript" src="/AppEngine/jQuery/toe.min.js"></script>
+ 	<script type="text/javascript" src="/AppEngine/CoreExt/ThingsUI/base.js"></script>
+
+	<script type="text/javascript" src="./js/jquery-weui.js"></script>
+	<script type="text/javascript" src="./js/main.js"></script>
+
+  </body>
+</html>

@@ -1,0 +1,48 @@
+{
+	"update_url": "http://webstore.thingslabs.com/service/update/tax",
+	"appid": "4CE22A2B-F633-40E2-AC12-6BABDCFSDADD",
+	"apptype": "Things",
+	"name": "人力资源管理系统",
+	"short": "人力资源",
+	"description": "",
+	"author": "Kuangqing",
+	"version": "1.0",
+	"app": {
+		"launch": {
+			"enable": true,
+			"local_path": "/es/",
+			"container": "proxy",
+			"sort": 5000,
+			"height": 600,
+			"width": 800,
+			"webapp": ""
+		},
+		"pad": {
+			"enable": false,
+			"local_path": "/WebApp/SmartApp/Pad/",
+			"container": "webapp",
+			"webapp": [{
+				"id": "p1",
+				"text": "XXXX",
+				"icons": "icon.png",
+				"info": "",
+				"local_path": "/WebApp/SmartApp/Pad/XXX"
+			}]
+		},
+		"mobile": {
+			"enable": false,
+			"local_path": "/WebApp/SmartApp/Mobile/",
+			"container": "webapp",
+			"webapp": [{
+				"id": "MyOffice",
+				"text": "我的办公室",
+				"icons": "/Mobile/MyOffice/logo.png",
+				"info": "",
+				"local_path": "/WebApp/SmartApp/Mobile/MyOffice/"
+			}]
+		}
+	},
+	"icons": {
+		"logo": "icon.png"
+	}
+}

@@ -1,0 +1,110 @@
+<!--#INCLUDE FILE="/AppEngine/CoreExt/ThingsSrv/base.tjs"-->
+<%@ LANGUAGE=JavaScript %>
+<%
+	Response.Write(function () {
+		var result={
+			flag:false,
+			text:"",
+			data:[]
+		};
+		//
+		var type=Request.QueryString("type");
+		var startTime = Request.QueryString("startTime");
+		var endTime = Request.QueryString("endTime");
+		//
+		if(startTime=="" || startTime==undefined)
+		{
+			var tc = new Date();
+			startTime = new Date();
+			startTime.setFullYear(tc.getFullYear(),tc.getMonth(),tc.getDate());
+			startTime.setHours(0,0,0,0);
+			startTime=startTime.DateAdd("d",-7);
+		}
+		else
+		{
+			startTime = TSS.Utils.parseDate(startTime);
+		}
+
+		if(endTime=="" || endTime==undefined)
+		{
+			endTime = new Date();
+		}
+		else
+		{
+			endTime = TSS.Utils.parseDate(endTime);
+			endTime=endTime.DateAdd("d",1);
+		}
+		//
+		var bRetryFlag=false;
+		var my = TSS.JSON.decode(System.OAuth.GetCurrentUser());
+		if(type==3)
+		{	
+			var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from MailDataTable where \"T_MailTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"T_MailTime\"<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' and  \"T_Recipient\"='"+my.eMail+"' and \"T_Status\"=1"))[0];
+		}
+		else if(type==0)
+		{
+			if(my.isUserSuper)
+			{
+				var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from MailDataTable where \"T_MailTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"T_MailTime\"<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' and (\"T_Status\"=0 or \"T_Status\"=2)"))[0];
+			}
+			else
+			{
+				var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from MailDataTable where \"T_MailTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"T_MailTime\"<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' and \"T_UserID\"="+my.userID+" and (\"T_Status\"=0 or \"T_Status\"=2)"))[0];
+			}
+			bRetryFlag=true;
+		}
+		else
+		{
+			if(my.isUserSuper)
+			{
+				var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from MailDataTable where \"T_MailTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"T_MailTime\"<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' and \"T_Status\"="+type))[0];
+			}
+			else
+			{
+				var record=TSS.JSON.decode(System.RDC.ExcuteSQL("ThingsCore",false,"select * from MailDataTable where \"T_MailTime\">='"+startTime.Format("yyyy-MM-dd") +"' and \"T_MailTime\"<='"+endTime.Format("yyyy-MM-dd hh:mm:ss") +"' and \"T_UserID\"="+my.userID+" and \"T_Status\"="+type))[0];
+			}
+			bRetryFlag=true;
+		}
+		//
+		if(record.MessageCode>0)
+		{
+			result.text=record.MessageText;
+			return TSS.JSON.encode(result);
+		}
+		//读取应用信息
+		var appList = Session("CPS");
+		if(appList==undefined)
+		{
+			appList = TSS.JSON.decode(Server.ExecuteAPI("GET","/API/System",""));
+			Session("CPS") = appList;
+		}
+		//
+		result.flag=true;
+		for(var i=0;i<record.Record.length;i++)
+		{
+			if(bRetryFlag)
+			{
+				result.data[result.data.length]=['<input type="checkbox" id="'+record.Record[i].T_MailID+'" name="selMailID" class="checkboxes">',
+												record.Record[i].T_MailTime,
+												record.Record[i].T_Recipient,
+												record.Record[i].T_Subject,
+												record.Record[i].T_Body,
+												appList.map[record.Record[i].T_AppID]==undefined?record.Record[i].T_AppID:appList.data[appList.map[record.Record[i].T_AppID]].name,
+												'<a href="javascript:App.retryMail('+record.Record[i].T_MailID+',\''+record.Record[i].T_Recipient+'\',\''+record.Record[i].T_Subject+'\',\''+record.Record[i].T_Body+'\');" class="btn btn-sm btn-outline green-haze sbold"><i class="fa fa-pencil"></i> 重发</a>'];
+			}
+			else
+			{
+				result.data[result.data.length]=['<input type="checkbox" id="'+record.Record[i].T_MailID+'" name="selMailID" class="checkboxes">',
+												record.Record[i].T_MailTime,
+												record.Record[i].T_Recipient,
+												record.Record[i].T_Subject,
+												record.Record[i].T_Body,
+												appList.map[record.Record[i].T_AppID]==undefined?record.Record[i].T_AppID:appList.data[appList.map[record.Record[i].T_AppID]].name,
+												'<a href="javascript:App.sendMail(\'\',\''+record.Record[i].T_Subject+'\',\''+record.Record[i].T_Body+'\');" class="btn btn-sm btn-outline green-haze sbold"><i class="fa fa-pencil"></i> 转发</a>'];
+			}
+		}
+		//
+		return TSS.JSON.encode(result);
+	}());
+	Response.ContentType = "application/json";
+%>
