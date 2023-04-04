@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge" />	
+		<meta name="keywords" content="轮播图" />
+		<meta name="description" content="我的主页" />
+		<meta name="copyright" content= "版权所有 Copyright (c) 2023 small-Y.保留所有权利。" />
+		<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+		<meta name="msapplication-navbutton-color" content="#b4d9f1" />	
+		<meta name="application-name" content="我的主页" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-touch-fullscreen" content="yes">
+		<meta name="apple-mobile-web-app-title" content="我的主页">
+		<meta name="MobileOptimized" content="320">
+		<title>我的主页</title>
+		<link rel="icon" href="favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="favicon.ico" sizes="16x16" type="image/x-icon" />
+		<link rel="bookmark" href="favicon.ico" type="image/x-icon" />
+		<!-- 开始全局强制样式 -->          
+		<link href="" rel="stylesheet" type="text/css"/>
+		<!-- 结束全局强制样式 -->
+		<!-- 开始页面级插件样式 --> 
+		<link href="css/base.css" rel="stylesheet" type="text/css"/>
+		<!-- 结束页面级插件样式 -->
+		<!-- 开始主题样式 --> 
+		<link href="css/mian.css" rel="stylesheet" type="text/css"/>
+		<!-- 结束主题样式 -->
+		<!-- 开启主题声音 --> 
+		<!-- Resources/nag.mp3 -->
+		<audio id="nag_sound" preload="auto">
+			<source src="" type="audio/mpeg" />
+		</audio>
+	</head>
+	<body>
+		<div class="banner">
+			<div class="img">
+				<a class="banner_img_a" href="javascript:void(0);"  style="display: inline;">
+					<img src="img/4269.webp" alt="">
+				</a>
+				<a class="banner_img_a show" href="javascript:void(0);"  style="display: inline;">
+					<img src="img/3128.webp" alt="">
+				</a>
+				<a class="banner_img_a" href="javascript:void(0);"  style="display: inline;">
+					<img src="img/368.webp" alt="">
+				</a>
+				<a class="banner_img_a" href="javascript:void(0);"  style="display: inline;">
+					<img src="img/5545.webp" alt="">
+				</a>
+				<a class="banner_img_a" href="javascript:void(0);"  style="display: inline;">
+				    <img src="img/8535.webp" alt="">
+				</a>
+				<a class="banner_img_a" href="javascript:void(0);"  style="display: inline;">
+					<img src="img/4269.webp" alt="">
+				</a>
+				<a class="banner_img_a" href="javascript:void(0);"  style="display: inline;">
+					<img src="img/3128.webp" alt="">
+				</a>
+			</div>
+			<div class="indicator">
+				<span class="cur">1</span>
+				<span class="">2</span>
+				<span class="">3</span>
+				<span class="">4</span>
+				<span class="">5</span>
+			</div>
+			<div class="page">
+				<span class="prev">&lt;</span>
+				<span class="next">&gt;</span>
+			</div>
+		</div>
+		<!-- 加载信息 -->
+		<div id="startingCover">
+			<div id="startingLogo"></div>
+			<div id="startingText">正加载核心组件...</div>
+			<div id="startingVer">&copy;2023&nbsp;small-Y.</div>
+		</div>
+		<!--平台库-->
+		<script type="text/javascript" src="js/base.js"></script>
+		<script type="text/javascript">
+			sleep(1000);
+			document.getElementById('startingText').innerHTML = '正加载通用组件...';
+		</script>
+		<!--应用库-->
+		<script type="text/javascript">
+			sleep(1000);
+			document.getElementById('startingText').innerHTML = '正加载应用组件...';
+		</script>
+		<script type="text/javascript" src="jquery/jquery-3.2.1.js"></script>
+		<script type="text/javascript" src="js/main.js"></script>
+
+		<script type="text/javascript">
+			sleep(1000);
+			document.getElementById('startingText').innerHTML = '正启动应用视窗...';
+		</script>
+		<script type="text/javascript">
+			sleep(1000);
+			$("#startingCover").remove();
+		</script>
+	</body>
+</html>
